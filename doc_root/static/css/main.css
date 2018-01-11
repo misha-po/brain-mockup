@@ -1,0 +1,203 @@
+html,body {
+	flex-direction: column;
+	font-family: Sans-serif;
+	/* background: #f2f2f2; */
+	background: gray;
+}
+
+h2 {
+	color: #7D1212;
+	margin-top: 0;
+}
+
+li:hover {
+    background-color: #green;
+}
+
+.alert {
+    padding: 20px;
+	display: none;
+    background-color: #f44336;
+    color: white;
+    opacity: 1;
+	font-size: larger;
+    transition: opacity 0.6s;
+
+    margin-bottom: 15px;
+	/* width: 60%; */
+}
+
+.data-pane {
+	background: #f2f2f2;
+	width:100%;
+}
+
+.vertical-pane {
+	display: table-cell;
+	padding: 3px;
+}
+
+.project-button {
+	//display:table-cell;
+}
+
+#left-pane {
+	display: flex;
+	position: relative;
+    left: 10px;
+	width: 750px;
+}
+
+#right-pane {
+	display: flex;
+	position: fixed;
+	top: 300px;
+    left: 800px;
+}
+
+#right-pane button {
+	float: left;
+}
+
+#buttons-pane {
+	float: left;
+	align: left;
+}
+#header {
+	font-size: 36pt;
+	color: #7D1212;
+	font-family: Sans-serif;
+	font-weight: bold;
+
+	background: #f2f2f2; /* For browsers that do not support gradients */
+	background: -webkit-linear-gradient(right, #e8e8e8 , white); /* For Safari 5.1 to 6.0 */
+	background: -o-linear-gradient(left, #e8e8e8 , white); /* For Opera 11.1 to 12.0 */
+	background: -moz-linear-gradient(left, #e8e8e8 , white); /* For Firefox 3.6 to 15 */
+	background: linear-gradient(to left, #e8e8e8 , white); /* Standard syntax */
+}
+
+#project_list {
+    border-collapse: collapse;
+	background: white;
+	width: 80%;
+}
+
+#project_list td,th {
+	border: solid maroon 2px;
+}
+
+#project_list th {
+	font-size: 14pt;
+	/* background-color: transparent; */
+}
+
+#project_list tr:not(:first-child):hover {
+	/* font-weight: bold; */
+	color: red;
+}
+
+#project_list tr:not(:first-child):active {
+	font-weight: bold;
+}
+
+.sort-up {
+	background-image: url('../../static/img/Up_Arrow_Icon.png');
+	background-repeat: no-repeat;
+	background-size: 15px 15px;
+	background-position: right center;
+}
+
+.sort-down {
+	background-image: url('../../static/img/Down_Arrow_Icon.png');
+	background-repeat: no-repeat;
+	background-size: 15px 15px;
+	background-position: right center;
+}
+
+
+.highlighted-strong {
+	background: #350353; 
+	color: white;
+    font-weight: bold;
+	border: white solid 1px !important;
+}
+
+.highlighted-header {
+	background-color:  #ffd9cc; 
+}
+
+.result-available {
+	background: #ffccff; 
+	color: "#663d00";
+    font-weight: bold;
+	border: white solid 1px !important;
+}
+
+/*
+ */
+#title-bar {
+    background-color: gray;
+}
+
+#title-bar h3 {
+    float: left;
+}
+
+.modal {
+	padding: 0;
+	margin:0;
+    display: none;
+	position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgb(0,0,0);
+    background-color: rgba(0,0,0,0.4);
+}
+
+#title-bar span {
+    color: white;
+	background: red; 
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+
+.modal-content {
+	position: fixed;
+    left: 20px;
+    top: -150px;
+    width: 80%;
+    /* height: 60%; */
+
+    background-color: #fefefe;
+    margin: 15% auto;
+    padding: 0;
+    border: 1px solid #888;
+	display: flex;
+    flex-direction: column;
+}
+
+.close {
+    color: white;
+	background: red; 
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.tab_pane {
+	margin-top: 3px;
+	background: #730000;	
+}

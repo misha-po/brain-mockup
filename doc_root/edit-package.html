@@ -1,0 +1,676 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<style>
+	.common_part {
+		color: red;
+	}
+
+	.basic_part {
+		color: blue;
+	}
+
+	.complex_part {
+		color: green;
+	}
+
+	.invocation_part {
+		color: orange;
+	}
+
+	.edit_row {
+		vertical-align: top;
+	}
+
+	.section_start {
+		display: block;
+		border-top: 1px solid black;
+		text-align:left;
+		font-weight: bold;
+	}
+
+	.edit-package_part {
+	}
+
+	.edit-row_label {
+		text-align:right;
+		padding: 4px;
+		padding-left: 8px;
+		white-space:nowrap;
+		vertical-align: top;
+	}
+
+	.edit-row_data {
+		display: table-cell; 
+		width:100%;
+	}
+
+	.selectable_list li:hover {
+		color: blue;
+	}
+
+	.selected_line {
+		color: blue;
+		background: darkgrey;
+	}
+
+	.edit-button {
+		margin: 4px;
+		width: 6em;
+		text-align: center;
+	}
+
+	#edit-dataframes_list {
+		border-collapse: collapse;
+	}
+
+	#edit-dataframes_list td,th{
+		border: 1px solid black;
+	}
+
+	</style>
+<base href="index.php" target="_self">
+</head>
+
+<body onload='editSetValues()'>
+    <div id="constantPart" class='edit-package_part'>
+        <table>
+        <tr class='edit_row'>
+            <td class="edit-row_label common_part">Algorithm type:</td>
+            <td>
+                <input type="radio" name="algorithmType" value="basic" onchange="selectAlgoType('basicAlgoPart');" checked><label for="basic">Basic</label>  <br>
+                <input type="radio" name="algorithmType" value="complex" onchange="selectAlgoType('complexAlgoPart');"><label for="complex">Complex</label>  <br>
+                <input type="radio" name="algorithmType" value="invocation" onchange="selectAlgoType('invocationAlgoPart');"><label for="invocation">Invocation</label>  <br>
+            </td>
+        </tr>
+        <tr class='edit_row section_start'><td>Algorithm:</td></tr>
+        <tr class='edit_row'>
+            <td class="edit-row_label common_part">Algo code:</td>
+            <td><input type="text" id="algo_code" class='edit-row_data'/></td>
+            <td class="edit-row_label common_part">Description:</td>
+            <td rowspan="2"><textarea id="description" class='edit-row_data' rows="3" ></textarea></td>
+        </tr>
+        <tr>
+            <td class="edit-row_label common_part">Owner name:</td>
+            <td><input type="text" id="owner_name" class='edit-row_data'/></td>
+        </tr>
+        <tr>
+            <td class="edit-row_label common_part">Owner email:</td>
+            <td><input type="email" id="owner_email" class='edit-row_data'/></td>
+            <td class="edit-row_label common_part">File name:</td>
+            <td><input type="text" id="edit-python_file_path" class='edit-row_data'/></td>
+        </tr>
+        
+        <tr id='edit-algo_universe' class='edit_row'>
+            <td class="edit-row_label basic_part">Universe:</td>
+            <td class='edit_row'>
+                <select id="key-universe" style="width:100%;">
+                    <option value="retail">retail</option>
+                    <option value="business">business</option>
+                    <option value="international">international</option>
+                    <option value="dealing_room">dealing_room</option>
+                    <option value="nostro">nostro</option>
+                </select>
+            </td>
+            <td class="edit-row_label basic_part">Key entity:</td>
+            <td class='edit_row'>
+                <select id="key-universe" style="width:100%;">
+                    <option value="account">account</option>
+                    <option value="customer">customer</option>
+                    <option value="company">company</option>
+                    <option value="branch">branch</option>
+                </select>
+            </td>
+        </tr>
+        <tr id='edit-complex_type' class='edit_row' style="visibility:collapse;">
+            <td class="edit-row_label complex_part">Complex algo type:</td>
+            <td>
+                <input type="radio" name="complexAlgoType" value="manual" onchange="selectComplexAlgo(this)" checked><label for="manual">manual</label>  <br>
+                <input type="radio" name="complexAlgoType" value="autoML" onchange="selectComplexAlgo(this)"><label for="invocation">autoML</label>  <br>
+            </td>
+        </tr>
+        <tr class='edit_row section_start common_part'><td colspan="2">Input:</td></tr>
+        <tr class='edit_row'>
+            <td class="edit-row_label common_part">Dataframes:</td>
+            <td>
+                <ul id="edit-input_dataframes" class="edit-row_data  selectable_list">
+                    <li value="ds1" onclick='selectLine(this, "edit-input_dataframes", "li")'>df_1</li>
+                    <li value="ds2" onclick='selectLine(this, "edit-input_dataframes", "li")'>dataset_2</li>
+                    <li value="ds3" onclick='selectLine(this, "edit-input_dataframes", "li")'>dataset_asdfasd</li>
+                </ul>
+            </td>
+            <td class='edit_row'>
+                <button id='edit-add_dataframe' class='edit-button' 
+                        onclick='editAddLiElement("edit-new_dataframe", "edit-new_dataframe_name", "edit-input_dataframes", "edit-delete_dataframe");'>Add</button><br>
+                <button id="edit-delete_dataframe" class='edit-button' 
+                        onclick='editDeleteLiElement("edit-input_dataframes");'>Delete</button>
+            </td>
+            <td>
+                <div id="edit-new_dataframe" style='display: none;'>
+                    <label>New dataframe:</label><br>
+                    <input id='edit-new_dataframe_name' type="text" />
+                </div>
+            </td>
+        </tr>
+        <tr id='edit-input_model2' class='edit_row' style="visibility:collapse;">
+            <td class="edit-row_label invocation_part">Model name:</td>
+            <td><input type="text" /></td>
+        </tr>
+        <tr id='edit-output_features1' class='edit_row section_start basic_part'><td colspan="2">Output:</td></tr>
+        <tr id='edit-output_features3' class='edit_row'>
+            <td class='edit-row_label basic_part'>Dataframe name:</td>
+            <td colspan="2"><input id='edit-output_df_name' type="text" /></td>
+        </tr>
+
+        <tr id='edit-output_features2' class='edit_row'>
+            <td>
+            </td>
+            <td  colspan="3">
+                <table id='edit-dataframes_list'>
+                    <tr>
+                        <th>Feature name</th><th>Data type</th><th>Constraint</th><th>Is target</th><th>Tags</th>
+                    </tr>
+                    <tr class='selectable_list' onclick='selectLine(this, "edit-dataframes_list", "tr")'>
+                        <td>feature1</td><td>int</td><td>numeric</td><td>Y</td>
+                        <td>
+                            <select>
+                                <option>Tag1</option>
+                                <option>Tag2</option>
+                                <option>Tag3</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr class='selectable_list' onclick='selectLine(this, "edit-dataframes_list", "tr")'>
+                        <td>feature1</td><td>int</td><td>numeric</td><td>Y</td>
+                        <td>
+                            <select>
+                                <option>Tag1</option>
+                                <option>Tag2</option>
+                                <option>Tag3</option>
+                            </select>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        <tr id='edit-feature_list_buttons' class='edit_row'>
+            <td>
+            </td>
+            <td colspan="3">
+                <button id='edit-add_output_feature' class='edit-button' 
+                        onclick='showEditPanel(true);'>Add</button>
+                <button id="edit-delete_output_feature" class='edit-button' 
+                        onclick='deleteSelectedRow("edit-dataframes_list");'>Delete</button>
+                <button id="edit-edit_output_feature" class='edit-button' 
+                        onclick='editOutputFeature("edit-dataframes_list");'>Edit</button>
+            </td>
+        </tr>
+        <tr id='edit-add_feature'  style="visibility:collapse;">        
+            <td id='edit-algo_output11' class="edit-row_label basic_part">Feature name:</td>
+            <td id='edit-algo_output12'>
+                <input id='edit-new_feature_name' type="text" />
+            </td>
+            <td class="edit-row_label basic_part">Quality thresholds:</td>
+            <td>
+                <input type="text" id="edit-quality_thresholds" class='edit-row_data'/>
+            </td>
+        </tr>
+
+        </tr>
+        <tr id='edit-add_feature2' style="visibility:collapse;">
+            <td class="edit-row_label basic_part">Data type:</td>
+            <td>
+                <select id="edit-data_type" class='edit-row_data' style="width:150;">
+                    <option value="int">int</option>
+                    <option value="float">float</option>
+                    <option value="string">string</option>
+                    <option value="datetime">datetime</option>
+                </select>
+            </td>
+            <td class="edit-row_label basic_part">Constraint:</td>
+            <td>
+                <select id="edit-data_constraint" class='edit-row_data' style="width:150;">
+                    <option value="numeric">numeric</option>
+                    <option value="interval">interval</option>
+                    <option value="categorial">categorial</option>
+                </select>
+            </td>
+        </tr>
+        <tr id='edit-add_feature3' class='edit_row' style="visibility:collapse;">
+            <td class="edit-row_label basic_part">Tag list:</td>
+            <td class="basic_part">
+                <input id='edit-feature_tag_list' type="text" id='edit-tag_list'/>
+            </td>
+            <td id='edit-add_feature5' class="basic_part">
+                <input type="checkbox" id='edit-is-target'>is target</input>
+            </td>
+        </tr>
+        <tr id='edit-add_feature4' class='edit_row' style="visibility:collapse;">
+            <td>
+            </td>
+            <td colspan="3">
+                <button id='edit-add_output_feature' class='edit-button' 
+                        onclick='addOutputDataFrame();'>Save</button>
+                <button id="edit-delete_output_feature" class='edit-button' 
+                        onclick='showEditPanel(false);'>Cancel</button>
+            </td>
+        </tr>
+        <!-- ------------------------------------------------------ -->     
+        <tr id='edit-algo_output3' class='edit_row' style="visibility:collapse;">
+            <td class="edit-row_label invocation_part">
+                <input type="checkbox" checked
+                    onchange="document.getElementById('edit-save_fname').style.visibility=this.checked?'visible':'collapse';">Save in file</input>
+            </td>
+            <td id='edit-save_fname'>
+                <input type="text" />
+            </td>
+        </tr>
+        <!-- ------------------------------------------------------ --> 
+        <tr id='edit-output_model' class='edit_row' style="visibility:collapse;">
+            <td class="edit-row_label complex_part">Model name:</td>
+            <td><input type="text" /></td>
+        </tr>
+        <tr id='edit-output_model1' class='edit_row' style="visibility:collapse;">
+            <td class="edit-row_label complex_part">Quality thresholds:</td>
+            <td><input type="text" class='edit-row_data'/></td>
+        </tr>
+        
+        <tr id='editparams_header' class='edit_row section_start common_part'><td colspan="2">Parameters:</td></tr>
+        <tr id='editparams_editor' class='edit_row'>
+            <td></td>
+            <td>
+                <ul id="edit-input_params" class='selectable_list' style="display:table-cell">
+                    <li value="param1" onclick='selectLine(this, "edit-input_params", "li")'>param1=123</li>
+                    <li value="param2" onclick='selectLine(this, "edit-input_params", "li")'>param2=345</li>
+                    <li value="param3" onclick='selectLine(this, "edit-input_params", "li")'>parameter3=gwgfhwsgfd</li>
+                </ul>
+            </td>
+            <td>
+                <button id='edit-add_param' class='edit-button' 
+                        onclick='editAddLiElement("edit-new_param", "edit-new_param_name", "edit-input_params", "edit-delete_param");'>Add</button><br>
+                <button  id="edit-delete_param" class='edit-button' 
+                        onclick='editDeleteLiElement("edit-input_params");'>Delete</button>
+            </td>
+            <td>
+                <div id="edit-new_param" style='display: none;'>
+                    <label>Add parameter:</label><br>
+                    <input id='edit-new_param_name' type="text" />
+                </div>
+            </td>
+        </tr>
+        <tr class='edit_row section_start  common_part'><td colspan="2">Schedule:</td></tr>
+        <tr class='edit_row'>
+            <td class="edit-row_label">Schedule type:</td>
+            <td>
+                <input type="radio" name="scheduleType" value="standard" checked onchange="selectEditSchedule(1);">Standard</input><br>
+                <input type="radio" name="scheduleType" value="custom" onchange="selectEditSchedule(2);">Custom</input>
+            </td>
+            <td colspan="2">
+                <div id='edit-schedule_standard' style='display: table-cell;' >
+                    <select id="schedule-period-list" class='edit-row_data'>
+                        <option value="volvo">hourly</option>
+                        <option value="saab">daily</option>
+                        <option value="mercedes">weekly</option>
+                        <option value="audi">monthly</option>
+                    </select>
+                </div>
+                <div id='edit-schedule_custom1' style='display: none;'>
+                    Period:
+                    <select id='edit-schedule_custom11' onchange='editSchedulePeriod()'>
+                        <option value="minutes">minutes</option>
+                        <option value="hours">hours</option>
+                        <option value="days">days</option>
+                        <option value="weeks">weeks</option>
+                        <option value="months">months</option>
+                    </select>
+                    <input type="number" step="1" min="1" value="1" style='width: 4em'/>
+                    <br>
+                    Start:
+                    <input id='edit-schedule_start_at' type="time"/>
+                    <input id='edit-schedule_start_on' type="date" style='display:none; width:10em;'/>
+                </div>
+            </td>
+            <td id='edit-schedule_custom2'  style='display: none;'>
+                <div>
+                </div>
+            </td>
+        </tr>
+        <tr id='visibility_tags_header' class='edit_row section_start complex_part' style="visibility:collapse;"><td colspan="2">Prohibited tags:</td></tr>
+        <tr id='visibility_tags_editor' class='edit_row' style="visibility:collapse;">
+            <td>
+                <ul id="edit-tags" class='selectable_list' style='display: table-cell;'>
+                    <li value="Tag1" onclick='selectLine(this, "edit-tags", "li")'>Tag1</li>
+                    <li value="Tag2" onclick='selectLine(this, "edit-tags", "li")'>Tag2</li>
+                    <li value="Tag3" onclick='selectLine(this, "edit-tags", "li")'>Tag3</li>
+                </ul>
+            </td>
+            <td>
+                <button id='edit-add_tag' class='edit-button' 
+                        onclick='editAddLiElement("edit-new_tags", "edit-new_tag_name", "edit-tags", "edit-delete_tag");'>Add</button><br>
+                <button id="edit-delete_tag" class='edit-button' 
+                        onclick='editDeleteLiElement("edit-tags");'>Delete</button>
+            </td>
+            <td>
+            </td>
+            <td>
+                <div id="edit-new_tags" style='display: none;'>
+                    <label>New tag:</label><br>
+                    <input id="edit-new_tag_name" type="text" />
+                </div>
+            </td>
+        </tr>
+        </table>
+    </div>  
+<script>
+function changeListener(text_name, button_name) {
+    document.getElementById(text_name).addEventListener("keyup", function(event) {
+        event.preventDefault();
+        if (event.keyCode === 13) {
+            document.getElementById(button_name).click();
+        }
+    });
+}
+
+changeListener("edit-new_dataframe_name", "edit-add_dataframe");
+changeListener("edit-new_param_name", "edit-add_param");
+changeListener("edit-new_tag_name", "edit-add_tag");
+
+function selectAlgoType(panelName) {
+    if (panelName == 'basicAlgoPart') {
+        document.getElementById("visibility_tags_header").style.visibility = "collapse";
+        document.getElementById("visibility_tags_editor").style.visibility = "collapse";
+        document.getElementById("edit-complex_type").style.visibility = "collapse";
+        document.getElementById("edit-algo_output12").style.visibility = "visible";
+        document.getElementById("edit-input_model2").style.visibility = "collapse";
+        document.getElementById("edit-algo_universe").style.visibility = "visible";
+        document.getElementById("edit-algo_output3").style.visibility = "collapse";
+
+        document.getElementById("edit-output_features2").style.visibility = "visible";
+        document.getElementById("edit-output_features3").style.visibility = "visible";
+        document.getElementById("edit-feature_list_buttons").style.visibility = "visible";
+        document.getElementById("edit-output_model").style.visibility = "collapse";
+        document.getElementById("edit-output_model1").style.visibility = "collapse";
+        document.getElementById("edit-add_feature").style.visibility = "collapse";
+        document.getElementById("edit-add_feature3").style.visibility = "collapse";
+    }
+    if (panelName == 'complexAlgoPart') {
+        document.getElementById("visibility_tags_header").style.visibility = "visible";
+        document.getElementById("visibility_tags_editor").style.visibility = "visible";
+        document.getElementById("edit-complex_type").style.visibility = "visible";
+        document.getElementById("edit-algo_output12").style.visibility = "collapse";
+        document.getElementById("edit-input_model2").style.visibility = "collapse";
+        document.getElementById("edit-algo_universe").style.visibility = "collapse";
+        document.getElementById("edit-algo_output3").style.visibility = "collapse";
+
+        document.getElementById("edit-output_features2").style.visibility = "collapse";
+        document.getElementById("edit-output_features3").style.visibility = "collapse";
+        document.getElementById("edit-feature_list_buttons").style.visibility = "collapse";
+        document.getElementById("edit-output_model").style.visibility = "visible";
+        document.getElementById("edit-output_model1").style.visibility = "visible";
+        document.getElementById("edit-add_feature").style.visibility = "collapse";
+        document.getElementById("edit-add_feature3").style.visibility = "collapse";
+    }
+    if (panelName == 'invocationAlgoPart') {
+        document.getElementById("visibility_tags_header").style.visibility = "collapse";
+        document.getElementById("visibility_tags_editor").style.visibility = "collapse";
+        document.getElementById("edit-complex_type").style.visibility = "collapse";
+        document.getElementById("edit-algo_output12").style.visibility = "visible";
+        document.getElementById("edit-input_model2").style.visibility = "visible";
+        document.getElementById("edit-algo_universe").style.visibility = "collapse";
+        document.getElementById("edit-algo_output3").style.visibility = "visible";
+
+        document.getElementById("edit-output_features2").style.visibility = "collapse";
+        document.getElementById("edit-output_features3").style.visibility = "collapse";
+        document.getElementById("edit-feature_list_buttons").style.visibility = "collapse";
+        document.getElementById("edit-output_model").style.visibility = "collapse";
+        document.getElementById("edit-output_model").style.visibility = "collapse";
+        document.getElementById("edit-add_feature").style.visibility = "visible";
+        document.getElementById("edit-add_feature3").style.visibility = "visible";
+        document.getElementById("edit-add_feature5").style.visibility = "collapse";
+    }
+}
+
+function showEditPanel(show) {
+    var show1 = show?"visible":"collapse";
+    var show2 = show?"collapse":"visible";
+    document.getElementById("edit-add_feature").style.visibility = show1;
+    document.getElementById("edit-add_feature2").style.visibility = show1;
+    document.getElementById("edit-add_feature3").style.visibility = show1;
+    document.getElementById("edit-feature_list_buttons").style.visibility = show2;
+    document.getElementById("edit-add_feature4").style.visibility = show1;
+    document.getElementById("edit-add_feature5").style.visibility = show1;
+}
+
+function editOutputFeature(table_name) {
+    var table = document.getElementById(table_name);
+    for (var i = 1; i < table.rows.length; i++) {
+        if (table.rows[i].classList.contains('selected_line')) {
+            break;
+        }
+    }
+    if (i >= table.rows.length)
+        return;
+    var tds = table.rows[i].getElementsByTagName('td');
+    document.getElementById('edit-new_feature_name').value = tds[0].innerHTML;
+    /*
+    document.getElementById('edit-data_type');
+    var e = document.getElementById('edit-data_type');
+    var data_type = e.options[e.selectedIndex].text;
+    e = document.getElementById('edit-data_constraint');
+    var data_constraint = e.options[e.selectedIndex].text;
+    var table = document.getElementById("edit-dataframes_list");
+    var row = table.insertRow(-1);
+    var td2 = row.insertCell(-1);
+    td2.innerHTML = feature_name;
+    var td3 = row.insertCell(-1);
+    td3.innerHTML = data_type;
+    var td4 = row.insertCell(-1);
+    td4.innerHTML = data_constraint;
+    var td5 = row.insertCell(-1);
+    td5.innerHTML = document.getElementById("edit-is-target").checked?'Y':'N';
+    var td6 = row.insertCell(-1);
+    */
+    showEditPanel(true);
+}
+
+function deleteSelectedRow(table_name) {
+    var table = document.getElementById(table_name);
+    for (var i = 1; i < table.rows.length; i++) {
+        if (table.rows[i].classList.contains('selected_line')) {
+            break;
+        }
+    }
+    if (i < table.rows.length)
+        table.deleteRow(i);
+}
+
+function addOutputDataFrame() {
+    var feature_name = document.getElementById('edit-new_feature_name').value;
+    var e = document.getElementById('edit-data_type');
+    var data_type = e.options[e.selectedIndex].text;
+    e = document.getElementById('edit-data_constraint');
+    var data_constraint = e.options[e.selectedIndex].text;
+    var table = document.getElementById("edit-dataframes_list");
+    var row = table.insertRow(-1);
+    var td2 = row.insertCell(-1);
+    td2.innerHTML = feature_name;
+    var td3 = row.insertCell(-1);
+    td3.innerHTML = data_type;
+    var td4 = row.insertCell(-1);
+    td4.innerHTML = data_constraint;
+    var td5 = row.insertCell(-1);
+    td5.innerHTML = document.getElementById("edit-is-target").checked?'Y':'N';
+    var td6 = row.insertCell(-1);
+    
+    var opt = document.createElement("select"); 
+    var tags = document.getElementById('edit-feature_tag_list').value.split(',');
+    for (var i = 0; i < tags.length; i++) {
+        var op = new Option();
+        op.value = tags[i];
+        op.text = tags[i];
+        opt.options.add(op);      
+    }
+    
+    td6.appendChild(opt);
+    row.setAttribute('onclick', 'selectLine(this, "edit-dataframes_list", "tr")');
+    showEditPanel(false);
+}
+
+function selectEditSchedule(view) {
+    var view1 = 'edit-schedule_standard';
+    var view2 = 'edit-schedule_custom1';
+    var view3 = 'edit-schedule_custom2';
+    if (view == 1) {
+        document.getElementById(view1).style.display = "table-cell";
+        document.getElementById(view2).style.display = "none";
+        document.getElementById(view3).style.display = "none";
+    }
+    else {
+        document.getElementById(view1).style.display = "none";
+        document.getElementById(view2).style.display = "table-cell";
+        document.getElementById(view3).style.display = "table-cell";
+    }
+    editSchedulePeriod();
+}
+
+/*
+function editDeleteParam() {
+    var elements = document.getElementById("edit-input_params").getElementsByTagName('li');
+    for (var i = 0; i < elements.length; i++) {
+        var li = elements[i];
+        if (li.classList.contains('selected_line')) {
+            li.parentNode.removeChild(li);
+        }
+    }
+}
+*/
+function selectLine(element, list_name, tag_name) {
+    var the_list = document.getElementById(list_name);
+    var list_elems = the_list.getElementsByTagName(tag_name);
+    for (var i = 0; i < list_elems.length; i++) {
+        list_elems[i].classList.remove('selected_line');
+    }
+    element.classList.add('selected_line');
+}
+
+function editAddLiElement(panel_name, text_box, list_name, delete_button) {
+    var edit_panel = document.getElementById(panel_name);
+    if (edit_panel.style.display == "none") {
+        edit_panel.style.display = "table-cell";
+        document.getElementById(delete_button).style.visibility = "hidden";
+    }
+    else {
+        edit_panel.style.display = "none";
+        document.getElementById(delete_button).style.visibility = "visible";
+        var text = document.getElementById(text_box).value;
+        if (text == '') {
+            return;
+        }
+        document.getElementById(text_box).value = "";
+        
+        var elements = document.getElementById(list_name).getElementsByTagName('li');
+        for (var i = 0; i < elements.length; i++) {
+            if (elements[i].innerHTML == text) {
+                return;
+            }
+        }
+        var li = document.createElement("li");
+        li.appendChild(document.createTextNode(text));
+        li.onclick = function(){selectLine(li, list_name, 'li')}
+        document.getElementById(list_name).appendChild(li);
+    }
+}
+
+function editDeleteLiElement(elem_name) {
+    var elements = document.getElementById(elem_name).getElementsByTagName('li');
+    for (var i = 0; i < elements.length; i++) {
+        var li = elements[i];
+        if (li.classList.contains('selected_line')) {
+            li.parentNode.removeChild(li);
+        }
+    }
+}
+
+function selectComplexAlgo(selection) {
+    /*
+    if(selection.value == 'manual') {
+        document.getElementById("editparams_header").style.visibility = "visible";
+        document.getElementById("editparams_editor").style.visibility = "visible";
+    }
+    else {
+        document.getElementById("editparams_header").style.visibility = "collapse";
+        document.getElementById("editparams_editor").style.visibility = "collapse";
+    }
+    */
+}
+
+function editSchedulePeriod() {
+    var selector = document.getElementById('edit-schedule_custom11');
+    var start_at = document.getElementById('edit-schedule_start_at');
+    var start_on = document.getElementById('edit-schedule_start_on');
+    var date = new Date();
+    var time = ('0'+date.getHours()).substr(-2)+':'+('0'+date.getMinutes()).substr(-2);
+    
+    switch (selector[selector.selectedIndex].value) {
+    case 'minutes':
+        start_at.style.display = "table-cell";
+        start_on.style.display = "none";
+        start_at.format='HH:mm';
+        start_at.value = time;
+        break;
+    case 'hours':
+        start_at.style.display = "table-cell";
+        start_on.style.display = "none";
+        start_at.format='HH:mm';
+        start_at.value = time;
+        break;
+    case 'days':
+        start_at.style.display = "none";
+        start_on.style.display = "table-cell";
+//      start_on.value = "2014-02-09";
+        start_on.value = (date.getYear()+1900)+'-'+(date.getMonth()+1)+'-'+date.getDate();
+        break;
+    case 'weeks':
+        start_at.style.display = "none";
+        start_on.style.display = "table-cell";
+        start_on.value = (date.getYear()+1900)+'-'+(date.getMonth()+1)+'-'+date.getDate();
+        break;
+    case 'months':
+        start_at.style.display = "none";
+        start_on.style.display = "table-cell";
+        start_on.value = (date.getYear()+1900)+'-'+(date.getMonth()+1)+'-'+date.getDate();
+        break;
+    }
+}
+
+function editSetValues() {
+	console.log();
+	var xhttp = new XMLHttpRequest();
+	xhttp.onreadystatechange = function() {
+		if (this.readyState == 4 && this.status == 200) {
+			var 	json_doc = JSON.parse(this.responseText);
+			/*
+			if (json_doc.length == 0) {
+				//tbl.style.display = "none";
+				return;
+			}
+			var root = json_doc.root;
+			var tree_view = document.getElementById('package_list');
+			// tree_view
+			for (var i = 0; i < root.length; i++) {
+				var name = root[i].name;
+				var li = document.createElement('li');
+				li.value = name;
+				li.innerHTML = name;
+				tree_view.appendChild(li);
+				
+			}
+			*/
+		}
+	};
+	xhttp.open("GET", 'static/ajax/GetPackageData.php?id='+window.parent.document.getElementsByName('object-package_id')[0].value, true);
+	xhttp.send();		
+
+}
+</script>
+</body>
+</html>
