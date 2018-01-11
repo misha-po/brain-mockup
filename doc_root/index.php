@@ -64,7 +64,7 @@ $_SESSION["next_page"] = 1;
 				<ul class='menu-bar1'>
 					<li><button class="action-button project-button" type="button"  data-toggle="modal" data-target="#select-feature-popup" onclick="ShowEditDialog();">Edit</button></li>
 					<li><button class="action-button project-button" type="button"  data-toggle="modal" data-target="#select-feature-popup" >Show PDF</button></li>
-					<li><button class="action-button project-button" type="button"  data-toggle="modal" data-target="#select-feature-popup" >Dependencies</button></li>
+					<li><button class="action-button project-button" type="button"  data-toggle="modal" data-target="#select-feature-popup"  onclick="ReloadGraph('project_list');SelectTab(this, 'depends');" >Dependencies</button></li>
 					<li><button class="action-button project-button" type="button">Delete</button></li>
 					<li>&nbsp</li>
 					<li><button class="action-button project-button" type="button"  data-toggle="modal" data-target="#edit-popup" onclick="ShowSelectFeatureDialog();">New</button></li>
