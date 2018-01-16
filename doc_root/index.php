@@ -132,7 +132,7 @@ $_SESSION["next_page"] = 1;
 	  <div class="modal-content">
 		<div style="border:solid black 1px;">
 			<span id="modal-title" style='float:left;font-size: 28px;'>Edit propertes</span>
-			<span class="close" onclick="CloseEditDialog('edit-popup');">&times;</span>
+			<span id="modal-title_close" class="close" onclick="CloseEditDialog('edit-popup');">&times;</span>
 		</div>
 		<!-- <div style="border:solid black 1px; height:500px;"   onmouseover='ShowButtons(this, true, "Cancel_edit-popup", "Save_edit-popup");'> -->
 		<div style="border:solid black 1px; height:600px;">
@@ -302,7 +302,7 @@ function ShowEditDialog() {
 	var modal = document.getElementById('edit-popup');
 	modal.style.display = "block";
 
-	document.getElementsByName('object-package_id')[0].value = 'abcde-12345';
+	document.getElementsByName('object-package_id')[0].value = pckg_id;
 }
 
 function ShowSelectFeatureDialog() {

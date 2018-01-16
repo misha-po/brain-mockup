@@ -85,17 +85,17 @@
         <tr class='edit_row section_start'><td>Algorithm:</td></tr>
         <tr class='edit_row'>
             <td class="edit-row_label common_part">Algo code:</td>
-            <td><input type="text" id="algo_code" class='edit-row_data'/></td>
+            <td><input type="text" id="edit-algo_code" class='edit-row_data'/></td>
             <td class="edit-row_label common_part">Description:</td>
-            <td rowspan="2"><textarea id="description" class='edit-row_data' rows="3" ></textarea></td>
+            <td rowspan="2"><textarea id="edit-description" class='edit-row_data' rows="3" ></textarea></td>
         </tr>
         <tr>
             <td class="edit-row_label common_part">Owner name:</td>
-            <td><input type="text" id="owner_name" class='edit-row_data'/></td>
+            <td><input type="text" id="edit-owner_name" class='edit-row_data'/></td>
         </tr>
         <tr>
             <td class="edit-row_label common_part">Owner email:</td>
-            <td><input type="email" id="owner_email" class='edit-row_data'/></td>
+            <td><input type="email" id="edit-owner_email" class='edit-row_data'/></td>
             <td class="edit-row_label common_part">File name:</td>
             <td><input type="text" id="edit-python_file_path" class='edit-row_data'/></td>
         </tr>
@@ -103,7 +103,7 @@
         <tr id='edit-algo_universe' class='edit_row'>
             <td class="edit-row_label basic_part">Universe:</td>
             <td class='edit_row'>
-                <select id="key-universe" style="width:100%;">
+                <select id="edit-universe" style="width:100%;">
                     <option value="retail">retail</option>
                     <option value="business">business</option>
                     <option value="international">international</option>
@@ -113,7 +113,7 @@
             </td>
             <td class="edit-row_label basic_part">Key entity:</td>
             <td class='edit_row'>
-                <select id="key-universe" style="width:100%;">
+                <select id="edit-key_enity" style="width:100%;">
                     <option value="account">account</option>
                     <option value="customer">customer</option>
                     <option value="company">company</option>
@@ -133,21 +133,22 @@
             <td class="edit-row_label common_part">Dataframes:</td>
             <td>
                 <ul id="edit-input_dataframes" class="edit-row_data  selectable_list">
-                    <li value="ds1" onclick='selectLine(this, "edit-input_dataframes", "li")'>df_1</li>
-                    <li value="ds2" onclick='selectLine(this, "edit-input_dataframes", "li")'>dataset_2</li>
-                    <li value="ds3" onclick='selectLine(this, "edit-input_dataframes", "li")'>dataset_asdfasd</li>
                 </ul>
             </td>
             <td class='edit_row'>
                 <button id='edit-add_dataframe' class='edit-button' 
-                        onclick='editAddLiElement("edit-new_dataframe", "edit-new_dataframe_name", "edit-input_dataframes", "edit-delete_dataframe");'>Add</button><br>
+                        onclick='editAddDataframe("edit-new_dataframe", "edit-new_dataframe_name", "edit-input_dataframes", "edit-delete_dataframe");'>Add</button><br>
                 <button id="edit-delete_dataframe" class='edit-button' 
                         onclick='editDeleteLiElement("edit-input_dataframes");'>Delete</button>
             </td>
             <td>
                 <div id="edit-new_dataframe" style='display: none;'>
                     <label>New dataframe:</label><br>
+					<!--
                     <input id='edit-new_dataframe_name' type="text" />
+					-->
+					<select id="edit-new_dataframe_name" class='edit-row_data' style="width:150;">
+					</select>
                 </div>
             </td>
         </tr>
@@ -158,7 +159,13 @@
         <tr id='edit-output_features1' class='edit_row section_start basic_part'><td colspan="2">Output:</td></tr>
         <tr id='edit-output_features3' class='edit_row'>
             <td class='edit-row_label basic_part'>Dataframe name:</td>
-            <td colspan="2"><input id='edit-output_df_name' type="text" /></td>
+            <td colspan="2">
+				<!--
+				<input id='edit-output_df_name' type="text" />
+				-->
+				<select id="edit-output_df_name" class='edit-row_data' style="width:150;">
+				</select>
+			</td>
         </tr>
 
         <tr id='edit-output_features2' class='edit_row'>
@@ -167,9 +174,11 @@
             <td  colspan="3">
                 <table id='edit-dataframes_list'>
                     <tr>
+						<td style='visibility:hidden;'>1</td>
                         <th>Feature name</th><th>Data type</th><th>Constraint</th><th>Is target</th><th>Tags</th>
                     </tr>
                     <tr class='selectable_list' onclick='selectLine(this, "edit-dataframes_list", "tr")'>
+						<td style='visibility:hidden;'>1</td>
                         <td>feature1</td><td>int</td><td>numeric</td><td>Y</td>
                         <td>
                             <select>
@@ -180,6 +189,7 @@
                         </td>
                     </tr>
                     <tr class='selectable_list' onclick='selectLine(this, "edit-dataframes_list", "tr")'>
+						<td style='visibility:hidden;'>1</td>
                         <td>feature1</td><td>int</td><td>numeric</td><td>Y</td>
                         <td>
                             <select>
@@ -220,18 +230,11 @@
             <td class="edit-row_label basic_part">Data type:</td>
             <td>
                 <select id="edit-data_type" class='edit-row_data' style="width:150;">
-                    <option value="int">int</option>
-                    <option value="float">float</option>
-                    <option value="string">string</option>
-                    <option value="datetime">datetime</option>
                 </select>
             </td>
             <td class="edit-row_label basic_part">Constraint:</td>
             <td>
                 <select id="edit-data_constraint" class='edit-row_data' style="width:150;">
-                    <option value="numeric">numeric</option>
-                    <option value="interval">interval</option>
-                    <option value="categorial">categorial</option>
                 </select>
             </td>
         </tr>
@@ -358,9 +361,20 @@
                 </div>
             </td>
         </tr>
+        <tr>
+            <td colspan=2>
+                <button id='edit-save-package' class='action-button' onclick='editSavePackage();'>Save</button>
+            </td>
+            <td colspan=2>
+                <button id="edit-cancel" class='action-button' onclick='editCancelSavePackage(false);'>Cancel</button>
+            </td>
+        </tr>
         </table>
     </div>  
 <script>
+var pid = window.parent.document.getElementsByName('object-package_id')[0].value;
+var aid;
+var out_df_id = -1;
 function changeListener(text_name, button_name) {
     document.getElementById(text_name).addEventListener("keyup", function(event) {
         event.preventDefault();
@@ -484,35 +498,79 @@ function deleteSelectedRow(table_name) {
 }
 
 function addOutputDataFrame() {
-    var feature_name = document.getElementById('edit-new_feature_name').value;
-    var e = document.getElementById('edit-data_type');
-    var data_type = e.options[e.selectedIndex].text;
-    e = document.getElementById('edit-data_constraint');
-    var data_constraint = e.options[e.selectedIndex].text;
     var table = document.getElementById("edit-dataframes_list");
     var row = table.insertRow(-1);
-    var td2 = row.insertCell(-1);
-    td2.innerHTML = feature_name;
-    var td3 = row.insertCell(-1);
-    td3.innerHTML = data_type;
-    var td4 = row.insertCell(-1);
-    td4.innerHTML = data_constraint;
-    var td5 = row.insertCell(-1);
-    td5.innerHTML = document.getElementById("edit-is-target").checked?'Y':'N';
-    var td6 = row.insertCell(-1);
-    
-    var opt = document.createElement("select"); 
-    var tags = document.getElementById('edit-feature_tag_list').value.split(',');
-    for (var i = 0; i < tags.length; i++) {
-        var op = new Option();
-        op.value = tags[i];
-        op.text = tags[i];
-        opt.options.add(op);      
-    }
-    
-    td6.appendChild(opt);
-    row.setAttribute('onclick', 'selectLine(this, "edit-dataframes_list", "tr")');
-    showEditPanel(false);
+
+    var feature_name = document.getElementById('edit-new_feature_name').value;
+	e = document.getElementById('edit-data_type');
+	var data_type_id = e.options[e.selectedIndex].value;
+	e = document.getElementById('edit-data_constraint');
+	var data_constraint_id = e.options[e.selectedIndex].value;
+
+	var is_target = document.getElementById("edit-is-target").checked;
+	var quality_metrics = document.getElementById('edit-quality_thresholds').value;
+	var xhttp = new XMLHttpRequest();
+	e = document.getElementById('edit-output_df_name');
+	var out_df_id = e.options[e.selectedIndex].value;
+	var dataframe_name = e.options[e.selectedIndex].innerHTML;
+	xhttp.onreadystatechange = function() {
+		if (this.readyState == 4 && this.status == 200) {
+			console.log(this.responseText);
+			var 	json_doc = JSON.parse(this.responseText);
+			if (json_doc.length == 0) {
+				return;
+			}
+			if (json_doc.error != 'OK') {
+				alert(json_doc.error);
+				return;
+			}
+			var pckg_data = json_doc.pckg_data;
+			var table = document.getElementById("edit-dataframes_list");
+			var row = table.insertRow(-1);
+			var e;
+
+			var feature_name = document.getElementById('edit-new_feature_name').value;
+			e = document.getElementById('edit-data_type');
+			var data_type = e.options[e.selectedIndex].text;
+			e = document.getElementById('edit-data_constraint');
+			var data_constraint = e.options[e.selectedIndex].text;
+
+			var td1 = row.insertCell(-1);
+			td1.innerHTML = -1;
+			td1.style.visibility = 'hidden';
+			var td2 = row.insertCell(-1);
+			td2.innerHTML = feature_name;
+			var td3 = row.insertCell(-1);
+			td3.innerHTML = data_type;
+			var td4 = row.insertCell(-1);
+			td4.innerHTML = data_constraint;
+			var td5 = row.insertCell(-1);
+			td5.innerHTML = is_target?'Y':'N';
+			var td6 = row.insertCell(-1);
+			
+			var opt = document.createElement("select"); 
+			var tags = document.getElementById('edit-feature_tag_list').value.split(',');
+			for (var i = 0; i < tags.length; i++) {
+				var op = new Option();
+				op.value = tags[i];
+				op.text = tags[i];
+				opt.options.add(op);      
+			}
+			
+			td6.appendChild(opt);
+			row.setAttribute('onclick', 'selectLine(this, "edit-dataframes_list", "tr")');
+			showEditPanel(false);
+		}
+	};
+	xhttp.open("GET", 'static/ajax/AddOutputFeature.php?df_id='+out_df_id
+				+'&feature_name='+feature_name
+				+'&data_type_id='+data_type_id
+				+'&data_constraint_id='+data_constraint_id
+				+'&is_target='+is_target
+				+'&package_id='+pid
+				+'&quality_metrics='+encodeURI(quality_metrics)
+				+'&dataframe_name='+dataframe_name,true);
+	xhttp.send();
 }
 
 function selectEditSchedule(view) {
@@ -580,6 +638,32 @@ function editAddLiElement(panel_name, text_box, list_name, delete_button) {
     }
 }
 
+function editAddDataframe(panel_name, text_box, list_name, delete_button) {
+    var edit_panel = document.getElementById(panel_name);
+    if (edit_panel.style.display == "none") {
+        edit_panel.style.display = "table-cell";
+        document.getElementById(delete_button).style.visibility = "hidden";
+    }
+    else {
+        edit_panel.style.display = "none";
+        document.getElementById(delete_button).style.visibility = "visible";
+		var tbl = document.getElementById(text_box);
+        var text = tbl.options[tbl.selectedIndex].innerHTML;
+        
+        var elements = document.getElementById(list_name).getElementsByTagName('li');
+        for (var i = 0; i < elements.length; i++) {
+            if (elements[i].innerHTML == text) {
+                return;
+            }
+        }
+        var li = document.createElement("li");
+        li.appendChild(document.createTextNode(text));
+        li.onclick = function(){selectLine(li, list_name, 'li')}
+        document.getElementById(list_name).appendChild(li);
+    }
+}
+
+
 function editDeleteLiElement(elem_name) {
     var elements = document.getElementById(elem_name).getElementsByTagName('li');
     for (var i = 0; i < elements.length; i++) {
@@ -643,33 +727,162 @@ function editSchedulePeriod() {
 }
 
 function editSetValues() {
-	console.log();
+	var xhttp = new XMLHttpRequest();
+	xhttp.onreadystatechange = function() {
+		if (this.readyState == 4 && this.status == 200) {
+			//console.log(this.responseText);
+			var 	json_doc = JSON.parse(this.responseText);
+			if (json_doc.length == 0) {
+				return;
+			}
+			var data_types = json_doc.data_types;
+			for (var i = 0; i < data_types.length; i++) {
+				var opt = document.createElement('option');
+				opt.value = data_types[i].id;
+				opt.innerHTML = data_types[i].name;
+				document.getElementById('edit-data_type').appendChild(opt);
+			}
+
+			var value_constraints = json_doc.value_constraints;
+			for (var i = 0; i < value_constraints.length; i++) {
+				var opt = document.createElement('option');
+				opt.value = value_constraints[i].id;
+				opt.innerHTML = value_constraints[i].name;
+				document.getElementById('edit-data_constraint').appendChild(opt);
+			}
+			
+			
+			
+			var pckg_data = json_doc.pckg_data;
+			var elems = document.getElementsByName('algorithmType');
+			for (var i=0; i < elems.length; i++) {
+				if (elems[i].value == pckg_data.algo_type)
+					elems[i].checked = true;
+				else 
+					elems[i].checked = false;
+			}
+			aid = pckg_data.aid;
+			document.getElementById('edit-algo_code').value = pckg_data.algo_code;
+			document.getElementById('edit-owner_name').value = pckg_data.owner_name;
+			document.getElementById('edit-owner_email').value = pckg_data.owner_email;
+			document.getElementById('edit-description').value = pckg_data.description;
+			document.getElementById('edit-python_file_path').value = pckg_data.egg_path;
+			var elems = document.getElementById('edit-universe').getElementsByTagName('option');
+			for (var i=0; i < elems.length; i++) {
+				if (elems[i].value == pckg_data.universe)
+					elems[i].selected = true;
+				else 
+					elems[i].selected = false;
+			}
+			var elems = document.getElementById('edit-key_enity').getElementsByTagName('option');
+			for (var i=0; i < elems.length; i++) {
+				if (elems[i].value == pckg_data.input_entity)
+					elems[i].selected = true;
+				else 
+					elems[i].selected = false;
+			}
+			//////////////////////////////////////////////////////
+			document.getElementById('edit-output_df_name').value = features = json_doc.output_df.name;
+			out_df_id = json_doc.output_df.id;
+			//////////////////////////////////////////////////////
+			var data_frames = json_doc.data_frames;
+			var ul = document.getElementById('edit-input_dataframes')
+			while( ul.firstChild )
+				ul.removeChild(ul.firstChild );
+			for (var i =0; i < data_frames.length; i++) {
+				var li = document.createElement("li");
+				var li = document.createElement("li");
+				li.appendChild(document.createTextNode(data_frames[i].name));
+				li.onclick = function(){selectLine(li, 'edit-input_dataframes', 'li')}
+				ul.appendChild(li);
+			}
+			
+			var features = json_doc.features;
+			var tbl = document.getElementById('edit-dataframes_list');
+			//console.log(tbl.getElementsByTagName['tr']);
+			for (var i = tbl.getElementsByTagName('tr').length-1; i>0; i--) {
+				tbl.deleteRow(i);
+			}
+			var table = document.getElementById("edit-dataframes_list");
+			for (var i = 0; i < features.length; i++) {
+				var row = table.insertRow(-1);
+				var td1 = row.insertCell(-1);
+				td1.innerHTML = features[i].id;
+				td1.style.visibility = 'hidden';
+				var td2 = row.insertCell(-1);
+				td2.innerHTML = features[i].name;
+				var td3 = row.insertCell(-1);
+				td3.innerHTML = features[i].data_type;
+				var td4 = row.insertCell(-1);
+				td4.innerHTML = features[i].value_constraint;
+				var td5 = row.insertCell(-1);
+				td5.innerHTML = (features[i].is_target == 0)?'N':'Y';
+				var td6 = row.insertCell(-1);
+				row.setAttribute('onclick', 'selectLine(this, "edit-dataframes_list", "tr")');		
+			}
+			var table1 = document.getElementById('edit-new_dataframe_name')
+			var table2 = document.getElementById('edit-output_df_name')
+			var children = table1.getElementsByTagName('option');
+			for (var i = children.length-1; i> 0; i--) {
+				table1.removeChild(children[i]);
+			}
+			children = table2.getElementsByTagName('option');
+			for (var i = children.length-1; i> 0; i--) {
+				table2.removeChild(children[i]);
+			}
+			data_frames = json_doc.all_data_frames;
+			for (var i = 0; i < data_frames.length; i++) {
+				var opt1 = document.createElement('option');
+				var opt2 = document.createElement('option');
+				opt1.value = data_frames[i].id;
+				opt1.innerHTML = data_frames[i].name;
+				opt2.value = data_frames[i].id;
+				opt2.innerHTML = data_frames[i].name;
+				table1.appendChild(opt1);
+				table2.appendChild(opt2);
+			}
+		}
+	};
+	xhttp.open("GET", 'static/ajax/GetPackageData.php?id='+pid, true);
+	xhttp.send();		
+
+}
+
+function editSavePackage() {
+	var df_list = [];
+	var children = document.getElementById('edit-input_dataframes').getElementsByTagName('li');
+	for (var i = 0; i < children.length; i++)
+		df_list.push(children[i].innerHTML);
 	var xhttp = new XMLHttpRequest();
 	xhttp.onreadystatechange = function() {
 		if (this.readyState == 4 && this.status == 200) {
 			var 	json_doc = JSON.parse(this.responseText);
-			/*
-			if (json_doc.length == 0) {
-				//tbl.style.display = "none";
-				return;
-			}
-			var root = json_doc.root;
-			var tree_view = document.getElementById('package_list');
-			// tree_view
-			for (var i = 0; i < root.length; i++) {
-				var name = root[i].name;
-				var li = document.createElement('li');
-				li.value = name;
-				li.innerHTML = name;
-				tree_view.appendChild(li);
-				
-			}
-			*/
+			window.parent.document.getElementById('modal-title_close').onclick('edit-popup');
 		}
 	};
-	xhttp.open("GET", 'static/ajax/GetPackageData.php?id='+window.parent.document.getElementsByName('object-package_id')[0].value, true);
+	xhttp.open("GET", 'static/ajax/SavePackageData.php?package_id='+pid
+			+"&df_list="+encodeURI(JSON.stringify(df_list)), true);
 	xhttp.send();		
+}
 
+function editCancelSavePackage() {
+	window.parent.document.getElementById('modal-title_close').onclick('edit-popup');
+}
+
+function addDataFrame() {
+	var xhttp = new XMLHttpRequest();
+	xhttp.onreadystatechange = function() {
+		if (this.readyState == 4 && this.status == 200) {
+			var 	json_doc = JSON.parse(this.responseText);
+			if (json_doc.length == 0) {
+				return;
+			}
+			var pckg_data = json_doc.pckg_data;
+			showEditPanel(true);
+		}
+	};
+	xhttp.open("GET", 'static/ajax/GetFeatures.php?df_id='+out_df_id, true);
+	xhttp.send();		
 }
 </script>
 </body>
