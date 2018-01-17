@@ -76,11 +76,7 @@
         <table>
         <tr class='edit_row'>
             <td class="edit-row_label common_part">Algorithm type:</td>
-            <td>
-                <input type="radio" name="algorithmType" value="basic" onchange="selectAlgoType('basicAlgoPart');" checked><label for="basic">Basic</label>  <br>
-                <input type="radio" name="algorithmType" value="complex" onchange="selectAlgoType('complexAlgoPart');"><label for="complex">Complex</label>  <br>
-                <input type="radio" name="algorithmType" value="invocation" onchange="selectAlgoType('invocationAlgoPart');"><label for="invocation">Invocation</label>  <br>
-            </td>
+            <td id='edit-algo_type'></td>
         </tr>
         <tr class='edit_row section_start'><td>Algorithm:</td></tr>
         <tr class='edit_row'>
@@ -515,7 +511,7 @@ function addOutputDataFrame() {
 	var dataframe_name = e.options[e.selectedIndex].innerHTML;
 	xhttp.onreadystatechange = function() {
 		if (this.readyState == 4 && this.status == 200) {
-			console.log(this.responseText);
+			//console.log(this.responseText);
 			var 	json_doc = JSON.parse(this.responseText);
 			if (json_doc.length == 0) {
 				return;
@@ -751,8 +747,6 @@ function editSetValues() {
 				document.getElementById('edit-data_constraint').appendChild(opt);
 			}
 			
-			
-			
 			var pckg_data = json_doc.pckg_data;
 			var elems = document.getElementsByName('algorithmType');
 			for (var i=0; i < elems.length; i++) {
@@ -838,8 +832,38 @@ function editSetValues() {
 				opt1.innerHTML = data_frames[i].name;
 				opt2.value = data_frames[i].id;
 				opt2.innerHTML = data_frames[i].name;
+				console.log("output_df="+json_doc.output_df.id);
+				if(data_frames[i].id == json_doc.output_df.id)
+					opt2.selected = true;
 				table1.appendChild(opt1);
 				table2.appendChild(opt2);
+			}
+			var algo_types = json_doc.algo_types;
+			var types = document.getElementById('edit-algo_type');
+			types.innerHTML = '';
+			var id;
+			var name;
+			for (var i = 0; i < algo_types.length; i++) {
+				id = algo_types[i].id;
+				name = algo_types[i].name;
+				var button = document.createElement('input');
+				button.setAttribute('type', 'radio');
+				button.setAttribute('name', 'algorithmType');
+				button.setAttribute('id', algo_types[i].name+'algorithmType');
+				button.setAttribute('value', id);
+				if (pckg_data.algo_type == name)
+					button.setAttribute('checked', true);
+				var panel = name+'AlgoPart';
+				//button.onchange=function(){selectAlgoType(name+"AlgoPart");};
+				button.setAttribute('onchange', 'selectAlgoType("'+name+'AlgoPart")');
+				//console.log(panel);
+				types.appendChild(button);
+				var label = document.createElement('label');
+				label.setAttribute('for', name+'algorithmType');
+				label.innerHTML = name;
+				types.appendChild(label);
+				var br = document.createElement('br');
+				types.appendChild(br);
 			}
 		}
 	};
@@ -853,6 +877,21 @@ function editSavePackage() {
 	var children = document.getElementById('edit-input_dataframes').getElementsByTagName('li');
 	for (var i = 0; i < children.length; i++)
 		df_list.push(children[i].innerHTML);
+	var feature_list = [];
+    var table = document.getElementById('edit-dataframes_list');
+    for (var i = 1; i < table.rows.length; i++) {
+//		var feature = {
+//			id: table.rows[i].cells[0].innerHTML,
+//			name: table.rows[i].cells[1].innerHTML,
+//			data_type: table.rows[i].cells[2].innerHTML,
+//			value_constraint: table.rows[i].cells[3].innerHTML,
+//			is_target: (table.rows[i].cells[4].innerHTML=='N')?false:true
+//		};
+//		feature_list.push(feature);
+		feature_list.push(table.rows[i].cells[0].innerHTML);
+    }
+	console.log(feature_list);
+
 	var xhttp = new XMLHttpRequest();
 	xhttp.onreadystatechange = function() {
 		if (this.readyState == 4 && this.status == 200) {
@@ -861,7 +900,8 @@ function editSavePackage() {
 		}
 	};
 	xhttp.open("GET", 'static/ajax/SavePackageData.php?package_id='+pid
-			+"&df_list="+encodeURI(JSON.stringify(df_list)), true);
+			+"&input_df_list="+encodeURI(JSON.stringify(df_list))
+			+"&output_features="+encodeURI(JSON.stringify(feature_list)), true);
 	xhttp.send();		
 }
 
