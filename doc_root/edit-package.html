@@ -159,7 +159,7 @@
 				<!--
 				<input id='edit-output_df_name' type="text" />
 				-->
-				<select id="edit-output_df_name" class='edit-row_data' style="width:150;">
+				<select id="edit-output_df_name" class='edit-row_data' style="width:150;" onchange="GetFeatures(this);">
 				</select>
 			</td>
         </tr>
@@ -213,7 +213,11 @@
         <tr id='edit-add_feature'  style="visibility:collapse;">        
             <td id='edit-algo_output11' class="edit-row_label basic_part">Feature name:</td>
             <td id='edit-algo_output12'>
+				<!--
                 <input id='edit-new_feature_name' type="text" />
+				-->
+				<select id="edit-new_feature_name" class='edit-row_data' style="width:150;">
+				</select>
             </td>
             <td class="edit-row_label basic_part">Quality thresholds:</td>
             <td>
@@ -497,7 +501,10 @@ function addOutputDataFrame() {
     var table = document.getElementById("edit-dataframes_list");
     var row = table.insertRow(-1);
 
-    var feature_name = document.getElementById('edit-new_feature_name').value;
+	var e;
+	var e = document.getElementById('edit-new_feature_name')
+	var feature_name = e.options[e.selectedIndex].text;
+
 	e = document.getElementById('edit-data_type');
 	var data_type_id = e.options[e.selectedIndex].value;
 	e = document.getElementById('edit-data_constraint');
@@ -525,14 +532,18 @@ function addOutputDataFrame() {
 			var row = table.insertRow(-1);
 			var e;
 
-			var feature_name = document.getElementById('edit-new_feature_name').value;
+			e = document.getElementById('edit-new_feature_name')
+			var feature_name = e.options[e.selectedIndex].text;
+			var feature_id = e.options[e.selectedIndex].value;
+
+
 			e = document.getElementById('edit-data_type');
 			var data_type = e.options[e.selectedIndex].text;
 			e = document.getElementById('edit-data_constraint');
 			var data_constraint = e.options[e.selectedIndex].text;
 
 			var td1 = row.insertCell(-1);
-			td1.innerHTML = -1;
+			td1.innerHTML = feature_id;
 			td1.style.visibility = 'hidden';
 			var td2 = row.insertCell(-1);
 			td2.innerHTML = feature_name;
@@ -865,6 +876,7 @@ function editSetValues() {
 				var br = document.createElement('br');
 				types.appendChild(br);
 			}
+			editSetAvailableFeatures(json_doc.available_features)
 		}
 	};
 	xhttp.open("GET", 'static/ajax/GetPackageData.php?id='+pid, true);
@@ -909,6 +921,7 @@ function editCancelSavePackage() {
 	window.parent.document.getElementById('modal-title_close').onclick('edit-popup');
 }
 
+/*
 function addDataFrame() {
 	var xhttp = new XMLHttpRequest();
 	xhttp.onreadystatechange = function() {
@@ -923,6 +936,41 @@ function addDataFrame() {
 	};
 	xhttp.open("GET", 'static/ajax/GetFeatures.php?df_id='+out_df_id, true);
 	xhttp.send();		
+}
+*/
+
+function GetFeatures(e) {
+	var df_id = e.options[e.selectedIndex].value;
+	var xhttp = new XMLHttpRequest();
+	xhttp.onreadystatechange = function() {
+		if (this.readyState == 4 && this.status == 200) {
+			var 	json_doc = JSON.parse(this.responseText);
+			if (json_doc.length == 0) {
+				return;
+			}
+			editSetAvailableFeatures(json_doc.available_features)
+		}
+	};
+	xhttp.open("GET", 'static/ajax/GetFeatures.php?df_id='+df_id, true);
+	xhttp.send();		
+	console.log(e.options[e.selectedIndex].text);
+}
+
+function editSetAvailableFeatures(available_features) {
+	console.log(available_features);
+	console.log(available_features.length);
+	var table3 = document.getElementById('edit-new_feature_name')
+	var children = table3.getElementsByTagName('option');
+	for (var i = children.length-1; i> 0; i--) {
+		table3.removeChild(children[i]);
+	}
+	for (var i = 0; i < available_features.length; i++) {
+		console.log(available_features[i].id+'  '+available_features[i].name);
+		var opt1 = document.createElement('option');
+		opt1.value = available_features[i].id;
+		opt1.innerHTML = available_features[i].name;
+		table3.appendChild(opt1);
+	}
 }
 </script>
 </body>
