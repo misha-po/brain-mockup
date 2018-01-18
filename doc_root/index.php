@@ -38,14 +38,11 @@ $_SESSION["next_page"] = 1;
 	</div>
 </head>
 
-<!--
-<body onload="FillTable('project_list');" >
--->
-<body onload="FillTable('project_list');setInterval(function() {FillTable('project_list');}, 5000);">
+<body onload="FillTable('project_list','GetKnownPackages.php');FillTable('algo_list','GetKnownAlgorithms.php');setInterval(function() {FillTable('project_list','GetKnownPackages.php');}, 10000);">
 
 	<div class="tab_pane">
-		<button class="tab-button tab-button-selected" type="button" onclick="SelectTab(this, 'pckg-editor');">Packages</button>
-		<button class="tab-button" type="button" onclick="SelectTab(this, 'event-viewer');">Algorithms</button>
+		<button class="tab-button tab-button-selected" type="button" onclick="SelectTab(this, 'pckg-view');">Packages</button>
+		<button class="tab-button" type="button" onclick="SelectTab(this, 'algo-view');">Algorithms</button>
 		<button class="tab-button" type="button" onclick="SelectTab(this, 'event-viewer');">Event viewer</button>
 		<button class="tab-button" type="button" onclick="SelectTab(this, 'airflow');">Airflow</button>
 		<button class="tab-button" type="button" onclick="SelectTab(this, 'atlas');">Atlas</button>
@@ -54,9 +51,9 @@ $_SESSION["next_page"] = 1;
 
 	
 	<div id='tab-vew'>
-		<div id='pckg-editor' class='data-pane'>
+		<div id='pckg-view' class='data-pane'>
 			<h2 style="padding-top: 10px;" >Package list</h2>
-			<div id="left-pane" class="vertical-pane" >
+			<div class="vertical-pane left-pane" >
 				<table id='project_list' style="width:100%;">
 				</table>
 			</div>
@@ -66,31 +63,44 @@ $_SESSION["next_page"] = 1;
 					<li><button class="action-button project-button" type="button"  data-toggle="modal" data-target="#select-feature-popup" >Show PDF</button></li>
 					<li><button class="action-button project-button" type="button"  data-toggle="modal" data-target="#select-feature-popup"  onclick="ReloadGraph('project_list');SelectTab(this, 'depends');" >Dependencies</button></li>
 					<li><button class="action-button project-button" type="button">Delete</button></li>
-					<li>&nbsp</li>
+					<li> &nbsp </li>
 					<li><button class="action-button project-button" type="button"  data-toggle="modal" data-target="#edit-popup" onclick="ShowSelectFeatureDialog();">New</button></li>
 				</ul>
-				<!--
-				<table>
-					<tr><td>
-						<button class="action-button project-button" type="button"  >Delete</button>
-					</td></tr>
-					<tr><td>
-						<button class="action-button project-button" type="button"  data-toggle="modal" data-target="#select-feature-popup" onclick="ShowEditDialog();">Edit</button>
-					</td></tr>
-					<tr><td>
-						<button class="action-button project-button" type="button"  data-toggle="modal" data-target="#select-feature-popup" >Show PDF</button>
-					</td></tr>
-					<tr><td>
-						<button class="action-button project-button" type="button"  data-toggle="modal" data-target="#select-feature-popup" >Dependencies</button>
-					</td></tr>
-					<tr><td>
-					</td></tr>
-					<tr><td>
-						<button class="action-button project-button" type="button"  data-toggle="modal" data-target="#edit-popup" onclick="ShowSelectFeatureDialog();">New</button>
-					</td></tr>
+			</div><!-- -->
+		</div>
+		<div id='algo-view' class='data-pane >
+			<h2 style="padding-top: 10px;" >Algorithm list</h2>
+			<div class="vertical-pane left-pane" >
+				<table id='algo_list' style="width:100%;">
 				</table>
-				-->
 			</div>
+			<div id="right-pane" class="vertical-pane">
+				<ul class='menu-bar1'>
+					<li><button class="action-button project-button" type="button"  data-toggle="modal" data-target="#select-feature-popup" onclick="ShowEditDialog();">Edit</button></li>
+					<li><button class="action-button project-button" type="button"  data-toggle="modal" data-target="#select-feature-popup" >Show PDF</button></li>
+					<li><button class="action-button project-button" type="button"  data-toggle="modal" data-target="#select-feature-popup"  onclick="ReloadGraph('project_list');SelectTab(this, 'depends');" >Dependencies</button></li>
+					<li><button class="action-button project-button" type="button">Delete</button></li>
+					<li> &nbsp </li>
+					<li><button class="action-button project-button" type="button"  data-toggle="modal" data-target="#edit-popup" onclick="ShowSelectFeatureDialog();">New</button></li>
+				</ul>
+			</div><!-- -->
+		</div>
+		<div id='feature-view' class='data-pane >
+			<h2 style="padding-top: 10px;" >Algorithm list</h2>
+			<div class="vertical-pane left-pane" >
+				<table id='feature_list' style="width:100%;">
+				</table>
+			</div>
+			<div id="right-pane" class="vertical-pane">
+				<ul class='menu-bar1'>
+					<li><button class="action-button project-button" type="button"  data-toggle="modal" data-target="#select-feature-popup" onclick="ShowEditDialog();">Edit</button></li>
+					<li><button class="action-button project-button" type="button"  data-toggle="modal" data-target="#select-feature-popup" >Show PDF</button></li>
+					<li><button class="action-button project-button" type="button"  data-toggle="modal" data-target="#select-feature-popup"  onclick="ReloadGraph('project_list');SelectTab(this, 'depends');" >Dependencies</button></li>
+					<li><button class="action-button project-button" type="button">Delete</button></li>
+					<li> &nbsp </li>
+					<li><button class="action-button project-button" type="button"  data-toggle="modal" data-target="#edit-popup" onclick="ShowSelectFeatureDialog();">New</button></li>
+				</ul>
+			</div><!-- -->
 		</div>
 		<div id='event-viewer' style='height:500px;display:none;' >
 			<iframe src="http://127.0.0.1:8983/banana" style="padding-top: 1px;width: 95%; height: 95%;border:0;"></iframe>
@@ -168,16 +178,18 @@ $_SESSION["next_page"] = 1;
 <script>
 var		name_idx = -1;
 var		timestamp = '';
-function FillTable(tbl_name)
+function FillTable(tbl_name, ajax)
 {
 	var xhttp = new XMLHttpRequest();
 	xhttp.onreadystatechange = function() {
 		if (this.readyState == 4 && this.status == 200) {
 			var		tbl = document.getElementById(tbl_name);
 			if (this.responseText == '') {
-					//tbl.style.display = "none";
 					return;
 			}
+			var 	json_doc = JSON.parse(this.responseText);
+			
+			
 			var res = this.responseText.split("|||");
 			if (timestamp == res[0])
 				return;
@@ -225,35 +237,11 @@ function FillTable(tbl_name)
 				tr.onclick = function() { 
 					highLightRow(this);
 				};
-				// var td = document.createElement('td');
-				// if (json_row[n_columns-1] == 1) {
-					// tr.classList.add("result-available");
-					
-									// // <a class="action-button" href="data/grid_figure.pdf" download>Download</a>
-
-					// var div = document.createElement('div');
-					// var button = document.createElement('a');
-					// button.href="data/grid_figure.pdf"
-					// button.download="";
-					// button.innerText = "PDF";
-					// div.appendChild(button);
-					
-					// div.style.display = "block";
-					// div.style.color = "white";
-					// button.style.width = "100%";
-					// button.style.height = "100%";
-					// td.classList.add("cell-button");
-					// td.appendChild(div);
-				// }
-				// else {
-					// tr.classList.remove("result-available");
-				// }
-				// tr.appendChild(td)
 				tbl.appendChild(tr)
 			}
 		}
 	};
-	xhttp.open("GET", 'static/ajax/GetKnownPackages.php', true);
+	xhttp.open("GET", 'static/ajax/'+ajax, true);
 	xhttp.send();		
 
 }
