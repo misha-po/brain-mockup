@@ -60,12 +60,12 @@ $_SESSION["next_page"] = 1;
 			</div>
 			<div id="right-pane" class="vertical-pane">
 				<ul class='menu-bar1'>
-					<li><button class="action-button project-button" type="button"  data-toggle="modal" data-target="#select-feature-popup" onclick="ShowEditDialog(false);">Edit</button></li>
+					<li><button class="action-button project-button" type="button"  data-toggle="modal" data-target="#select-feature-popup" onclick="ShowEditDialog('pkg-edit-popup', 'project_list', 'object-package_id', false);">Edit</button></li>
 					<li><button class="action-button project-button" type="button"  data-toggle="modal" data-target="#select-feature-popup" >Show PDF</button></li>
 					<li><button class="action-button project-button" type="button"  data-toggle="modal" data-target="#select-feature-popup"  onclick="ReloadGraph('project_list');SelectTab(5, 'depends');" >Dependencies</button></li>
 					<li><button class="action-button project-button" type="button">Delete</button></li>
 					<li> &nbsp </li>
-					<li><button class="action-button project-button" type="button"  data-toggle="modal" data-target="#edit-popup" onclick="ShowEditDialog(true);">New</button></li>
+					<li><button class="action-button project-button" type="button"  data-toggle="modal" data-target="#pkg-edit-popup" onclick="ShowEditDialog('pkg-edit-popup', 'project_list', 'object-package_id', true);">New</button></li>
 				</ul>
 			</div>
 		</div>
@@ -77,12 +77,10 @@ $_SESSION["next_page"] = 1;
 			</div>
 			<div id="right-pane" class="vertical-pane">
 				<ul class='menu-bar1'>
-					<li><button class="action-button project-button" type="button"  data-toggle="modal" data-target="#select-feature-popup" onclick="ShowEditDialog(false);">Edit</button></li>
-					<li><button class="action-button project-button" type="button"  data-toggle="modal" data-target="#select-feature-popup" >Show PDF</button></li>
-					<li><button class="action-button project-button" type="button"  data-toggle="modal" data-target="#select-feature-popup"  onclick="ReloadGraph('project_list');SelectTab(5, 'depends');" >Dependencies</button></li>
+					<li><button class="action-button project-button" type="button"  data-toggle="modal" data-target="#select-feature-popup" onclick="ShowEditDialog('algo-edit-popup', 'algo_list', 'object-algo_id', false);">Edit</button></li>
 					<li><button class="action-button project-button" type="button">Delete</button></li>
 					<li> &nbsp </li>
-					<li><button class="action-button project-button" type="button"  data-toggle="modal" data-target="#edit-popup" onclick="ShowEditDialog(true);">New</button></li>
+					<li><button class="action-button project-button" type="button"  data-toggle="modal" data-target="#algo-edit-popup" onclick="ShowEditDialog('algo-edit-popup', 'algo_list', 'object-algo_id', true);">New</button></li>
 				</ul>
 			</div>
 		</div>
@@ -95,12 +93,10 @@ $_SESSION["next_page"] = 1;
 			</div>
 			<div id="right-pane" class="vertical-pane">
 				<ul class='menu-bar1'>
-					<li><button class="action-button project-button" type="button"  data-toggle="modal" data-target="#select-feature-popup" onclick="ShowEditDialog(false);">Edit</button></li>
-					<li><button class="action-button project-button" type="button"  data-toggle="modal" data-target="#select-feature-popup" >Show PDF</button></li>
-					<li><button class="action-button project-button" type="button"  data-toggle="modal" data-target="#select-feature-popup"  onclick="ReloadGraph('project_list');SelectTab(5, 'depends');" >Dependencies</button></li>
+					<li><button class="action-button project-button" type="button"  data-toggle="modal" data-target="#select-feature-popup" onclick="ShowEditDialog('pkg-edit-popup', 'project_list', 'object-package_id', false);">Edit</button></li>
 					<li><button class="action-button project-button" type="button">Delete</button></li>
 					<li> &nbsp </li>
-					<li><button class="action-button project-button" type="button"  data-toggle="modal" data-target="#edit-popup" onclick="ShowEditDialog(true);">New</button></li>
+					<li><button class="action-button project-button" type="button"  data-toggle="modal" data-target="#pkg-edit-popup" onclick="ShowEditDialog('pkg-edit-popup', 'project_list', 'object-package_id', true);">New</button></li>
 				</ul>
 			</div>
 		</div>
@@ -114,17 +110,7 @@ $_SESSION["next_page"] = 1;
 			<iframe src="http://127.0.0.2:21001" style="padding-top: 1px;width: 95%; height: 95%;border:0;"></iframe>
 		</div>
 		<div id='depends' style='height:600px;display:none;' class='data-pane'>
-			<!--
-			<button class="action-button" type="button" onclick="ReloadGraph();">Reload</button>
-			-->
 			<iframe id="graph_area" src="data/graph1.svg" style="padding-top: 1px;width: 95%; height: 90%;border:0;"></iframe>
-			<!-- graphviz generated map 
-			<img src="data/graph1.png" usemap="#G" alt="graphviz graph" />
-			<map id="G" name="G">
-				<area shape="poly" href="google.com" title="boot&#45;master" alt="" coords="297,29 292,22 279,15 258,10 233,7 204,5 175,7 150,10 129,15 116,22 111,29 116,37 129,43 150,49 175,52 204,53 233,52 258,49 279,43 292,37"/>
-			
-			</map>
-			-->
 		</div>
 	</div>
 	<!-- -------------------------------------------------------------------------------------- -->
@@ -134,21 +120,39 @@ $_SESSION["next_page"] = 1;
 		<span style='float:right;' class="closebtn" onclick="this.parentElement.style.display='none';">click to close &times;</span>
 		<div style='display:inline-block;width:100%;' onclick="this.parentElement.style.display='none';">Select row that you want to edit.</div> 
 	</div>	
+
+	<input type="hidden" name='tab-name' value="">
 	
 	<!-- ----------------- -->
 	<!-- edit package ---- -->
 	<!-- ----------------- -->
 	<!-- <div class="modal fade" id="edit-popup" role="dialog" onmouseout='ShowButtons(this, false, "Cancel_edit-popup", "Save_edit-popup");'> -->
-	<div class="modal fade" id="edit-popup" role="dialog" style="top:100px;">
+	<div class="modal fade" id="pkg-edit-popup" role="dialog" style="top:100px;">
 	  <div class="modal-content">
 		<div style="border:solid black 1px;">
 			<span id="modal-title" style='float:left;font-size: 28px;'>Edit propertes</span>
-			<span id="modal-title_close" class="close" onclick="CloseEditDialog('edit-popup');">&times;</span>
+			<span id="modal-title_close" class="close" onclick="CloseEditDialog('pkg-edit-popup');">&times;</span>
 		</div>
-		<!-- <div style="border:solid black 1px; height:500px;"   onmouseover='ShowButtons(this, true, "Cancel_edit-popup", "Save_edit-popup");'> -->
 		<div style="border:solid black 1px; height:600px;">
 			<object id="object-package_edit" type="text/html" style="width:100%;border: 0; height:100%;" data="edit-package.html">
 				<param name="object-package_id" value="unknown"/>
+			</object>
+		</div>
+	  </div>
+	</div>
+	<!-- ----------------- -->
+	<!-- edit algorithm -- -->
+	<!-- ----------------- -->
+	<!-- <div class="modal fade" id="edit-popup" role="dialog" onmouseout='ShowButtons(this, false, "Cancel_edit-popup", "Save_edit-popup");'> -->
+	<div class="modal fade" id="algo-edit-popup" role="dialog" style="top:100px;">
+	  <div class="modal-content">
+		<div style="border:solid black 1px;">
+			<span id="modal-title" style='float:left;font-size: 28px;'>Edit propertes</span>
+			<span id="modal-title_close" class="close" onclick="CloseEditDialog('algo-edit-popup');">&times;</span>
+		</div>
+		<div style="border:solid black 1px; height:300px;">
+			<object id="object-algo_edit" type="text/html" style="width:100%;border: 0; height:100%;" data="edit-algorithm.html">
+				<param name="object-algo_id" value="unknown"/>
 			</object>
 		</div>
 	  </div>
@@ -167,9 +171,6 @@ $_SESSION["next_page"] = 1;
 				onmouseover='ShowButtons(this, true, "Cancel_select-feature-popup", "Save_select-feature-popup");'>
 			<ul id='package_list'>
 			</ul>
-			<!--
-			<button id="Cancel_edit-popup" class="action-button" type="button" onclick="CloseEditDialog('edit-popup');" style='visibility:hidden;'>Cancel</button>
-			-->
 			<button id="Save_select-feature-popup" class="action-button" type="button" style='visibility:hidden;'>Save</button>
 		</div>
 	  </div>
@@ -298,12 +299,12 @@ function CloseEditDialog(dlg_id) {
 	modal.style.display = "none";
 }
 
-function ShowEditDialog(new_pkg) {
-	var  tbl = document.getElementById('project_list');
+function ShowEditDialog(popup_name, table_name, param_name, new_pkg) {
+	var  tbl = document.getElementById(table_name);
 	var  row;
-	var pckg_id;
-	var modal_title = document.getElementById('modal-title');
-	console.log('is_new='+new_pkg);
+	var  pckg_id;
+	var  modal_title = document.getElementById('modal-title');
+//	console.log('is_new='+new_pkg);
 	if (!new_pkg) {
 		for (var i = 1; i < tbl.childNodes.length; i++) {
 			row = tbl.childNodes[i]
@@ -324,10 +325,10 @@ function ShowEditDialog(new_pkg) {
 		modal_title.innerText = 'Edit new package'
 	}
 
-	var modal = document.getElementById('edit-popup');
+	var modal = document.getElementById(popup_name);
 	modal.style.display = "block";
 
-	document.getElementsByName('object-package_id')[0].value = pckg_id;
+	document.getElementsByName(param_name)[0].value = pckg_id;
 }
 
 /*
@@ -386,6 +387,7 @@ function SelectTab(tab_id, tab_name) {
 		}
 	}
 	document.getElementById(tab_name).style.display='block';
+	document.getElementsByName('tab-name')[0].value=tab_name;
 }
 
 function ReloadGraph(tbl_name)
