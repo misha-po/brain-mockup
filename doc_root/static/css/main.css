@@ -76,27 +76,27 @@ li:hover {
 	background: linear-gradient(to left, #e8e8e8 , white); /* Standard syntax */
 }
 
-#project_list {
+.object_list {
     border-collapse: collapse;
 	background: white;
 	width: 80%;
 }
 
-#project_list td,th {
+.object_list td,th {
 	border: solid maroon 2px;
 }
 
-#project_list th {
+.object_list th {
 	font-size: 14pt;
 	/* background-color: transparent; */
 }
 
-#project_list tr:not(:first-child):hover {
+.object_list tr:not(:first-child):hover {
 	/* font-weight: bold; */
 	color: red;
 }
 
-#project_list tr:not(:first-child):active {
+.object_list tr:not(:first-child):active {
 	font-weight: bold;
 }
 

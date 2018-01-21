@@ -10,10 +10,6 @@ $_SESSION["next_page"] = 1;
 
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<!-- saved from url=(0064)file:///C:/Users/misha/Documents/Work3/FaceLab/www/default4.html -->
-<!--
-<meta http-equiv="refresh" content="1; RefteshPage();" />
--->
 
 <html xmlns="http://www.w3.org/1999/xhtml">
 <title>W3.CSS Template</title>
@@ -23,9 +19,6 @@ $_SESSION["next_page"] = 1;
 <link href="static/css/main.css" rel="stylesheet" type="text/css" />
 <link href="static/css/action-button.css" rel="stylesheet" type="text/css" />
 <link href="static/css/menu-bar.css" rel="stylesheet" type="text/css" />
-<!--
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
--->
 
 <script src="static/js/read-csv.js"></script>
 <script src="static/js/canvasjs.min.js"></script>
@@ -38,69 +31,78 @@ $_SESSION["next_page"] = 1;
 	</div>
 </head>
 
-<body onload="FillTable('project_list','GetKnownPackages.php');FillTable('algo_list','GetKnownAlgorithms.php');setInterval(function() {FillTable('project_list','GetKnownPackages.php');}, 10000);">
+<body onload="SelectTab(0, 'pckg-view');FillTable('project_list', timestamp, 'package', '');setInterval(function() {FillTable('project_list', timestamp, 'package','');}, 10000);">
 
-	<div class="tab_pane">
-		<button class="tab-button tab-button-selected" type="button" onclick="SelectTab(this, 'pckg-view');">Packages</button>
-		<button class="tab-button" type="button" onclick="SelectTab(this, 'algo-view');">Algorithms</button>
-		<button class="tab-button" type="button" onclick="SelectTab(this, 'event-viewer');">Event viewer</button>
-		<button class="tab-button" type="button" onclick="SelectTab(this, 'airflow');">Airflow</button>
-		<button class="tab-button" type="button" onclick="SelectTab(this, 'atlas');">Atlas</button>
-		<button class="tab-button" type="button" onclick="ReloadGraph('project_list');SelectTab(this, 'depends');">Depends</button>
+	<div id="main_vew_tabs" class="tab_pane">
+		<button class="tab-button tab-button-selected" type="button" 
+				onclick="SelectTab(0, 'pckg-view'); FillTable('project_list', timestamp, 'package','');">
+				Packages
+		</button>
+		<button class="tab-button" type="button" 
+				onclick="SelectTab(1, 'algo-view'); FillTable('algo_list', timestamp2, 'algorithm','');">
+				Algorithms
+		</button>
+		<button class="tab-button" type="button" 
+				onclick="SelectTab(2, 'feature-view'); FillTable2('df_list', 0, 'dataframe','');">
+				Fetaures
+		</button>
+		<button class="tab-button" type="button" onclick="SelectTab(3, 'airflow');">Airflow</button>
+		<button class="tab-button" type="button" onclick="SelectTab(4, 'atlas');">Atlas</button>
+		<button class="tab-button" type="button" onclick="ReloadGraph('project_list');SelectTab(5, 'depends');">Depends</button>
 	</div>
-
 	
 	<div id='tab-vew'>
 		<div id='pckg-view' class='data-pane'>
 			<h2 style="padding-top: 10px;" >Package list</h2>
 			<div class="vertical-pane left-pane" >
-				<table id='project_list' style="width:100%;">
+				<table class='object_list' id='project_list' style="width:100%;">
 				</table>
 			</div>
 			<div id="right-pane" class="vertical-pane">
 				<ul class='menu-bar1'>
-					<li><button class="action-button project-button" type="button"  data-toggle="modal" data-target="#select-feature-popup" onclick="ShowEditDialog();">Edit</button></li>
+					<li><button class="action-button project-button" type="button"  data-toggle="modal" data-target="#select-feature-popup" onclick="ShowEditDialog(false);">Edit</button></li>
 					<li><button class="action-button project-button" type="button"  data-toggle="modal" data-target="#select-feature-popup" >Show PDF</button></li>
-					<li><button class="action-button project-button" type="button"  data-toggle="modal" data-target="#select-feature-popup"  onclick="ReloadGraph('project_list');SelectTab(this, 'depends');" >Dependencies</button></li>
+					<li><button class="action-button project-button" type="button"  data-toggle="modal" data-target="#select-feature-popup"  onclick="ReloadGraph('project_list');SelectTab(5, 'depends');" >Dependencies</button></li>
 					<li><button class="action-button project-button" type="button">Delete</button></li>
 					<li> &nbsp </li>
-					<li><button class="action-button project-button" type="button"  data-toggle="modal" data-target="#edit-popup" onclick="ShowSelectFeatureDialog();">New</button></li>
+					<li><button class="action-button project-button" type="button"  data-toggle="modal" data-target="#edit-popup" onclick="ShowEditDialog(true);">New</button></li>
 				</ul>
-			</div><!-- -->
+			</div>
 		</div>
-		<div id='algo-view' class='data-pane >
+		<div id='algo-view' class='data-pane' >
 			<h2 style="padding-top: 10px;" >Algorithm list</h2>
 			<div class="vertical-pane left-pane" >
-				<table id='algo_list' style="width:100%;">
+				<table class='object_list' id='algo_list' style="width:100%;">
 				</table>
 			</div>
 			<div id="right-pane" class="vertical-pane">
 				<ul class='menu-bar1'>
-					<li><button class="action-button project-button" type="button"  data-toggle="modal" data-target="#select-feature-popup" onclick="ShowEditDialog();">Edit</button></li>
+					<li><button class="action-button project-button" type="button"  data-toggle="modal" data-target="#select-feature-popup" onclick="ShowEditDialog(false);">Edit</button></li>
 					<li><button class="action-button project-button" type="button"  data-toggle="modal" data-target="#select-feature-popup" >Show PDF</button></li>
-					<li><button class="action-button project-button" type="button"  data-toggle="modal" data-target="#select-feature-popup"  onclick="ReloadGraph('project_list');SelectTab(this, 'depends');" >Dependencies</button></li>
+					<li><button class="action-button project-button" type="button"  data-toggle="modal" data-target="#select-feature-popup"  onclick="ReloadGraph('project_list');SelectTab(5, 'depends');" >Dependencies</button></li>
 					<li><button class="action-button project-button" type="button">Delete</button></li>
 					<li> &nbsp </li>
-					<li><button class="action-button project-button" type="button"  data-toggle="modal" data-target="#edit-popup" onclick="ShowSelectFeatureDialog();">New</button></li>
+					<li><button class="action-button project-button" type="button"  data-toggle="modal" data-target="#edit-popup" onclick="ShowEditDialog(true);">New</button></li>
 				</ul>
-			</div><!-- -->
+			</div>
 		</div>
-		<div id='feature-view' class='data-pane >
-			<h2 style="padding-top: 10px;" >Algorithm list</h2>
-			<div class="vertical-pane left-pane" >
-				<table id='feature_list' style="width:100%;">
+		<div id='feature-view' class='data-pane' >
+			<h2 style="padding-top: 10px;" >Feature list</h2>
+			<div class="vertical-pane left-pane" style='display:inline-block; width:50%;'>
+				<select class='object_list' id='df_list' style="width:100%;" onchange='FillTable("feature_list", 0, "feature","df="+this.options[this.selectedIndex].value);'></select>
+				<table class='object_list' id='feature_list' style="width:100%;">
 				</table>
 			</div>
 			<div id="right-pane" class="vertical-pane">
 				<ul class='menu-bar1'>
-					<li><button class="action-button project-button" type="button"  data-toggle="modal" data-target="#select-feature-popup" onclick="ShowEditDialog();">Edit</button></li>
+					<li><button class="action-button project-button" type="button"  data-toggle="modal" data-target="#select-feature-popup" onclick="ShowEditDialog(false);">Edit</button></li>
 					<li><button class="action-button project-button" type="button"  data-toggle="modal" data-target="#select-feature-popup" >Show PDF</button></li>
-					<li><button class="action-button project-button" type="button"  data-toggle="modal" data-target="#select-feature-popup"  onclick="ReloadGraph('project_list');SelectTab(this, 'depends');" >Dependencies</button></li>
+					<li><button class="action-button project-button" type="button"  data-toggle="modal" data-target="#select-feature-popup"  onclick="ReloadGraph('project_list');SelectTab(5, 'depends');" >Dependencies</button></li>
 					<li><button class="action-button project-button" type="button">Delete</button></li>
 					<li> &nbsp </li>
-					<li><button class="action-button project-button" type="button"  data-toggle="modal" data-target="#edit-popup" onclick="ShowSelectFeatureDialog();">New</button></li>
+					<li><button class="action-button project-button" type="button"  data-toggle="modal" data-target="#edit-popup" onclick="ShowEditDialog(true);">New</button></li>
 				</ul>
-			</div><!-- -->
+			</div>
 		</div>
 		<div id='event-viewer' style='height:500px;display:none;' >
 			<iframe src="http://127.0.0.1:8983/banana" style="padding-top: 1px;width: 95%; height: 95%;border:0;"></iframe>
@@ -124,7 +126,6 @@ $_SESSION["next_page"] = 1;
 			</map>
 			-->
 		</div>
-		
 	</div>
 	<!-- -------------------------------------------------------------------------------------- -->
 	<!-- --------- MODAL POPUPS --------------------------------------------------------------- -->
@@ -177,34 +178,29 @@ $_SESSION["next_page"] = 1;
 </div>
 <script>
 var		name_idx = -1;
-var		timestamp = '';
-function FillTable(tbl_name, ajax)
+var		timestamp = { value: 0};
+var		timestamp2 = { value: 0};
+
+function FillTable(tbl_name, timestamp, type, extra_data)
 {
 	var xhttp = new XMLHttpRequest();
 	xhttp.onreadystatechange = function() {
 		if (this.readyState == 4 && this.status == 200) {
 			var		tbl = document.getElementById(tbl_name);
 			if (this.responseText == '') {
-					return;
+				return;
 			}
 			var 	json_doc = JSON.parse(this.responseText);
-			
-			
-			var res = this.responseText.split("|||");
-			if (timestamp == res[0])
+
+			if (timestamp.value == json_doc.timestamp)
 				return;
-			timestamp = res[0];
-			var 	json_doc = JSON.parse(res[1]);
-			if (json_doc.length == 0) {
-				//tbl.style.display = "none";
-				return;
-			}
+			timestamp.value = json_doc.timestamp;
 			
-			var rows = json_doc.rows;
 			for (var j = tbl.rows.length-1; j >= 0; j--) {
 				tbl.deleteRow(j);
 			}
 			
+			//console.log(this.responseText);
 			var headers = json_doc.headers;
 			var n_columns = headers.length;
 			var tr = document.createElement('tr');
@@ -222,7 +218,8 @@ function FillTable(tbl_name, ajax)
 					name_idx = i;
 				tr.appendChild(th)
 			}
-			tbl.appendChild(tr)
+			tbl.appendChild(tr);
+			
 			var rows = json_doc.rows;
 			for (var j = 0; j < rows.length; j++) {
 				var json_row = rows[j];
@@ -230,7 +227,7 @@ function FillTable(tbl_name, ajax)
 				for(var i in json_row) {
 					var td = document.createElement('td');
 					td.innerText = json_row[i];
-					if (i == 'pid')
+					if (i == 'id')
 						td.style.display = 'none';
 					tr.appendChild(td)
 				}
@@ -241,7 +238,40 @@ function FillTable(tbl_name, ajax)
 			}
 		}
 	};
-	xhttp.open("GET", 'static/ajax/'+ajax, true);
+	var url='static/ajax/GetKnownObjects.php?type='+type+((extra_data=='')?'':('&'+extra_data));
+	console.log(url);
+	xhttp.open("GET", url, true);
+	xhttp.send();		
+
+}
+
+function FillTable2(tbl_name, timestamp, type)
+{
+	var xhttp = new XMLHttpRequest();
+	xhttp.onreadystatechange = function() {
+		if (this.readyState == 4 && this.status == 200) {
+			var		tbl = document.getElementById(tbl_name);
+			if (this.responseText == '') {
+				return;
+			}
+			var 	json_doc = JSON.parse(this.responseText);
+
+			var children = tbl.getElementsByTagName('option');
+			for (var i = children.length-1; i> 0; i--) {
+				tbl.removeChild(children[i]);
+			}
+			for (var i = 0; i < json_doc.rows.length; i++) {
+//				console.log(json_doc.rows[i]);
+				var opt = document.createElement('option');
+				opt.value = json_doc.rows[i].id;
+				opt.innerHTML = json_doc.rows[i].Name;
+				tbl.appendChild(opt);
+			}
+			extra_data='df='+json_doc.rows[0].id;
+			FillTable("feature_list", 0, "feature", extra_data);
+		}
+	};
+	xhttp.open("GET", 'static/ajax/GetKnownObjects.php?type='+type, true);
 	xhttp.send();		
 
 }
@@ -268,31 +298,39 @@ function CloseEditDialog(dlg_id) {
 	modal.style.display = "none";
 }
 
-function ShowEditDialog() {
+function ShowEditDialog(new_pkg) {
 	var  tbl = document.getElementById('project_list');
 	var  row;
-	// console.log(row.parentElement.nodeName);
-	for (var i = 1; i < tbl.childNodes.length; i++) {
-		row = tbl.childNodes[i]
-		if (row.classList.contains("highlighted-strong")) {
-			break;
-		}
-	}
-	if (i == tbl.childNodes.length) {
-		document.getElementById('alert-popup').style.display = "block";
-		return;
-	}
-	var pckg_id = row.getElementsByTagName('td')[0].innerHTML;
-
+	var pckg_id;
 	var modal_title = document.getElementById('modal-title');
-	var td = row.getElementsByTagName("td")[name_idx];
-	modal_title.innerText = 'Edit propertes of '+td.innerText;
+	console.log('is_new='+new_pkg);
+	if (!new_pkg) {
+		for (var i = 1; i < tbl.childNodes.length; i++) {
+			row = tbl.childNodes[i]
+			if (row.classList.contains("highlighted-strong")) {
+				break;
+			}
+		}
+		if (i == tbl.childNodes.length) {
+			document.getElementById('alert-popup').style.display = "block";
+			return;
+		}
+		pckg_id = row.getElementsByTagName('td')[0].innerHTML;
+		var td = row.getElementsByTagName("td")[name_idx];
+		modal_title.innerText = 'Edit propertes of '+td.innerText;
+	}
+	else {
+		pckg_id = -1;
+		modal_title.innerText = 'Edit new package'
+	}
+
 	var modal = document.getElementById('edit-popup');
 	modal.style.display = "block";
 
 	document.getElementsByName('object-package_id')[0].value = pckg_id;
 }
 
+/*
 function ShowSelectFeatureDialog() {
 	var xhttp = new XMLHttpRequest();
 	xhttp.onreadystatechange = function() {
@@ -321,7 +359,7 @@ function ShowSelectFeatureDialog() {
 	var modal = document.getElementById('select-feature-popup');
 	modal.style.display = "block";
 }
-
+*/
 function ShowButtons(obj, show, cancel_button_id, save_button_id) {
 	if (show) {
 		// document.getElementById(cancel_button_id).style.visibility = 'visible';
@@ -333,21 +371,21 @@ function ShowButtons(obj, show, cancel_button_id, save_button_id) {
 	}
 }
 
-function SelectTab(button, tab_id) {
-	var buttons = button.parentElement.childNodes;
+function SelectTab(tab_id, tab_name) {
+	var buttons = document.getElementById('main_vew_tabs').getElementsByTagName('button');
+	var button = buttons[tab_id];
 	for (var i = 0; i < buttons.length; i++) {
 		if (buttons[i].type == 'button')
 			buttons[i].classList.remove('tab-button-selected');
 	}
 	button.classList.add('tab-button-selected');
 	var tabs = document.getElementById('tab-vew').childNodes;
-	// console.log(tabs.length);
 	for (var i = 0; i < tabs.length; i++) {
 		if (tabs[i].nodeName.toUpperCase() == 'DIV') {
 			tabs[i].style.display='none';
 		}
 	}
-	document.getElementById(tab_id).style.display='block';
+	document.getElementById(tab_name).style.display='block';
 }
 
 function ReloadGraph(tbl_name)

@@ -737,7 +737,6 @@ function editSetValues() {
 	var xhttp = new XMLHttpRequest();
 	xhttp.onreadystatechange = function() {
 		if (this.readyState == 4 && this.status == 200) {
-			//console.log(this.responseText);
 			var 	json_doc = JSON.parse(this.responseText);
 			if (json_doc.length == 0) {
 				return;
@@ -760,31 +759,36 @@ function editSetValues() {
 			
 			var pckg_data = json_doc.pckg_data;
 			var elems = document.getElementsByName('algorithmType');
-			for (var i=0; i < elems.length; i++) {
-				if (elems[i].value == pckg_data.algo_type)
-					elems[i].checked = true;
-				else 
-					elems[i].checked = false;
+			if (pckg_data != null) {
+				for (var i=0; i < elems.length; i++) {
+					if (elems[i].value == pckg_data.algo_type)
+						elems[i].checked = true;
+					else 
+						elems[i].checked = false;
+				}
+				aid = pckg_data.aid;
+				document.getElementById('edit-algo_code').value = pckg_data.algo_code;
+				document.getElementById('edit-owner_name').value = pckg_data.owner_name;
+				document.getElementById('edit-owner_email').value = pckg_data.owner_email;
+				document.getElementById('edit-description').value = pckg_data.description;
+				document.getElementById('edit-python_file_path').value = pckg_data.egg_path;
+				var elems = document.getElementById('edit-universe').getElementsByTagName('option');
+				for (var i=0; i < elems.length; i++) {
+					if (elems[i].value == pckg_data.universe)
+						elems[i].selected = true;
+					else 
+						elems[i].selected = false;
+				}
+				var elems = document.getElementById('edit-key_enity').getElementsByTagName('option');
+				for (var i=0; i < elems.length; i++) {
+					if (elems[i].value == pckg_data.input_entity)
+						elems[i].selected = true;
+					else 
+						elems[i].selected = false;
+				}
 			}
-			aid = pckg_data.aid;
-			document.getElementById('edit-algo_code').value = pckg_data.algo_code;
-			document.getElementById('edit-owner_name').value = pckg_data.owner_name;
-			document.getElementById('edit-owner_email').value = pckg_data.owner_email;
-			document.getElementById('edit-description').value = pckg_data.description;
-			document.getElementById('edit-python_file_path').value = pckg_data.egg_path;
-			var elems = document.getElementById('edit-universe').getElementsByTagName('option');
-			for (var i=0; i < elems.length; i++) {
-				if (elems[i].value == pckg_data.universe)
-					elems[i].selected = true;
-				else 
-					elems[i].selected = false;
-			}
-			var elems = document.getElementById('edit-key_enity').getElementsByTagName('option');
-			for (var i=0; i < elems.length; i++) {
-				if (elems[i].value == pckg_data.input_entity)
-					elems[i].selected = true;
-				else 
-					elems[i].selected = false;
+			else {
+				aid = 0;
 			}
 			//////////////////////////////////////////////////////
 			document.getElementById('edit-output_df_name').value = features = json_doc.output_df.name;
@@ -850,6 +854,8 @@ function editSetValues() {
 				table2.appendChild(opt2);
 			}
 			var algo_types = json_doc.algo_types;
+			console.log(algo_types);
+
 			var types = document.getElementById('edit-algo_type');
 			types.innerHTML = '';
 			var id;
@@ -862,8 +868,10 @@ function editSetValues() {
 				button.setAttribute('name', 'algorithmType');
 				button.setAttribute('id', algo_types[i].name+'algorithmType');
 				button.setAttribute('value', id);
-				if (pckg_data.algo_type == name)
-					button.setAttribute('checked', true);
+				if (pckg_data != null ) {
+					if (pckg_data.algo_type == name)
+						button.setAttribute('checked', true);
+				}
 				var panel = name+'AlgoPart';
 				//button.onchange=function(){selectAlgoType(name+"AlgoPart");};
 				button.setAttribute('onchange', 'selectAlgoType("'+name+'AlgoPart")');

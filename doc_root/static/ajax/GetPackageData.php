@@ -140,6 +140,6 @@ $json_data = (object) array(
 				'available_features' => $available_features
 			);
 
-//error_log("Here we go");
+error_log(json_encode($json_data));
 echo(json_encode($json_data));
 ?>
