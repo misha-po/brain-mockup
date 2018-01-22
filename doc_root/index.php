@@ -31,20 +31,20 @@ $_SESSION["next_page"] = 1;
 	</div>
 </head>
 
-<body onload="SelectTab(0, 'pckg-view');FillTable('project_list', timestamp, 'package', '');setInterval(function() {FillTable('project_list', timestamp, 'package','');}, 10000);">
+<body onload="SelectTab(0, 'feature-view'); FillTable2('df_list', 0, 'dataframe','');setInterval(function() {FillTable('project_list', timestamp, 'package','');}, 10000);">
 
 	<div id="main_vew_tabs" class="tab_pane">
-		<button class="tab-button tab-button-selected" type="button" 
-				onclick="SelectTab(0, 'pckg-view'); FillTable('project_list', timestamp, 'package','');">
-				Packages
+		<button class="tab-button" type="button" 
+				onclick="SelectTab(0, 'feature-view'); FillTable2('df_list', 0, 'dataframe','');">
+				Fetaures
 		</button>
 		<button class="tab-button" type="button" 
 				onclick="SelectTab(1, 'algo-view'); FillTable('algo_list', timestamp2, 'algorithm','');">
 				Algorithms
 		</button>
-		<button class="tab-button" type="button" 
-				onclick="SelectTab(2, 'feature-view'); FillTable2('df_list', 0, 'dataframe','');">
-				Fetaures
+		<button class="tab-button tab-button-selected" type="button" 
+				onclick="SelectTab(2, 'pckg-view'); FillTable('project_list', timestamp, 'package','');">
+				Packages
 		</button>
 		<button class="tab-button" type="button" onclick="SelectTab(3, 'airflow');">Airflow</button>
 		<button class="tab-button" type="button" onclick="SelectTab(4, 'atlas');">Atlas</button>
@@ -77,10 +77,10 @@ $_SESSION["next_page"] = 1;
 			</div>
 			<div id="right-pane" class="vertical-pane">
 				<ul class='menu-bar1'>
-					<li><button class="action-button project-button" type="button"  data-toggle="modal" data-target="#select-feature-popup" onclick="ShowEditDialog('algo-edit-popup', 'algo_list', 'object-algo_id', false);">Edit</button></li>
+					<li><button class="action-button project-button" type="button"  data-toggle="modal" data-target="#select-feature-popup" onclick="ShowEditDialog('algo-view-popup', 'algo_list', 'object-algo_id', false);">Edit</button></li>
 					<li><button class="action-button project-button" type="button">Delete</button></li>
 					<li> &nbsp </li>
-					<li><button class="action-button project-button" type="button"  data-toggle="modal" data-target="#algo-edit-popup" onclick="ShowEditDialog('algo-edit-popup', 'algo_list', 'object-algo_id', true);">New</button></li>
+					<li><button class="action-button project-button" type="button"  data-toggle="modal" data-target="#algo-view-popup" onclick="ShowEditDialog('algo-view-popup', 'algo_list', 'object-algo_id', true);">New</button></li>
 				</ul>
 			</div>
 		</div>
@@ -93,10 +93,10 @@ $_SESSION["next_page"] = 1;
 			</div>
 			<div id="right-pane" class="vertical-pane">
 				<ul class='menu-bar1'>
-					<li><button class="action-button project-button" type="button"  data-toggle="modal" data-target="#select-feature-popup" onclick="ShowEditDialog('pkg-edit-popup', 'project_list', 'object-package_id', false);">Edit</button></li>
+					<li><button class="action-button project-button" type="button"  data-toggle="modal" data-target="#select-feature-popup" onclick="ShowEditDialog('feature-view-popup', 'feature_list', 'object-feature_id', false);">Edit</button></li>
 					<li><button class="action-button project-button" type="button">Delete</button></li>
 					<li> &nbsp </li>
-					<li><button class="action-button project-button" type="button"  data-toggle="modal" data-target="#pkg-edit-popup" onclick="ShowEditDialog('pkg-edit-popup', 'project_list', 'object-package_id', true);">New</button></li>
+					<li><button class="action-button project-button" type="button"  data-toggle="modal" data-target="#feature-view-popup" onclick="ShowEditDialog('feature-view-popup', 'feature_list', 'object-feature_id', true);">New</button></li>
 				</ul>
 			</div>
 		</div>
@@ -144,11 +144,11 @@ $_SESSION["next_page"] = 1;
 	<!-- edit algorithm -- -->
 	<!-- ----------------- -->
 	<!-- <div class="modal fade" id="edit-popup" role="dialog" onmouseout='ShowButtons(this, false, "Cancel_edit-popup", "Save_edit-popup");'> -->
-	<div class="modal fade" id="algo-edit-popup" role="dialog" style="top:100px;">
+	<div class="modal fade" id="algo-view-popup" role="dialog" style="top:100px;">
 	  <div class="modal-content">
 		<div style="border:solid black 1px;">
 			<span id="modal-title" style='float:left;font-size: 28px;'>Edit propertes</span>
-			<span id="modal-title_close" class="close" onclick="CloseEditDialog('algo-edit-popup');">&times;</span>
+			<span id="algo-view-popup_close" class="close" onclick="CloseEditDialog('algo-view-popup');">&times;</span>
 		</div>
 		<div style="border:solid black 1px; height:300px;">
 			<object id="object-algo_edit" type="text/html" style="width:100%;border: 0; height:100%;" data="edit-algorithm.html">
@@ -161,17 +161,16 @@ $_SESSION["next_page"] = 1;
 	<!-- ----------------- -->
 	<!-- feature selection -->
 	<!-- ----------------- -->
-	<div class="modal fade" id="select-feature-popup" role="dialog" onmouseout='ShowButtons(this, false, "Cancel_select-feature-popup", "Save_select-feature-popup");'>
+	<div class="modal fade" id="feature-view-popup" role="dialog"  style="top:100px;">
 	  <div class="modal-content">
 		<div style="border:solid black 1px;">
 			<span id="modal-title" style='float:left;font-size: 28px;'>Select package</span>
 			<span class="close" onclick='CloseEditDialog("select-feature-popup");'>&times;</span>
 		</div>
-		<div style="border:solid black 1px;" 
-				onmouseover='ShowButtons(this, true, "Cancel_select-feature-popup", "Save_select-feature-popup");'>
-			<ul id='package_list'>
-			</ul>
-			<button id="Save_select-feature-popup" class="action-button" type="button" style='visibility:hidden;'>Save</button>
+		<div style="border:solid black 1px; height:300px;">
+			<object id="object-feature_edit" type="text/html" style="width:100%;border: 0; height:100%;" data="edit-algorithm.html">
+				<param name="object-feature_id" value="unknown"/>
+			</object>
 		</div>
 	  </div>
   </div>
