@@ -133,7 +133,7 @@ $_SESSION["next_page"] = 1;
 			<span id="modal-title" style='float:left;font-size: 28px;'>Edit propertes</span>
 			<span id="modal-title_close" class="close" onclick="CloseEditDialog('pkg-edit-popup');">&times;</span>
 		</div>
-		<div style="border:solid black 1px; height:600px;">
+		<div style="border:solid black 1px; height:700px;">
 			<object id="object-package_edit" type="text/html" style="width:100%;border: 0; height:100%;" data="edit-package.html">
 				<param name="object-package_id" value="unknown"/>
 			</object>
@@ -159,16 +159,16 @@ $_SESSION["next_page"] = 1;
 	</div>
 
 	<!-- ----------------- -->
-	<!-- feature selection -->
+	<!-- edit feature ------->
 	<!-- ----------------- -->
 	<div class="modal fade" id="feature-view-popup" role="dialog"  style="top:100px;">
 	  <div class="modal-content">
 		<div style="border:solid black 1px;">
-			<span id="modal-title" style='float:left;font-size: 28px;'>Select package</span>
-			<span class="close" onclick='CloseEditDialog("select-feature-popup");'>&times;</span>
+			<span id="modal-title" style='float:left;font-size: 28px;'>Edit propertes</span>
+			<span id="feature-view-popup_close" class="close" onclick='CloseEditDialog("feature-view-popup");'>&times;</span>
 		</div>
 		<div style="border:solid black 1px; height:300px;">
-			<object id="object-feature_edit" type="text/html" style="width:100%;border: 0; height:100%;" data="edit-algorithm.html">
+			<object id="object-feature_edit" type="text/html" style="width:100%;border: 0; height:100%;" data="edit-feature.html">
 				<param name="object-feature_id" value="unknown"/>
 			</object>
 		</div>

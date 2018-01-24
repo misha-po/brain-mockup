@@ -1,0 +1,65 @@
+.common_part {
+	color: red;
+}
+
+.basic_part {
+	color: blue;
+}
+
+.complex_part {
+	color: green;
+}
+
+.invocation_part {
+	color: orange;
+}
+
+.edit_row {
+	vertical-align: top;
+}
+
+.section_start {
+	display: block;
+	border-top: 1px solid black;
+	text-align:left;
+	font-weight: bold;
+}
+
+.edit-package_part {
+}
+
+.edit-row_label {
+	text-align:right;
+	padding: 4px;
+	padding-left: 8px;
+	white-space:nowrap;
+	vertical-align: top;
+}
+
+.edit-row_data {
+	display: table-cell; 
+	width:100%;
+}
+
+.selectable_list li:hover {
+	color: blue;
+}
+
+.selected_line {
+	color: blue;
+	background: darkgrey;
+}
+
+.edit-button {
+	margin: 4px;
+	width: 6em;
+	text-align: center;
+}
+
+#edit-dataframes_list {
+	border-collapse: collapse;
+}
+
+#edit-dataframes_list td,th{
+	border: 1px solid black;
+}
