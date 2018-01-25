@@ -109,7 +109,7 @@ $_SESSION["next_page"] = 1;
 			<h2 style="padding-top: 10px;" >Feature list</h2>
 			<div class="vertical-pane left-pane" style='display:inline-block;'>
 				<label style="font-size: large;display:inline-block;">Dataframe:</label>
-				<select class='object_list' id='df_list' style="font-size: large;display:inline-block;width:80%;" 
+				<select class='object_list' id='df_list' style="font-size: large;display:inline-block;width:80%;float:right;" 
 									onchange='UpdateFeatureList();'></select>
 				<table class='object_list' id='feature_list' style="width:100%;">
 				</table>
