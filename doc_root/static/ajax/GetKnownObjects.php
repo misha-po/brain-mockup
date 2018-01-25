@@ -11,6 +11,14 @@ if ($conn->connect_error) {
 } 
 
 $type = $_GET['type'];
+if($type == 'tag') {
+	$sql = "select UNIX_TIMESTAMP(max(last_modified)) as timestamp from Packages;";
+	$result = $conn->query($sql);
+	$row = $result->fetch_assoc();
+	$timestamp = $row['timestamp'];
+
+	$sql = "SELECT id, name 'Name',description Description FROM VisibilityTags";
+}
 if($type == 'algorithm') {
 	$sql = "select UNIX_TIMESTAMP(max(last_modified)) as timestamp from Packages;";
 	$result = $conn->query($sql);
@@ -35,7 +43,7 @@ if($type == 'dataframe') {
 if($type == 'feature') {
 	$df_id = $_GET['df'];
 	$timestamp = -1;
-	$sql = "select f.id,f.name Name, d.name Type, v.name as 'Constraint' from Features f,Data_types d,Value_constraints v where f.value_constraint=v.id and f.data_type=d.id and dataframe_id=".$df_id;
+	$sql = "select f.id,f.name Name, d.name Type, v.name as 'Constraint', f.description Description from Features f,Data_types d,Value_constraints v where f.value_constraint=v.id and f.data_type=d.id and dataframe_id=".$df_id;
 }
 $result = $conn->query($sql);
 $fields = mysqli_fetch_fields($result);

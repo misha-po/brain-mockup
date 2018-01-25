@@ -1,5 +1,4 @@
 <?php
-$pid = $_GET['id'];
 $servername = "localhost";
 $username = "root";
 $password = "1q2w3e4r";
@@ -12,6 +11,10 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 } 
 
+//////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////
+$pid = $_GET['id'];
 $sql1 = "SELECT "
 			."p.id as pid, "
 			."a.id as aid, "
@@ -140,6 +143,6 @@ $json_data = (object) array(
 				'available_features' => $available_features
 			);
 
-error_log(json_encode($json_data));
+//error_log(json_encode($json_data));
 echo(json_encode($json_data));
 ?>

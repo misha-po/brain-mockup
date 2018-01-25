@@ -1,0 +1,143 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<base href="index.php" target="_self">
+<link href="static/css/editor.css" rel="stylesheet" type="text/css" />
+
+</head>
+
+<body onload='editSetValues()'>
+    <div id="constantPart" class='edit-package_part'>
+        <table>
+        <tr class='edit_row'>
+            <td class="edit-row_label common_part">Name:</td>
+            <td><input type="text" id="edit-tag_name" class='edit-row_data'/></td>
+            <td class="edit-row_label common_part">Description:</td>
+            <td rowspan="2"><textarea id="edit-description" class='edit-row_data' rows="3" ></textarea></td>
+        </tr>
+        <tr class='edit_row'>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+        </tr>
+		<!-- ------------------------------------------------------------ -->
+        <tr class='edit_row'>
+			<td colspan="4">
+			<hr>
+			</td>
+        </tr>
+        <tr>
+            <td colspan=2>
+                <button id='edit-save-package' class='action-button' onclick='editSaveValues();'>Save</button>
+            </td>
+            <td colspan=2>
+                <button id="edit-cancel" class='action-button' onclick='editCancelSavePackage(false);'>Cancel</button>
+            </td>
+        </tr>
+        </table>
+    </div>  
+<script>
+var popup_name = window.parent.document.getElementsByName('tab-name')[0].value+'-popup';
+var tag_id = window.parent.document.getElementsByName('object-tag_id')[0].value;
+console.log(tag_id);
+function selectLine(element, list_name, tag_name) {
+    var the_list = document.getElementById(list_name);
+    var list_elems = the_list.getElementsByTagName(tag_name);
+    for (var i = 0; i < list_elems.length; i++) {
+        list_elems[i].classList.remove('selected_line');
+    }
+    element.classList.add('selected_line');
+}
+
+function editAddLiElement(panel_name, text_box, list_name, delete_button) {
+    var edit_panel = document.getElementById(panel_name);
+    if (edit_panel.style.display == "none") {
+        edit_panel.style.display = "table-cell";
+        document.getElementById(delete_button).style.visibility = "hidden";
+    }
+    else {
+        edit_panel.style.display = "none";
+        document.getElementById(delete_button).style.visibility = "visible";
+        var text = document.getElementById(text_box).value;
+        if (text == '') {
+            return;
+        }
+        document.getElementById(text_box).value = "";
+        
+        var elements = document.getElementById(list_name).getElementsByTagName('li');
+        for (var i = 0; i < elements.length; i++) {
+            if (elements[i].innerHTML == text) {
+                return;
+            }
+        }
+        var li = document.createElement("li");
+        li.appendChild(document.createTextNode(text));
+        li.onclick = function(){selectLine(li, list_name, 'li')}
+        document.getElementById(list_name).appendChild(li);
+    }
+}
+
+function editDeleteLiElement(elem_name) {
+    var elements = document.getElementById(elem_name).getElementsByTagName('li');
+    for (var i = 0; i < elements.length; i++) {
+        var li = elements[i];
+        if (li.classList.contains('selected_line')) {
+            li.parentNode.removeChild(li);
+        }
+    }
+}
+
+function editSetValues() {
+	var xhttp = new XMLHttpRequest();
+	xhttp.onreadystatechange = function() {
+		if (this.readyState == 4 && this.status == 200) {
+			var 	json_doc = JSON.parse(this.responseText);
+			if (json_doc.length == 0) {
+				return;
+			}
+			if (json_doc.error != 'OK') {
+				alert(json_doc.error);
+				return;
+			}
+			document.getElementById("edit-tag_name").value = json_doc.tag_data.name;
+			document.getElementById("edit-description").value = json_doc.tag_data.description;
+
+		}
+	};
+	xhttp.open("GET", 'static/ajax/GetTagData.php?tag_id='+tag_id, true);
+	xhttp.send();		
+
+}
+
+function editSaveValues() {
+	var name = document.getElementById('edit-tag_name').value;
+	var description = document.getElementById('edit-description').value;
+	var tag_data = {
+		tag_id: tag_id,
+		name: name,
+		description: description
+	};
+	console.log(JSON.stringify(tag_data));
+	var xhttp = new XMLHttpRequest();
+	xhttp.onreadystatechange = function() {
+		if (this.readyState == 4 && this.status == 200) {
+			console.log(this.responseText);
+			var 	json_doc = JSON.parse(this.responseText);
+			if (json_doc.error != 'OK') {
+				alert(json_doc.error);
+				return;
+			}
+			editCancelSavePackage();
+		}
+	};
+	xhttp.open("GET", 'static/ajax/SaveTagData.php?tag_id='+tag_id+'&tag_data='+encodeURI(JSON.stringify(tag_data)), true);
+	xhttp.send();		
+}
+
+function editCancelSavePackage() {
+	window.parent.document.getElementById(popup_name+'_close').onclick(popup_name);
+}
+
+</script>
+</body>
+</html>

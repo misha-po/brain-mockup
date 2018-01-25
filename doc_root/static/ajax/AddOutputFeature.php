@@ -28,7 +28,6 @@ $sql2 = "insert into Features (dataframe_id, name, data_type, value_constraint, 
 			.$data_constraint_id.","
 			.$is_target.")";
 $sql3 = "select last_insert_id()as last_id";
-error_log($sql1);
 // if(!$result1 = $conn->query($sql1)) {
 	// echo(json_encode((object) array('error' => $conn->error)));
 	// error_log('Error: '.$conn->error);

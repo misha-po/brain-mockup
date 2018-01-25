@@ -31,27 +31,48 @@ $_SESSION["next_page"] = 1;
 	</div>
 </head>
 
-<body onload="SelectTab(0, 'feature-view'); FillTable2('df_list', 0, 'dataframe','');setInterval(function() {FillTable('project_list', timestamp, 'package','');}, 10000);">
+<body onload="SelectTab(0, 'tag-view'); FillTable('tag_list', 0, 'tag','');setInterval(function() {FillTable('project_list', timestamp, 'package','');}, 10000);">
 
 	<div id="main_vew_tabs" class="tab_pane">
 		<button class="tab-button" type="button" 
-				onclick="SelectTab(0, 'feature-view'); FillTable2('df_list', 0, 'dataframe','');">
-				Fetaures
+				onclick="SelectTab(0, 'tag-view'); FillTable('tag_list', 0, 'tag','');">
+				Tags
 		</button>
 		<button class="tab-button" type="button" 
-				onclick="SelectTab(1, 'algo-view'); FillTable('algo_list', timestamp2, 'algorithm','');">
+				onclick="SelectTab(1, 'feature-view'); FillTable2('df_list', 0, 'dataframe','');UpdateFeatureList()">
+				Features
+		</button>
+		<button class="tab-button" type="button" 
+				onclick="SelectTab(2, 'algo-view'); FillTable('algo_list', timestamp2, 'algorithm','');">
 				Algorithms
 		</button>
 		<button class="tab-button tab-button-selected" type="button" 
-				onclick="SelectTab(2, 'pckg-view'); FillTable('project_list', timestamp, 'package','');">
+				onclick="SelectTab(3, 'pckg-view'); FillTable('project_list', timestamp, 'package','');">
 				Packages
 		</button>
-		<button class="tab-button" type="button" onclick="SelectTab(3, 'airflow');">Airflow</button>
-		<button class="tab-button" type="button" onclick="SelectTab(4, 'atlas');">Atlas</button>
-		<button class="tab-button" type="button" onclick="ReloadGraph('project_list');SelectTab(5, 'depends');">Depends</button>
+		<button class="tab-button" type="button" onclick="SelectTab(4, 'airflow');">Airflow</button>
+		<button class="tab-button" type="button" onclick="SelectTab(5, 'atlas');">Atlas</button>
+		<button class="tab-button" type="button" onclick="ReloadGraph('project_list');SelectTab(6, 'depends');">Depends</button>
 	</div>
 	
 	<div id='tab-vew'>
+		<div id='tag-view' class='data-pane'>
+			<h2 style="padding-top: 10px;" >Tag list</h2>
+			<div class="vertical-pane left-pane" >
+				<table class='object_list' id='tag_list' style="width:100%;">
+				</table>
+			</div>
+			<div id="right-pane" class="vertical-pane">
+				<ul class='menu-bar1'>
+					<li><button class="action-button project-button" type="button"  data-toggle="modal" data-target="#select-feature-popup" 
+									onclick="ShowEditDialog('tag-edit-popup', 'tag_list', 'object-tag_id', false);">Edit</button></li>
+					<li><button class="action-button project-button" type="button">Delete</button></li>
+					<li> &nbsp </li>
+					<li><button class="action-button project-button" type="button"  data-toggle="modal" data-target="#tag-edit-popup" 
+								onclick="ShowEditDialog('tag-edit-popup', 'tag_list', 'object-tag_id', true);">New</button></li>
+				</ul>
+			</div>
+		</div>
 		<div id='pckg-view' class='data-pane'>
 			<h2 style="padding-top: 10px;" >Package list</h2>
 			<div class="vertical-pane left-pane" >
@@ -62,7 +83,7 @@ $_SESSION["next_page"] = 1;
 				<ul class='menu-bar1'>
 					<li><button class="action-button project-button" type="button"  data-toggle="modal" data-target="#select-feature-popup" onclick="ShowEditDialog('pkg-edit-popup', 'project_list', 'object-package_id', false);">Edit</button></li>
 					<li><button class="action-button project-button" type="button"  data-toggle="modal" data-target="#select-feature-popup" >Show PDF</button></li>
-					<li><button class="action-button project-button" type="button"  data-toggle="modal" data-target="#select-feature-popup"  onclick="ReloadGraph('project_list');SelectTab(5, 'depends');" >Dependencies</button></li>
+					<li><button class="action-button project-button" type="button"  data-toggle="modal" data-target="#select-feature-popup"  onclick="ReloadGraph('project_list');SelectTab(6, 'depends');" >Dependencies</button></li>
 					<li><button class="action-button project-button" type="button">Delete</button></li>
 					<li> &nbsp </li>
 					<li><button class="action-button project-button" type="button"  data-toggle="modal" data-target="#pkg-edit-popup" onclick="ShowEditDialog('pkg-edit-popup', 'project_list', 'object-package_id', true);">New</button></li>
@@ -86,17 +107,21 @@ $_SESSION["next_page"] = 1;
 		</div>
 		<div id='feature-view' class='data-pane' >
 			<h2 style="padding-top: 10px;" >Feature list</h2>
-			<div class="vertical-pane left-pane" style='display:inline-block; width:50%;'>
-				<select class='object_list' id='df_list' style="width:100%;" onchange='FillTable("feature_list", 0, "feature","df="+this.options[this.selectedIndex].value);'></select>
+			<div class="vertical-pane left-pane" style='display:inline-block;'>
+				<label style="font-size: large;display:inline-block;">Dataframe:</label>
+				<select class='object_list' id='df_list' style="font-size: large;display:inline-block;width:80%;" 
+									onchange='UpdateFeatureList();'></select>
 				<table class='object_list' id='feature_list' style="width:100%;">
 				</table>
 			</div>
 			<div id="right-pane" class="vertical-pane">
 				<ul class='menu-bar1'>
-					<li><button class="action-button project-button" type="button"  data-toggle="modal" data-target="#select-feature-popup" onclick="ShowEditDialog('feature-view-popup', 'feature_list', 'object-feature_id', false);">Edit</button></li>
+					<li><button class="action-button project-button" type="button"  data-toggle="modal" data-target="#select-feature-popup" 
+									onclick="UpdateFeatureList();ShowEditDialog('feature-view-popup', 'feature_list', 'object-feature_id', false);">Edit</button></li>
 					<li><button class="action-button project-button" type="button">Delete</button></li>
 					<li> &nbsp </li>
-					<li><button class="action-button project-button" type="button"  data-toggle="modal" data-target="#feature-view-popup" onclick="ShowEditDialog('feature-view-popup', 'feature_list', 'object-feature_id', true);">New</button></li>
+					<li><button class="action-button project-button" type="button"  data-toggle="modal" data-target="#feature-view-popup" 
+									onclick="UpdateFeatureList();ShowEditDialog('feature-view-popup', 'feature_list', 'object-feature_id', true);">New</button></li>
 				</ul>
 			</div>
 		</div>
@@ -124,14 +149,29 @@ $_SESSION["next_page"] = 1;
 	<input type="hidden" name='tab-name' value="">
 	
 	<!-- ----------------- -->
+	<!-- edit tag -------- -->
+	<!-- ----------------- -->
+	<div class="modal fade" id="tag-edit-popup" role="dialog" style="top:100px;">
+	  <div class="modal-content">
+		<div style="border:solid black 1px;">
+			<span id="modal-title" style='float:left;font-size: 28px;'>Edit tag propertes</span>
+			<span id="tag-view-popup_close" class="close" onclick="CloseEditDialog('tag-edit-popup','tag_list','tag');">&times;</span>
+		</div>
+		<div style="border:solid black 1px; height:140px;">
+			<object id="object-tag_edit" type="text/html" style="width:100%;border: 0; height:100%;" data="edit-tag.html">
+				<param name="object-tag_id" value="unknown"/>
+			</object>
+		</div>
+	  </div>
+	</div>
+	<!-- ----------------- -->
 	<!-- edit package ---- -->
 	<!-- ----------------- -->
-	<!-- <div class="modal fade" id="edit-popup" role="dialog" onmouseout='ShowButtons(this, false, "Cancel_edit-popup", "Save_edit-popup");'> -->
 	<div class="modal fade" id="pkg-edit-popup" role="dialog" style="top:100px;">
 	  <div class="modal-content">
 		<div style="border:solid black 1px;">
 			<span id="modal-title" style='float:left;font-size: 28px;'>Edit propertes</span>
-			<span id="modal-title_close" class="close" onclick="CloseEditDialog('pkg-edit-popup');">&times;</span>
+			<span id="modal-title_close" class="close" onclick="CloseEditDialog('pkg-edit-popup','project_list', 'package');">&times;</span>
 		</div>
 		<div style="border:solid black 1px; height:700px;">
 			<object id="object-package_edit" type="text/html" style="width:100%;border: 0; height:100%;" data="edit-package.html">
@@ -148,7 +188,7 @@ $_SESSION["next_page"] = 1;
 	  <div class="modal-content">
 		<div style="border:solid black 1px;">
 			<span id="modal-title" style='float:left;font-size: 28px;'>Edit propertes</span>
-			<span id="algo-view-popup_close" class="close" onclick="CloseEditDialog('algo-view-popup');">&times;</span>
+			<span id="algo-view-popup_close" class="close" onclick="CloseEditDialog('algo-view-popup','algo_list', 'algorithm');">&times;</span>
 		</div>
 		<div style="border:solid black 1px; height:300px;">
 			<object id="object-algo_edit" type="text/html" style="width:100%;border: 0; height:100%;" data="edit-algorithm.html">
@@ -165,11 +205,12 @@ $_SESSION["next_page"] = 1;
 	  <div class="modal-content">
 		<div style="border:solid black 1px;">
 			<span id="modal-title" style='float:left;font-size: 28px;'>Edit propertes</span>
-			<span id="feature-view-popup_close" class="close" onclick='CloseEditDialog("feature-view-popup");'>&times;</span>
+			<span id="feature-view-popup_close" class="close" onclick='CloseEditDialog("feature-view-popup","feature_list", "feature");'>&times;</span>
 		</div>
 		<div style="border:solid black 1px; height:300px;">
 			<object id="object-feature_edit" type="text/html" style="width:100%;border: 0; height:100%;" data="edit-feature.html">
-				<param name="object-feature_id" value="unknown"/>
+				<param name="object-feature_id" value="-1"/>
+				<param name="object-df_id" value="-1"/>
 			</object>
 		</div>
 	  </div>
@@ -293,18 +334,19 @@ function highLightRow(row) {
 }
 
 
-function CloseEditDialog(dlg_id) {
+function CloseEditDialog(dlg_id,tbl_name, type) {
+	FillTable(tbl_name, 0, type,'');
 	var modal = document.getElementById(dlg_id);
 	modal.style.display = "none";
 }
 
-function ShowEditDialog(popup_name, table_name, param_name, new_pkg) {
+function ShowEditDialog(popup_name, table_name, param_name, new_object) {
 	var  tbl = document.getElementById(table_name);
 	var  row;
-	var  pckg_id;
+	var  object_id;
 	var  modal_title = document.getElementById('modal-title');
-//	console.log('is_new='+new_pkg);
-	if (!new_pkg) {
+//	console.log('is_new='+new_object);
+	if (!new_object) {
 		for (var i = 1; i < tbl.childNodes.length; i++) {
 			row = tbl.childNodes[i]
 			if (row.classList.contains("highlighted-strong")) {
@@ -315,19 +357,19 @@ function ShowEditDialog(popup_name, table_name, param_name, new_pkg) {
 			document.getElementById('alert-popup').style.display = "block";
 			return;
 		}
-		pckg_id = row.getElementsByTagName('td')[0].innerHTML;
+		object_id = row.getElementsByTagName('td')[0].innerHTML;
 		var td = row.getElementsByTagName("td")[name_idx];
 		modal_title.innerText = 'Edit propertes of '+td.innerText;
 	}
 	else {
-		pckg_id = -1;
+		object_id = -1;
 		modal_title.innerText = 'Edit new package'
 	}
 
 	var modal = document.getElementById(popup_name);
 	modal.style.display = "block";
 
-	document.getElementsByName(param_name)[0].value = pckg_id;
+	document.getElementsByName(param_name)[0].value = object_id;
 }
 
 /*
@@ -506,6 +548,12 @@ function rebuildTable(tbl, tableArr, highligted, result) {
 		if (rows[i].cells[0].innerText == result)
 			rows[i].classList.add("result-available");
 	}
+}
+
+function UpdateFeatureList() {
+	var table = document.getElementById('df_list');
+	FillTable("feature_list", 0, "feature","df="+table.options[table.selectedIndex].value);
+	document.getElementsByName('object-df_id')[0].value = table.options[table.selectedIndex].value;
 }
 </script>
 
