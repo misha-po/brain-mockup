@@ -9,48 +9,13 @@
     <div id="constantPart" class='edit-package_part'>
         <table>
         <tr class='edit_row'>
-            <td class="edit-row_label common_part">Algorithm type:</td>
-            <td id='edit-algo_type'></td>
-        </tr>
-        <tr class='edit_row section_start'><td>Algorithm:</td></tr>
-        <tr class='edit_row'>
-            <td class="edit-row_label common_part">Algo code:</td>
-            <td><input type="text" id="edit-algo_code" class='edit-row_data'/></td>
-            <td class="edit-row_label common_part">Description:</td>
-            <td rowspan="2"><textarea id="edit-description" class='edit-row_data' rows="3" ></textarea></td>
-        </tr>
-        <tr>
-            <td class="edit-row_label common_part">Owner name:</td>
-            <td><input type="text" id="edit-owner_name" class='edit-row_data'/></td>
-        </tr>
-        <tr>
-            <td class="edit-row_label common_part">Owner email:</td>
-            <td><input type="email" id="edit-owner_email" class='edit-row_data'/></td>
-            <td class="edit-row_label common_part">File name:</td>
-            <td><input type="text" id="edit-python_file_path" class='edit-row_data'/></td>
-        </tr>
+			<td>Algorithm:</td>
+			<td colspan=3>
+				<select id="edit-algo_code" style="width:100%;"></select>
+			<td></td>
+			<td></td>
+		</tr>
         
-        <tr id='edit-algo_universe' class='edit_row'>
-            <td class="edit-row_label basic_part">Universe:</td>
-            <td class='edit_row'>
-                <select id="edit-universe" style="width:100%;">
-                    <option value="retail">retail</option>
-                    <option value="business">business</option>
-                    <option value="international">international</option>
-                    <option value="dealing_room">dealing_room</option>
-                    <option value="nostro">nostro</option>
-                </select>
-            </td>
-            <td class="edit-row_label basic_part">Key entity:</td>
-            <td class='edit_row'>
-                <select id="edit-key_enity" style="width:100%;">
-                    <option value="account">account</option>
-                    <option value="customer">customer</option>
-                    <option value="company">company</option>
-                    <option value="branch">branch</option>
-                </select>
-            </td>
-        </tr>
         <tr id='edit-complex_type' class='edit_row' style="visibility:collapse;">
             <td class="edit-row_label complex_part">Complex algo type:</td>
             <td>
@@ -58,7 +23,7 @@
                 <input type="radio" name="complexAlgoType" value="autoML" onchange="selectComplexAlgo(this)"><label for="invocation">autoML</label>  <br>
             </td>
         </tr>
-        <tr class='edit_row section_start common_part'><td colspan="2">Input:</td></tr>
+        <tr class='edit_row common_part'><td colspan="2">Input:</td></tr>
         <tr class='edit_row'>
             <td class="edit-row_label common_part">Dataframes:</td>
             <td>
@@ -707,11 +672,6 @@ function editSetValues() {
 						elems[i].checked = false;
 				}
 				aid = pckg_data.aid;
-				document.getElementById('edit-algo_code').value = pckg_data.algo_code;
-				document.getElementById('edit-owner_name').value = pckg_data.owner_name;
-				document.getElementById('edit-owner_email').value = pckg_data.owner_email;
-				document.getElementById('edit-description').value = pckg_data.description;
-				document.getElementById('edit-python_file_path').value = pckg_data.egg_path;
 				var elems = document.getElementById('edit-universe').getElementsByTagName('option');
 				for (var i=0; i < elems.length; i++) {
 					if (elems[i].value == pckg_data.universe)
@@ -779,7 +739,7 @@ function editSetValues() {
 			for (var i = children.length-1; i> 0; i--) {
 				table2.removeChild(children[i]);
 			}
-			data_frames = json_doc.all_data_frames;
+			var data_frames = json_doc.all_data_frames;
 			for (var i = 0; i < data_frames.length; i++) {
 				var opt1 = document.createElement('option');
 				var opt2 = document.createElement('option');
@@ -796,6 +756,7 @@ function editSetValues() {
 			var algo_types = json_doc.algo_types;
 			console.log(algo_types);
 
+/*
 			var types = document.getElementById('edit-algo_type');
 			types.innerHTML = '';
 			var id;
@@ -823,6 +784,19 @@ function editSetValues() {
 				types.appendChild(label);
 				var br = document.createElement('br');
 				types.appendChild(br);
+			}
+*/
+			var table1 = document.getElementById('edit-algo_code')
+			var children = table1.getElementsByTagName('option');
+			for (var i = children.length-1; i> 0; i--) {
+				table1.removeChild(children[i]);
+			}
+			var algorithms = json_doc.algorithms;
+			for (var i = 0; i < algorithms.length; i++) {
+				var opt = document.createElement('option');
+				opt.value = algorithms[i].id;
+				opt.innerHTML = algorithms[i].Name;
+				table1.appendChild(opt);
 			}
 			editSetAvailableFeatures(json_doc.available_features)
 		}

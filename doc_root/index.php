@@ -31,28 +31,28 @@ $_SESSION["next_page"] = 1;
 	</div>
 </head>
 
-<body onload="SelectTab(0, 'tag-view'); FillTable('tag_list', 0, 'tag','');setInterval(function() {FillTable('project_list', timestamp, 'package','');}, 10000);">
+<body onload="SelectTab(0);">
 
 	<div id="main_vew_tabs" class="tab_pane">
 		<button class="tab-button" type="button" 
-				onclick="SelectTab(0, 'tag-view'); FillTable('tag_list', 0, 'tag','');">
+				onclick="SelectTab(0);">
 				Tags
 		</button>
 		<button class="tab-button" type="button" 
-				onclick="SelectTab(1, 'feature-view'); FillTable2('df_list', 0, 'dataframe','');UpdateFeatureList()">
+				onclick="SelectTab(1); UpdateFeatureList()">
 				Features
 		</button>
 		<button class="tab-button" type="button" 
-				onclick="SelectTab(2, 'algo-view'); FillTable('algo_list', timestamp2, 'algorithm','');">
+				onclick="SelectTab(2); ">
 				Algorithms
 		</button>
 		<button class="tab-button tab-button-selected" type="button" 
-				onclick="SelectTab(3, 'pckg-view'); FillTable('project_list', timestamp, 'package','');">
+				onclick="SelectTab(3);">
 				Packages
 		</button>
-		<button class="tab-button" type="button" onclick="SelectTab(4, 'airflow');">Airflow</button>
-		<button class="tab-button" type="button" onclick="SelectTab(5, 'atlas');">Atlas</button>
-		<button class="tab-button" type="button" onclick="ReloadGraph('project_list');SelectTab(6, 'depends');">Depends</button>
+		<button class="tab-button" type="button" onclick="SelectTab(4);">Airflow</button>
+		<button class="tab-button" type="button" onclick="SelectTab(5);">Atlas</button>
+		<button class="tab-button" type="button" onclick="ReloadGraph('pckg_list');SelectTab(6);">Depends</button>
 	</div>
 	
 	<div id='tab-vew'>
@@ -76,17 +76,17 @@ $_SESSION["next_page"] = 1;
 		<div id='pckg-view' class='data-pane'>
 			<h2 style="padding-top: 10px;" >Package list</h2>
 			<div class="vertical-pane left-pane" >
-				<table class='object_list' id='project_list' style="width:100%;">
+				<table class='object_list' id='pckg_list' style="width:100%;">
 				</table>
 			</div>
 			<div id="right-pane" class="vertical-pane">
 				<ul class='menu-bar1'>
-					<li><button class="action-button project-button" type="button"  data-toggle="modal" data-target="#select-feature-popup" onclick="ShowEditDialog('pkg-edit-popup', 'project_list', 'object-package_id', false);">Edit</button></li>
+					<li><button class="action-button project-button" type="button"  data-toggle="modal" data-target="#select-feature-popup" onclick="ShowEditDialog('pkg-edit-popup', 'pckg_list', 'object-package_id', false);">Edit</button></li>
 					<li><button class="action-button project-button" type="button"  data-toggle="modal" data-target="#select-feature-popup" >Show PDF</button></li>
-					<li><button class="action-button project-button" type="button"  data-toggle="modal" data-target="#select-feature-popup"  onclick="ReloadGraph('project_list');SelectTab(6, 'depends');" >Dependencies</button></li>
+					<li><button class="action-button project-button" type="button"  data-toggle="modal" data-target="#select-feature-popup"  onclick="ReloadGraph('pckg_list');SelectTab(6);" >Dependencies</button></li>
 					<li><button class="action-button project-button" type="button">Delete</button></li>
 					<li> &nbsp </li>
-					<li><button class="action-button project-button" type="button"  data-toggle="modal" data-target="#pkg-edit-popup" onclick="ShowEditDialog('pkg-edit-popup', 'project_list', 'object-package_id', true);">New</button></li>
+					<li><button class="action-button project-button" type="button"  data-toggle="modal" data-target="#pkg-edit-popup" onclick="ShowEditDialog('pkg-edit-popup', 'pckg_list', 'object-package_id', true);">New</button></li>
 				</ul>
 			</div>
 		</div>
@@ -125,25 +125,36 @@ $_SESSION["next_page"] = 1;
 				</ul>
 			</div>
 		</div>
-		<div id='event-viewer' style='height:500px;display:none;' >
+		<div id='event-view' style='height:500px;display:none;' >
 			<iframe src="http://127.0.0.1:8983/banana" style="padding-top: 1px;width: 95%; height: 95%;border:0;"></iframe>
 		</div>
-		<div id='airflow' style='height:500px;display:none;' class='data-pane'>
+		<div id='airflow-view' style='height:500px;display:none;' class='data-pane'>
 			<iframe src="http://192.168.56.101:8080/admin" style="padding-top: 1px;width: 95%; height: 95%;border:0;"></iframe>
 		</div>
-		<div id='atlas' style='height:500px;display:none;' class='data-pane'>
+		<div id='atlas-view' style='height:500px;display:none;' class='data-pane'>
 			<iframe src="http://127.0.0.2:21001" style="padding-top: 1px;width: 95%; height: 95%;border:0;"></iframe>
 		</div>
-		<div id='depends' style='height:600px;display:none;' class='data-pane'>
+		<div id='depends-view' style='height:600px;display:none;' class='data-pane'>
 			<iframe id="graph_area" src="data/graph1.svg" style="padding-top: 1px;width: 95%; height: 90%;border:0;"></iframe>
 		</div>
 	</div>
 	<!-- -------------------------------------------------------------------------------------- -->
 	<!-- --------- MODAL POPUPS --------------------------------------------------------------- -->
 	<!-- -------------------------------------------------------------------------------------- -->
+	<!--
 	<div class="modal fade" id="alert-popup" role="dialog" onmouseout='ShowButtons(this, false, "Cancel_select-feature-popup", "Save_select-feature-popup");'>
 		<span style='float:right;' class="closebtn" onclick="this.parentElement.style.display='none';">click to close &times;</span>
 		<div style='display:inline-block;width:100%;' onclick="this.parentElement.style.display='none';">Select row that you want to edit.</div> 
+	</div>
+	-->	
+	<div class="modal fade" id="alert-popup" role="dialog">
+		<div class="modal-content">
+			<div style="border:solid black 1px;">
+				<span id="modal-title" style='float:left;font-size: 28px;'>Error</span>
+				<span id="tag-view-popup_close" class="close" onclick="CloseEditDialog('alert-popup','','');">&times;</span>
+			</div>
+			<div style='display:inline-block;width:100%;' onclick="this.parentElement.style.display='none';">Select row that you want to edit.</div> 
+		</div>
 	</div>	
 
 	<input type="hidden" name='tab-name' value="">
@@ -171,7 +182,7 @@ $_SESSION["next_page"] = 1;
 	  <div class="modal-content">
 		<div style="border:solid black 1px;">
 			<span id="modal-title" style='float:left;font-size: 28px;'>Edit propertes</span>
-			<span id="modal-title_close" class="close" onclick="CloseEditDialog('pkg-edit-popup','project_list', 'package');">&times;</span>
+			<span id="modal-title_close" class="close" onclick="CloseEditDialog('pkg-edit-popup','pckg_list', 'package');">&times;</span>
 		</div>
 		<div style="border:solid black 1px; height:700px;">
 			<object id="object-package_edit" type="text/html" style="width:100%;border: 0; height:100%;" data="edit-package.html">
@@ -221,6 +232,15 @@ $_SESSION["next_page"] = 1;
 var		name_idx = -1;
 var		timestamp = { value: 0};
 var		timestamp2 = { value: 0};
+var		tab_names = [
+	'tag',
+	'feature',
+	'algo',
+	'pckg',
+	'airflow',
+	'atlas',
+	'depends'
+];
 
 function FillTable(tbl_name, timestamp, type, extra_data)
 {
@@ -335,7 +355,12 @@ function highLightRow(row) {
 
 
 function CloseEditDialog(dlg_id,tbl_name, type) {
-	FillTable(tbl_name, 0, type,'');
+	if (tbl_name != '') {
+		if (type == 'feature')
+			FillTable2('df_list', 0, 'dataframe','');
+		else
+			FillTable(tbl_name, 0, type,'');
+	}
 	var modal = document.getElementById(dlg_id);
 	modal.style.display = "none";
 }
@@ -413,7 +438,10 @@ function ShowButtons(obj, show, cancel_button_id, save_button_id) {
 	}
 }
 
-function SelectTab(tab_id, tab_name) {
+function SelectTab(tab_id) {
+	var type = tab_names[tab_id];
+	var tab_name = type+'-view';
+	console.log(tab_name, type);
 	var buttons = document.getElementById('main_vew_tabs').getElementsByTagName('button');
 	var button = buttons[tab_id];
 	for (var i = 0; i < buttons.length; i++) {
@@ -429,6 +457,10 @@ function SelectTab(tab_id, tab_name) {
 	}
 	document.getElementById(tab_name).style.display='block';
 	document.getElementsByName('tab-name')[0].value=tab_name;
+	if (type == 'feature')
+		FillTable2('df_list', 0, 'dataframe','');
+	else
+		FillTable(type+'_list', 0, type,'');
 }
 
 function ReloadGraph(tbl_name)

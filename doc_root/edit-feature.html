@@ -25,6 +25,16 @@
 			<td></td>
         </tr>
         <tr class='edit_row'>
+            <td class="edit-row_label basic_part">Universe:</td>
+            <td class='edit_row'>
+                <select id="edit-universe" style="width:100%;"></select>
+            </td>
+            <td class="edit-row_label basic_part">Key entity:</td>
+            <td class='edit_row'>
+                <select id="edit-key_enity" style="width:100%;"></select>
+            </td>
+        </tr>
+        <tr class='edit_row'>
             <td class="edit-row_label">Data type:</td>
             <td>
                 <select id="edit-data_type" class='edit-row_data' style="width:150;">
@@ -225,6 +235,31 @@ function editSetValues() {
 				opt.innerHTML = tags[i].name;
 				select.appendChild(opt);
 			}
+
+			select = document.getElementById('edit-universe')
+			if (select.getElementsByTagName('option').length == 0) {
+				for (var i=0; i < json_doc.universe.length; i++) {
+					var opt = document.createElement('option');
+					opt.value = json_doc.universe[i].id;
+					opt.innerHTML = json_doc.universe[i].name;
+					console.log(json_doc.universe[i].id,json_doc.feature_data.universe);
+					if (json_doc.universe[i].id == json_doc.feature_data.universe)
+						opt.selected = true
+					select.appendChild(opt);
+				}
+			}
+
+			select = document.getElementById('edit-key_enity')
+			if (select.getElementsByTagName('option').length == 0) {
+				for (var i=0; i < json_doc.key_enity.length; i++) {
+					var opt = document.createElement('option');
+					opt.value = json_doc.key_enity[i].id;
+					opt.innerHTML = json_doc.key_enity[i].name;
+					if (json_doc.key_enity[i].id == json_doc.feature_data.key_enity)
+						opt.selected = true
+					select.appendChild(opt);
+				}
+			}
 			
 			select = document.getElementById('edit-used_tags');
 			while (select.firstChild)
@@ -256,6 +291,11 @@ function editSaveValues() {
 	var used_tags = [];
 	for (var i = 0; i < options.length; i++)
 		used_tags.push(options[i].value);
+	tbl = document.getElementById('edit-universe')
+	var universe = tbl.options[tbl.selectedIndex].value;
+	tbl = document.getElementById('edit-key_enity')
+	var key_enity = tbl.options[tbl.selectedIndex].value;
+
 	var feature_data = {
 		dataframe_id: df_id,
 		feature_id: feature_id,
@@ -263,10 +303,11 @@ function editSaveValues() {
 		description: description,
 		is_target: is_target?1:0,
 		data_type: data_type,
+		universe: universe,
+		key_enity: key_enity,
 		data_constraint: data_constraint,
 		used_tags: used_tags
 	};
-	console.log(JSON.stringify(feature_data));
 	var xhttp = new XMLHttpRequest();
 	xhttp.onreadystatechange = function() {
 		if (this.readyState == 4 && this.status == 200) {
@@ -286,40 +327,6 @@ function editSaveValues() {
 function editCancelSavePackage() {
 	window.parent.document.getElementById(popup_name+'_close').onclick(popup_name);
 }
-
-/*
-function addDataFrame() {
-	var xhttp = new XMLHttpRequest();
-	xhttp.onreadystatechange = function() {
-		if (this.readyState == 4 && this.status == 200) {
-			var 	json_doc = JSON.parse(this.responseText);
-			if (json_doc.length == 0) {
-				return;
-			}
-			var pckg_data = json_doc.pckg_data;
-			showEditPanel(true);
-		}
-	};
-	xhttp.open("GET", 'static/ajax/GetFeatures.php?df_id='+out_df_id, true);
-	xhttp.send();		
-}
-
-function GetFeatures(e) {
-	var df_id = e.options[e.selectedIndex].value;
-	var xhttp = new XMLHttpRequest();
-	xhttp.onreadystatechange = function() {
-		if (this.readyState == 4 && this.status == 200) {
-			var 	json_doc = JSON.parse(this.responseText);
-			if (json_doc.length == 0) {
-				return;
-			}
-			editSetAvailableFeatures(json_doc.available_features)
-		}
-	};
-	xhttp.open("GET", 'static/ajax/GetFeatures.php?df_id='+df_id, true);
-	xhttp.send();		
-}
-*/
 
 function MoveTag(direction) {
 	var select1 = document.getElementById('edit-available_tags');

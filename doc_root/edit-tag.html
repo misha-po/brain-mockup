@@ -99,8 +99,10 @@ function editSetValues() {
 				alert(json_doc.error);
 				return;
 			}
-			document.getElementById("edit-tag_name").value = json_doc.tag_data.name;
-			document.getElementById("edit-description").value = json_doc.tag_data.description;
+			if (json_doc.tag_data != null) {
+				document.getElementById("edit-tag_name").value = json_doc.tag_data.name;
+				document.getElementById("edit-description").value = json_doc.tag_data.description;
+			}
 
 		}
 	};

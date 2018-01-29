@@ -108,14 +108,25 @@ while($row7 = $result7->fetch_assoc()) {
 	array_push($all_data_frames, $row7);
 }
 
+/*
+$algo_types = array();
 $sql = "select * from AlgoTypes";
 if(!$result = $conn->query($sql)) {
 	error_log('Error: '.$conn->error);
 	return;
 }
-$algo_types = array();
 while($row = $result->fetch_assoc()) {
 	array_push($algo_types, $row);
+}
+*/
+$algorithms = array();
+$sql = "select id,algo_code Name from Algorithms";
+if(!$result = $conn->query($sql)) {
+	error_log('Error: '.$conn->error);
+	return;
+}
+while($row = $result->fetch_assoc()) {
+	array_push($algorithms, $row);
 }
 
 $available_features = array();
@@ -139,7 +150,8 @@ $json_data = (object) array(
 				'data_types' => $data_types,
 				'value_constraints' => $value_constraints,
 				'all_data_frames' => $all_data_frames,
-				'algo_types' => $algo_types,
+//				'algo_types' => $algo_types,
+				'algorithms' => $algorithms,
 				'available_features' => $available_features
 			);
 

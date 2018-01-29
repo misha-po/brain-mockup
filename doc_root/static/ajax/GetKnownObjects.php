@@ -19,7 +19,7 @@ if($type == 'tag') {
 
 	$sql = "SELECT id, name 'Name',description Description FROM VisibilityTags";
 }
-if($type == 'algorithm') {
+if($type == 'algo') {
 	$sql = "select UNIX_TIMESTAMP(max(last_modified)) as timestamp from Packages;";
 	$result = $conn->query($sql);
 	$row = $result->fetch_assoc();
@@ -27,7 +27,7 @@ if($type == 'algorithm') {
 
 	$sql = "SELECT a.id id, a.algo_code 'Algo name', t.name 'Algo type',a.owner_name Owner, a.owner_email Email FROM Algorithms as a,AlgoTypes t WHERE a.algo_type=t.id";
 }
-if($type == 'package') {
+if($type == 'pckg') {
 	$sql = "select UNIX_TIMESTAMP(max(last_modified)) as timestamp from Packages;";
 	$result = $conn->query($sql);
 	$row = $result->fetch_assoc();
@@ -35,10 +35,8 @@ if($type == 'package') {
 	$sql = "SELECT p.id, name Name, a.owner_name Owner, a.owner_email Email, run_status Status FROM Packages as p, Algorithms as a WHERE a.id=p.algorithm";
 }
 if($type == 'dataframe') {
-	error_log($type);
 	$timestamp = -1;
 	$sql = "select id,name Name from DataFrames";
-	error_log($sql);
 }
 if($type == 'feature') {
 	$df_id = $_GET['df'];

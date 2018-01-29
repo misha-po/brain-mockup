@@ -26,13 +26,16 @@ if ($feature_data->feature_id == -1) {
 		echo(json_encode((object) array('error' => 'Feature '.$feature_data->name.' already defined for this dataframe')));
 		return;
 	}
-	$sql = "insert into Features (dataframe_id,name,is_target,description,data_type,value_constraint) values (".
+	$sql = "insert into Features (dataframe_id,name,is_target,description,data_type,value_constraint, universe, key_enity) values (".
 			$feature_data->dataframe_id.","
 			."'".$feature_data->name."',"
 			.$feature_data->is_target.","
 			."'".$feature_data->description."',"
 			.$feature_data->data_type.","
-			.$feature_data->data_constraint.")";
+			.$feature_data->data_constraint.","
+			.$feature_data->universe.","
+			.$feature_data->key_enity.")";
+	error_log($sql);
 	if(!$result = $conn->query($sql)) {
 		echo(json_encode((object) array('error' => $conn->error)));
 		error_log('Error: '.$conn->error);
@@ -63,9 +66,11 @@ else {
 	$sql = "update Features set data_type=".$feature_data->data_type.","
 			."value_constraint=".$feature_data->data_constraint.", "
 			."is_target=".$feature_data->is_target.", "
+			."universe=".$feature_data->universe.", "
+			."key_enity=".$feature_data->key_enity.", "
 			."description='".$feature_data->description."'"
 			." where id=".$feature_id;
-		error_log($sql);
+	error_log($sql);
 
 	if(!$result = $conn->query($sql)) {
 		echo(json_encode((object) array('error' => $conn->error)));
@@ -85,7 +90,6 @@ else {
 			continue;
 
 		$sql = "insert into FeatureTags set feature_id=".$feature_id.", tag_id=".$feature_data->used_tags[$i];
-		error_log($sql);
 		if(!$result = $conn->query($sql)) {
 			echo(json_encode((object) array('error' => $conn->error)));
 			error_log('Error: '.$conn->error);

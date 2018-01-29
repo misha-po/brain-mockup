@@ -19,13 +19,12 @@ $dataframe_id = $_GET['df_id'];
 $sql5 = "SELECT * from Data_types";
 $sql6 = "SELECT * from Value_constraints";
 
-$sql = "select f.name Feature, d.name Dataframe, f.is_target, f.description from Features f, DataFrames d where f.dataframe_id=d.id and f.id=".$id;
-error_log($sql);
+$sql = "select f.name Feature, d.name Dataframe, f.is_target, f.description, f.universe, f.key_enity from Features f, DataFrames d where f.dataframe_id=d.id and f.id=".$id;
 if(!$result1 = $conn->query($sql)) {
 	error_log('Error: '.$conn->error);
 	return;
 }
-$row1 = $result1->fetch_assoc();
+$feature_data = $result1->fetch_assoc();
 
 if(!$result5 = $conn->query($sql5)) {
 	error_log('Error: '.$conn->error);
@@ -73,16 +72,39 @@ if(!$result = $conn->query($sql)) {
 }
 $dataframe = $result->fetch_assoc();
 
+$sql = "select id,name from AlgoUniverse";
+if(!$result = $conn->query($sql)) {
+	error_log('Error: '.$conn->error);
+	return;
+}
+$universe = array();
+while($row = $result->fetch_assoc()) {
+	array_push($universe, $row);
+}
+
+$sql = "select id,name from AlgoInputEntities";
+if(!$result = $conn->query($sql)) {
+	error_log('Error: '.$conn->error);
+	return;
+}
+$key_enity = array();
+while($row = $result->fetch_assoc()) {
+	array_push($key_enity, $row);
+}
+
+
 $json_data = (object) array(
 				'error' => 'OK',
-				'feature_data' => $row1,
+				'feature_data' => $feature_data,
 				'data_types' => $data_types,
 				'value_constraints' => $value_constraints,
 				'available_tags' => $available_tags,
+				'universe' => $universe,
+				'key_enity' => $key_enity,
 				'dataframe' => $dataframe,
 				'used_tags' => $used_tags
 			);
 
-error_log(json_encode($json_data));
+//error_log(json_encode($json_data));
 echo(json_encode($json_data));
 ?>
