@@ -95,7 +95,6 @@
 var popup_name = window.parent.document.getElementsByName('tab-name')[0].value+'-popup';
 var feature_id = window.parent.document.getElementsByName('object-feature_id')[0].value;
 var df_id = window.parent.document.getElementsByName('object-df_id')[0].value;
-console.log('df_id=',df_id);
 var out_df_id = -1;
 
 function selectLine(element, list_name, tag_name) {
@@ -197,6 +196,7 @@ function editSetValues() {
 				alert(json_doc.error);
 				return;
 			}
+			//console.log(this.responseText);
 			document.getElementById("edit-dataframe_name").innerHTML = json_doc.dataframe.name;
 			if (feature_id != -1) {
 				document.getElementById("edit-feature_name").value = json_doc.feature_data.Feature;
@@ -242,9 +242,10 @@ function editSetValues() {
 					var opt = document.createElement('option');
 					opt.value = json_doc.universe[i].id;
 					opt.innerHTML = json_doc.universe[i].name;
-					console.log(json_doc.universe[i].id,json_doc.feature_data.universe);
-					if (json_doc.universe[i].id == json_doc.feature_data.universe)
-						opt.selected = true
+					if (feature_id != -1) {
+						if (json_doc.universe[i].id == json_doc.feature_data.universe)
+							opt.selected = true;
+					}
 					select.appendChild(opt);
 				}
 			}
@@ -255,8 +256,10 @@ function editSetValues() {
 					var opt = document.createElement('option');
 					opt.value = json_doc.key_enity[i].id;
 					opt.innerHTML = json_doc.key_enity[i].name;
-					if (json_doc.key_enity[i].id == json_doc.feature_data.key_enity)
-						opt.selected = true
+					if (feature_id != -1) {
+						if (json_doc.key_enity[i].id == json_doc.feature_data.key_enity)
+							opt.selected = true;
+					}
 					select.appendChild(opt);
 				}
 			}

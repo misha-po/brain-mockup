@@ -50,8 +50,10 @@ $_SESSION["next_page"] = 1;
 				onclick="SelectTab(3);">
 				Packages
 		</button>
+		<!--
 		<button class="tab-button" type="button" onclick="SelectTab(4);">Airflow</button>
 		<button class="tab-button" type="button" onclick="SelectTab(5);">Atlas</button>
+		-->
 		<button class="tab-button" type="button" onclick="ReloadGraph('pckg_list');SelectTab(6);">Depends</button>
 	</div>
 	
@@ -128,12 +130,14 @@ $_SESSION["next_page"] = 1;
 		<div id='event-view' style='height:500px;display:none;' >
 			<iframe src="http://127.0.0.1:8983/banana" style="padding-top: 1px;width: 95%; height: 95%;border:0;"></iframe>
 		</div>
+		<!--
 		<div id='airflow-view' style='height:500px;display:none;' class='data-pane'>
 			<iframe src="http://192.168.56.101:8080/admin" style="padding-top: 1px;width: 95%; height: 95%;border:0;"></iframe>
 		</div>
 		<div id='atlas-view' style='height:500px;display:none;' class='data-pane'>
 			<iframe src="http://127.0.0.2:21001" style="padding-top: 1px;width: 95%; height: 95%;border:0;"></iframe>
 		</div>
+		-->
 		<div id='depends-view' style='height:600px;display:none;' class='data-pane'>
 			<iframe id="graph_area" src="data/graph1.svg" style="padding-top: 1px;width: 95%; height: 90%;border:0;"></iframe>
 		</div>
@@ -165,7 +169,7 @@ $_SESSION["next_page"] = 1;
 	<div class="modal fade" id="tag-edit-popup" role="dialog" style="top:100px;">
 	  <div class="modal-content">
 		<div style="border:solid black 1px;">
-			<span id="modal-title" style='float:left;font-size: 28px;'>Edit tag propertes</span>
+			<span id="modal-title" style='float:left;font-size: 28px;'>Tag propertes</span>
 			<span id="tag-view-popup_close" class="close" onclick="CloseEditDialog('tag-edit-popup','tag_list','tag');">&times;</span>
 		</div>
 		<div style="border:solid black 1px; height:140px;">
@@ -181,8 +185,8 @@ $_SESSION["next_page"] = 1;
 	<div class="modal fade" id="pkg-edit-popup" role="dialog" style="top:100px;">
 	  <div class="modal-content">
 		<div style="border:solid black 1px;">
-			<span id="modal-title" style='float:left;font-size: 28px;'>Edit propertes</span>
-			<span id="modal-title_close" class="close" onclick="CloseEditDialog('pkg-edit-popup','pckg_list', 'package');">&times;</span>
+			<span id="modal-title" style='float:left;font-size: 28px;'>Package propertes</span>
+			<span id="modal-title_close" class="close" onclick="CloseEditDialog('pkg-edit-popup','pckg_list', 'pckg');">&times;</span>
 		</div>
 		<div style="border:solid black 1px; height:700px;">
 			<object id="object-package_edit" type="text/html" style="width:100%;border: 0; height:100%;" data="edit-package.html">
@@ -198,10 +202,10 @@ $_SESSION["next_page"] = 1;
 	<div class="modal fade" id="algo-view-popup" role="dialog" style="top:100px;">
 	  <div class="modal-content">
 		<div style="border:solid black 1px;">
-			<span id="modal-title" style='float:left;font-size: 28px;'>Edit propertes</span>
-			<span id="algo-view-popup_close" class="close" onclick="CloseEditDialog('algo-view-popup','algo_list', 'algorithm');">&times;</span>
+			<span id="modal-title" style='float:left;font-size: 28px;'>Algorithm propertes</span>
+			<span id="algo-view-popup_close" class="close" onclick="CloseEditDialog('algo-view-popup','algo_list', 'algo');">&times;</span>
 		</div>
-		<div style="border:solid black 1px; height:300px;">
+		<div style="border:solid black 1px; height:400px;">
 			<object id="object-algo_edit" type="text/html" style="width:100%;border: 0; height:100%;" data="edit-algorithm.html">
 				<param name="object-algo_id" value="unknown"/>
 			</object>
@@ -215,7 +219,7 @@ $_SESSION["next_page"] = 1;
 	<div class="modal fade" id="feature-view-popup" role="dialog"  style="top:100px;">
 	  <div class="modal-content">
 		<div style="border:solid black 1px;">
-			<span id="modal-title" style='float:left;font-size: 28px;'>Edit propertes</span>
+			<span id="modal-title" style='float:left;font-size: 28px;'>Feature propertes</span>
 			<span id="feature-view-popup_close" class="close" onclick='CloseEditDialog("feature-view-popup","feature_list", "feature");'>&times;</span>
 		</div>
 		<div style="border:solid black 1px; height:300px;">
@@ -300,7 +304,6 @@ function FillTable(tbl_name, timestamp, type, extra_data)
 		}
 	};
 	var url='static/ajax/GetKnownObjects.php?type='+type+((extra_data=='')?'':('&'+extra_data));
-	console.log(url);
 	xhttp.open("GET", url, true);
 	xhttp.send();		
 
@@ -441,7 +444,6 @@ function ShowButtons(obj, show, cancel_button_id, save_button_id) {
 function SelectTab(tab_id) {
 	var type = tab_names[tab_id];
 	var tab_name = type+'-view';
-	console.log(tab_name, type);
 	var buttons = document.getElementById('main_vew_tabs').getElementsByTagName('button');
 	var button = buttons[tab_id];
 	for (var i = 0; i < buttons.length; i++) {

@@ -16,13 +16,6 @@
 			<td></td>
 		</tr>
         
-        <tr id='edit-complex_type' class='edit_row' style="visibility:collapse;">
-            <td class="edit-row_label complex_part">Complex algo type:</td>
-            <td>
-                <input type="radio" name="complexAlgoType" value="manual" onchange="selectComplexAlgo(this)" checked><label for="manual">manual</label>  <br>
-                <input type="radio" name="complexAlgoType" value="autoML" onchange="selectComplexAlgo(this)"><label for="invocation">autoML</label>  <br>
-            </td>
-        </tr>
         <tr class='edit_row common_part'><td colspan="2">Input:</td></tr>
         <tr class='edit_row'>
             <td class="edit-row_label common_part">Dataframes:</td>
@@ -54,61 +47,15 @@
         <tr id='edit-output_features1' class='edit_row section_start basic_part'><td colspan="2">Output:</td></tr>
         <tr id='edit-output_features3' class='edit_row'>
             <td class='edit-row_label basic_part'>Dataframe name:</td>
-            <td colspan="2">
-				<!--
-				<input id='edit-output_df_name' type="text" />
-				-->
-				<select id="edit-output_df_name" class='edit-row_data' style="width:150;" onchange="GetFeatures(this);">
-				</select>
+            <td>
+				<select id="edit-output_df_name" class='edit-row_data' style="width:150;" onchange="GetFeatures(this);"></select>
 			</td>
+            <td class='edit-row_label basic_part'>Feature name:</td>
+            <td>
+				<select id="edit-output_features" class='edit-row_data' style="width:150;"></select>
+            </td>
         </tr>
 
-        <tr id='edit-output_features2' class='edit_row'>
-            <td>
-            </td>
-            <td  colspan="3">
-                <table id='edit-dataframes_list'>
-                    <tr>
-						<td style='visibility:hidden;'>1</td>
-                        <th>Feature name</th><th>Data type</th><th>Constraint</th><th>Is target</th><th>Tags</th>
-                    </tr>
-                    <tr class='selectable_list' onclick='selectLine(this, "edit-dataframes_list", "tr")'>
-						<td style='visibility:hidden;'>1</td>
-                        <td>feature1</td><td>int</td><td>numeric</td><td>Y</td>
-                        <td>
-                            <select>
-                                <option>Tag1</option>
-                                <option>Tag2</option>
-                                <option>Tag3</option>
-                            </select>
-                        </td>
-                    </tr>
-                    <tr class='selectable_list' onclick='selectLine(this, "edit-dataframes_list", "tr")'>
-						<td style='visibility:hidden;'>1</td>
-                        <td>feature1</td><td>int</td><td>numeric</td><td>Y</td>
-                        <td>
-                            <select>
-                                <option>Tag1</option>
-                                <option>Tag2</option>
-                                <option>Tag3</option>
-                            </select>
-                        </td>
-                    </tr>
-                </table>
-            </td>
-        </tr>
-        <tr id='edit-feature_list_buttons' class='edit_row'>
-            <td>
-            </td>
-            <td colspan="3">
-                <button id='edit-add_output_feature' class='edit-button' 
-                        onclick='showEditPanel(true);'>Add</button>
-                <button id="edit-delete_output_feature" class='edit-button' 
-                        onclick='deleteSelectedRow("edit-dataframes_list");'>Delete</button>
-                <button id="edit-edit_output_feature" class='edit-button' 
-                        onclick='editOutputFeature("edit-dataframes_list");'>Edit</button>
-            </td>
-        </tr>
         <tr id='edit-add_feature'  style="visibility:collapse;">        
             <td id='edit-algo_output11' class="edit-row_label basic_part">Feature name:</td>
             <td id='edit-algo_output12'>
@@ -672,6 +619,7 @@ function editSetValues() {
 						elems[i].checked = false;
 				}
 				aid = pckg_data.aid;
+				/*
 				var elems = document.getElementById('edit-universe').getElementsByTagName('option');
 				for (var i=0; i < elems.length; i++) {
 					if (elems[i].value == pckg_data.universe)
@@ -686,6 +634,7 @@ function editSetValues() {
 					else 
 						elems[i].selected = false;
 				}
+				*/
 			}
 			else {
 				aid = 0;
@@ -707,11 +656,6 @@ function editSetValues() {
 			}
 			
 			var features = json_doc.features;
-			var tbl = document.getElementById('edit-dataframes_list');
-			//console.log(tbl.getElementsByTagName['tr']);
-			for (var i = tbl.getElementsByTagName('tr').length-1; i>0; i--) {
-				tbl.deleteRow(i);
-			}
 			var table = document.getElementById("edit-dataframes_list");
 			for (var i = 0; i < features.length; i++) {
 				var row = table.insertRow(-1);
@@ -754,7 +698,6 @@ function editSetValues() {
 				table2.appendChild(opt2);
 			}
 			var algo_types = json_doc.algo_types;
-			console.log(algo_types);
 
 /*
 			var types = document.getElementById('edit-algo_type');
@@ -879,15 +822,12 @@ function GetFeatures(e) {
 }
 
 function editSetAvailableFeatures(available_features) {
-	console.log(available_features);
-	console.log(available_features.length);
-	var table3 = document.getElementById('edit-new_feature_name')
+	var table3 = document.getElementById('edit-output_features')
 	var children = table3.getElementsByTagName('option');
 	for (var i = children.length-1; i> 0; i--) {
 		table3.removeChild(children[i]);
 	}
 	for (var i = 0; i < available_features.length; i++) {
-		console.log(available_features[i].id+'  '+available_features[i].name);
 		var opt1 = document.createElement('option');
 		opt1.value = available_features[i].id;
 		opt1.innerHTML = available_features[i].name;

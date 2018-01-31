@@ -8,15 +8,21 @@
 <body onload='editSetValues()'>
     <div id="constantPart" class='edit-package_part'>
         <table>
-        <tr class='edit_row'>
-            <td class="edit-row_label common_part">Algorithm type:</td>
-            <td id='edit-algo_type'></td>
+		<!-- ------------------------------------------------------------ -->
+        <tr class='edit_row section_start'>
+			<td colspan="2">Common features</td>
         </tr>
         <tr class='edit_row'>
             <td class="edit-row_label common_part">Algo code:</td>
             <td><input type="text" id="edit-algo_code" class='edit-row_data'/></td>
             <td class="edit-row_label common_part">Description:</td>
             <td rowspan="2"><textarea id="edit-description" class='edit-row_data' rows="3" ></textarea></td>
+        </tr>
+        <tr class='edit_row'>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
         </tr>
         <tr>
             <td class="edit-row_label common_part">Owner name:</td>
@@ -27,6 +33,19 @@
             <td><input type="email" id="edit-owner_email" class='edit-row_data'/></td>
             <td class="edit-row_label common_part">File name:</td>
             <td><input type="text" id="edit-python_file_path" class='edit-row_data'/></td>
+        </tr>
+		<!-- ------------------------------------------------------------ -->
+        <tr class='edit_row section_start'>
+			<td colspan="2">Algorithm properties</td>
+        </tr>
+        <tr class='edit_row'>
+            <td class="edit-row_label common_part">Algorithm type:</td>
+            <td id='edit-algo_type'></td>
+			<td id='edit-complex_algotype'>
+				<br>
+				<input type="checkbox" name="complexAlgoType" value="autoML" onchange="selectComplexAlgo(this)"><label for="autoML">autoML</label>
+			</td>
+			<td></td>
         </tr>
 		<!-- ------------------------------------------------------------ -->
         <tr class='edit_row'>
@@ -47,10 +66,84 @@
 <script>
 var popup_name = window.parent.document.getElementsByName('tab-name')[0].value+'-popup';
 var algo_id = window.parent.document.getElementsByName('object-algo_id')[0].value;
-console.log('popup_name='+popup_name+'-popup');
 var out_df_id = -1;
 
-function selectAlgoType(panelName) {
+function editSetValues() {
+	var xhttp = new XMLHttpRequest();
+	xhttp.onreadystatechange = function() {
+		if (this.readyState == 4 && this.status == 200) {
+			var 	json_doc = JSON.parse(this.responseText);
+			if (json_doc.length == 0) {
+				return;
+			}
+
+			var algo_data = json_doc.algo_data;
+			var elems = document.getElementsByName('algorithmType');
+			if (algo_data != null) {
+				for (var i=0; i < elems.length; i++) {
+					if (elems[i].value == algo_data.algo_type)
+						elems[i].checked = true;
+					else 
+						elems[i].checked = false;
+				}
+				aid = algo_data.aid;
+				document.getElementById('edit-algo_code').value = algo_data.algo_code;
+				document.getElementById('edit-owner_name').value = algo_data.owner_name;
+				document.getElementById('edit-owner_email').value = algo_data.owner_email;
+				document.getElementById('edit-description').value = algo_data.description;
+				document.getElementById('edit-python_file_path').value = algo_data.egg_path;
+			}
+			else {
+				aid = 0;
+			}
+			//////////////////////////////////////////////////////
+			var algo_types = json_doc.algo_types;
+
+			var types = document.getElementById('edit-algo_type');
+			types.innerHTML = '';
+			var id;
+			var name;
+			var algo_type;
+			for (var i = 0; i < algo_types.length; i++) {
+				id = algo_types[i].id;
+				name = algo_types[i].name;
+				var button = document.createElement('input');
+				button.setAttribute('type', 'radio');
+				button.setAttribute('name', 'algorithmType');
+				button.setAttribute('id', algo_types[i].name+'algorithmType');
+				button.setAttribute('value', id);
+				if (algo_data != null ) {
+					if (algo_data.algo_type == name) {
+						button.setAttribute('checked', true);
+						algo_type = name;
+					}
+				}
+				else if (i == 0) {
+					button.setAttribute('checked', true);
+					algo_type = 'basic';
+				}
+				var panel = name+'AlgoPart';
+				button.setAttribute('onchange', 'selectAlgoType("'+name+'")');
+				//console.log(panel);
+				types.appendChild(button);
+				var label = document.createElement('label');
+				label.setAttribute('for', name+'algorithmType');
+				label.innerHTML = name;
+				types.appendChild(label);
+				var br = document.createElement('br');
+				types.appendChild(br);
+			}
+			document.getElementById("edit-complex_algotype").style.visibility = ((algo_type == 'complex')?"visible":"collapse");
+		}
+	};
+	xhttp.open("GET", 'static/ajax/GetAlgoData.php?algo_id='+algo_id, true);
+	xhttp.send();		
+
+}
+
+function selectAlgoType(algo_type) {
+	document.getElementById("edit-complex_algotype").style.visibility = ((algo_type == 'complex')?"visible":"collapse");
+	return;
     if (panelName == 'basicAlgoPart') {
         document.getElementById("visibility_tags_header").style.visibility = "collapse";
         document.getElementById("visibility_tags_editor").style.visibility = "collapse";
@@ -65,23 +158,6 @@ function selectAlgoType(panelName) {
         document.getElementById("edit-feature_list_buttons").style.visibility = "visible";
         document.getElementById("edit-output_model").style.visibility = "collapse";
         document.getElementById("edit-output_model1").style.visibility = "collapse";
-        document.getElementById("edit-add_feature").style.visibility = "collapse";
-        document.getElementById("edit-add_feature3").style.visibility = "collapse";
-    }
-    if (panelName == 'complexAlgoPart') {
-        document.getElementById("visibility_tags_header").style.visibility = "visible";
-        document.getElementById("visibility_tags_editor").style.visibility = "visible";
-        document.getElementById("edit-complex_type").style.visibility = "visible";
-        document.getElementById("edit-algo_output12").style.visibility = "collapse";
-        document.getElementById("edit-input_model2").style.visibility = "collapse";
-        document.getElementById("edit-algo_universe").style.visibility = "collapse";
-        document.getElementById("edit-algo_output3").style.visibility = "collapse";
-
-        document.getElementById("edit-output_features2").style.visibility = "collapse";
-        document.getElementById("edit-output_features3").style.visibility = "collapse";
-        document.getElementById("edit-feature_list_buttons").style.visibility = "collapse";
-        document.getElementById("edit-output_model").style.visibility = "visible";
-        document.getElementById("edit-output_model1").style.visibility = "visible";
         document.getElementById("edit-add_feature").style.visibility = "collapse";
         document.getElementById("edit-add_feature3").style.visibility = "collapse";
     }
@@ -104,6 +180,11 @@ function selectAlgoType(panelName) {
         document.getElementById("edit-add_feature5").style.visibility = "collapse";
     }
 }
+
+function selectComplexAlgo(checkbox) {
+	console.log(checkbox.checked);
+}
+
 
 function showEditPanel(show) {
     var show1 = show?"visible":"collapse";
@@ -343,19 +424,6 @@ function editDeleteLiElement(elem_name) {
     }
 }
 
-function selectComplexAlgo(selection) {
-    /*
-    if(selection.value == 'manual') {
-        document.getElementById("editparams_header").style.visibility = "visible";
-        document.getElementById("editparams_editor").style.visibility = "visible";
-    }
-    else {
-        document.getElementById("editparams_header").style.visibility = "collapse";
-        document.getElementById("editparams_editor").style.visibility = "collapse";
-    }
-    */
-}
-
 function editSchedulePeriod() {
     var selector = document.getElementById('edit-schedule_custom11');
     var start_at = document.getElementById('edit-schedule_start_at');
@@ -393,73 +461,6 @@ function editSchedulePeriod() {
         start_on.value = (date.getYear()+1900)+'-'+(date.getMonth()+1)+'-'+date.getDate();
         break;
     }
-}
-
-function editSetValues() {
-	var xhttp = new XMLHttpRequest();
-	xhttp.onreadystatechange = function() {
-		if (this.readyState == 4 && this.status == 200) {
-			var 	json_doc = JSON.parse(this.responseText);
-			if (json_doc.length == 0) {
-				return;
-			}
-
-			var algo_data = json_doc.algo_data;
-			var elems = document.getElementsByName('algorithmType');
-			if (algo_data != null) {
-				for (var i=0; i < elems.length; i++) {
-					if (elems[i].value == algo_data.algo_type)
-						elems[i].checked = true;
-					else 
-						elems[i].checked = false;
-				}
-				aid = algo_data.aid;
-				document.getElementById('edit-algo_code').value = algo_data.algo_code;
-				document.getElementById('edit-owner_name').value = algo_data.owner_name;
-				document.getElementById('edit-owner_email').value = algo_data.owner_email;
-				document.getElementById('edit-description').value = algo_data.description;
-				document.getElementById('edit-python_file_path').value = algo_data.egg_path;
-			}
-			else {
-				aid = 0;
-			}
-			//////////////////////////////////////////////////////
-			var algo_types = json_doc.algo_types;
-			console.log(algo_types);
-
-			var types = document.getElementById('edit-algo_type');
-			types.innerHTML = '';
-			var id;
-			var name;
-			for (var i = 0; i < algo_types.length; i++) {
-				id = algo_types[i].id;
-				name = algo_types[i].name;
-				var button = document.createElement('input');
-				button.setAttribute('type', 'radio');
-				button.setAttribute('name', 'algorithmType');
-				button.setAttribute('id', algo_types[i].name+'algorithmType');
-				button.setAttribute('value', id);
-				if (algo_data != null ) {
-					if (algo_data.algo_type == name)
-						button.setAttribute('checked', true);
-				}
-				var panel = name+'AlgoPart';
-				//button.onchange=function(){selectAlgoType(name+"AlgoPart");};
-				button.setAttribute('onchange', 'selectAlgoType("'+name+'AlgoPart")');
-				//console.log(panel);
-				types.appendChild(button);
-				var label = document.createElement('label');
-				label.setAttribute('for', name+'algorithmType');
-				label.innerHTML = name;
-				types.appendChild(label);
-				var br = document.createElement('br');
-				types.appendChild(br);
-			}
-		}
-	};
-	xhttp.open("GET", 'static/ajax/GetAlgoData.php?algo_id='+algo_id, true);
-	xhttp.send();		
-
 }
 
 function editSavePackage() {
