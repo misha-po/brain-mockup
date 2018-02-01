@@ -48,6 +48,27 @@
 			<td></td>
         </tr>
 		<!-- ------------------------------------------------------------ -->
+		<tr class='edit_row section_start common_part'><td colspan="2">Input:</td></tr>
+        <tr class='edit_row'>
+            <td class="edit-row_label common_part">Dataframes:</td>
+            <td>
+                <ul id="edit-input_dataframes" class="edit-row_data  selectable_list">
+                </ul>
+            </td>
+            <td class='edit_row'>
+                <button id='edit-add_dataframe' class='edit-button' 
+                        onclick='editAddDataframe("edit-new_dataframe_name", "edit-input_dataframes", "edit-delete_dataframe");'>Add</button><br>
+                <button id="edit-delete_dataframe" class='edit-button' 
+                        onclick='editDeleteDataframe("edit-input_dataframes");'>Delete</button>
+            </td>
+            <td>
+                <div id="edit-new_dataframe">
+					<select id="edit-new_dataframe_name" class='edit-row_data' style="width:150;visibility: hidden;">
+					</select>
+                </div>
+            </td>
+        </tr>
+		<!-- ------------------------------------------------------------ -->
         <tr class='edit_row'>
 			<td colspan="4">
 			<hr>
@@ -76,8 +97,7 @@ function editSetValues() {
 			if (json_doc.length == 0) {
 				return;
 			}
-
-			var algo_data = json_doc.algo_data;
+			var algo_data = json_doc.algo_data[0];
 			var elems = document.getElementsByName('algorithmType');
 			if (algo_data != null) {
 				for (var i=0; i < elems.length; i++) {
@@ -87,6 +107,7 @@ function editSetValues() {
 						elems[i].checked = false;
 				}
 				aid = algo_data.aid;
+
 				document.getElementById('edit-algo_code').value = algo_data.algo_code;
 				document.getElementById('edit-owner_name').value = algo_data.owner_name;
 				document.getElementById('edit-owner_email').value = algo_data.owner_email;
@@ -132,6 +153,30 @@ function editSetValues() {
 				types.appendChild(label);
 				var br = document.createElement('br');
 				types.appendChild(br);
+			}
+			//////////////////////////////////////////////////////
+			if (json_doc.input_dataframes.length == 0) {
+				var li = document.createElement("li");
+				li.appendChild(document.createTextNode('any dataframe')); //if change check 
+				//li.onclick = function(){selectLine(li, list_name, 'li')}
+				document.getElementById('edit-input_dataframes').appendChild(li);				
+			}
+			else {
+				for(var i = 0; i < json_doc.input_dataframes.length; i++) {
+					var li = document.createElement("li");
+					li.appendChild(document.createTextNode(json_doc.input_dataframes[i].name)); //if change check 
+					li.onclick = function(){selectLine(li, list_name, 'li')}
+					document.getElementById('edit-input_dataframes').appendChild(li);				
+				}
+			}
+			var data_frames = json_doc.all_data_frames;
+
+			for (var i = 0; i < data_frames.length; i++) {
+				var opt1 = document.createElement('option');
+				opt1.value = data_frames[i].id;
+				opt1.innerHTML = data_frames[i].name;
+				//console.log("output_df="+json_doc.output_df.id);
+				document.getElementById('edit-new_dataframe_name').appendChild(opt1);
 			}
 			document.getElementById("edit-complex_algotype").style.visibility = ((algo_type == 'complex')?"visible":"collapse");
 		}
@@ -388,33 +433,36 @@ function editAddLiElement(panel_name, text_box, list_name, delete_button) {
     }
 }
 
-function editAddDataframe(panel_name, text_box, list_name, delete_button) {
-    var edit_panel = document.getElementById(panel_name);
-    if (edit_panel.style.display == "none") {
-        edit_panel.style.display = "table-cell";
+function editAddDataframe(select, list_name, delete_button) {
+	//console.log('here we go '+document.getElementById(select).style.visibility);
+    if (document.getElementById(select).style.visibility == "hidden") {
         document.getElementById(delete_button).style.visibility = "hidden";
+        document.getElementById(select).style.visibility = "visible";
+		return;
     }
-    else {
-        edit_panel.style.display = "none";
-        document.getElementById(delete_button).style.visibility = "visible";
-		var tbl = document.getElementById(text_box);
-        var text = tbl.options[tbl.selectedIndex].innerHTML;
-        
-        var elements = document.getElementById(list_name).getElementsByTagName('li');
-        for (var i = 0; i < elements.length; i++) {
-            if (elements[i].innerHTML == text) {
-                return;
-            }
-        }
-        var li = document.createElement("li");
-        li.appendChild(document.createTextNode(text));
-        li.onclick = function(){selectLine(li, list_name, 'li')}
-        document.getElementById(list_name).appendChild(li);
-    }
+	
+	document.getElementById(delete_button).style.visibility = "visible";
+	document.getElementById(select).style.visibility = "hidden";
+	var tbl = document.getElementById(select);
+	var text = tbl.options[tbl.selectedIndex].innerHTML;
+	var elements = document.getElementById(list_name).getElementsByTagName('li');
+	if (elements[0].innerHTML == 'any dataframe') {
+		elements[0].remove();
+	}
+	for (var i = 0; i < elements.length; i++) {
+		if (elements[i].innerHTML == text) {
+			return;
+		}
+	}
+	
+	var li = document.createElement("li");
+	li.appendChild(document.createTextNode(text));
+	li.onclick = function(){selectLine(li, list_name, 'li')}
+	document.getElementById(list_name).appendChild(li);
 }
 
 
-function editDeleteLiElement(elem_name) {
+function editDeleteDataframe(elem_name) {
     var elements = document.getElementById(elem_name).getElementsByTagName('li');
     for (var i = 0; i < elements.length; i++) {
         var li = elements[i];
@@ -422,6 +470,11 @@ function editDeleteLiElement(elem_name) {
             li.parentNode.removeChild(li);
         }
     }
+	if (elements.length == 0) {
+		var li = document.createElement("li");
+		li.appendChild(document.createTextNode('any dataframe')); //if change check 
+		document.getElementById('edit-input_dataframes').appendChild(li);				
+	}
 }
 
 function editSchedulePeriod() {
@@ -482,7 +535,6 @@ function editSavePackage() {
 	var xhttp = new XMLHttpRequest();
 	xhttp.onreadystatechange = function() {
 		if (this.readyState == 4 && this.status == 200) {
-			console.log(this.responseText);
 			var 	json_doc = JSON.parse(this.responseText);
 			window.parent.document.getElementById('modal-title_close').onclick('edit-popup');
 		}
@@ -492,7 +544,6 @@ function editSavePackage() {
 }
 
 function editCancelSavePackage() {
-	console.log(popup_name+'-popup_close');
 	window.parent.document.getElementById(popup_name+'_close').onclick(popup_name);
 }
 
@@ -528,7 +579,6 @@ function GetFeatures(e) {
 	};
 	xhttp.open("GET", 'static/ajax/GetFeatures.php?df_id='+df_id, true);
 	xhttp.send();		
-	console.log(e.options[e.selectedIndex].text);
 }
 
 </script>

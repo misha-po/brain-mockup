@@ -1,20 +1,11 @@
 <?php
-$servername = "localhost";
-$username = "root";
-$password = "1q2w3e4r";
-$dbname = "HDP_PoalimBrainDB";
-
-$conn = new mysqli($servername, $username, $password, $dbname);
-
-// Check connection
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-} 
+require 'DB_utils.php';
 
 //////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////
 $pid = $_GET['id'];
+
 $sql1 = "SELECT "
 			."p.id as pid, "
 			."a.id as aid, "
@@ -38,8 +29,6 @@ $sql4 = "select f.id,f.name,q.quality_metrics,dt.name as data_type, v.name as va
 $sql5 = "SELECT * from Data_types";
 
 $sql6 = "SELECT * from Value_constraints";
-$sql7 = "select * from DataFrames";
-
 
 if(!$result1 = $conn->query($sql1)) {
 	error_log('Error: '.$conn->error);
@@ -99,14 +88,16 @@ while($row6 = $result6->fetch_assoc()) {
 	array_push($value_constraints, $row6);
 }
 
-if(!$result7 = $conn->query($sql7)) {
-	error_log('Error: '.$conn->error);
-	return;
-}
-$all_data_frames = array();
-while($row7 = $result7->fetch_assoc()) {
-	array_push($all_data_frames, $row7);
-}
+$sql = "select * from DataFrames";
+$all_data_frames = FetchData($sql, $conn);
+// if(!$result7 = $conn->query($sql7)) {
+	// error_log('Error: '.$conn->error);
+	// return;
+// }
+// $all_data_frames = array();
+// while($row7 = $result7->fetch_assoc()) {
+	// array_push($all_data_frames, $row7);
+// }
 
 /*
 $algo_types = array();

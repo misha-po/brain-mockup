@@ -1,18 +1,8 @@
 <?php
-$servername = "localhost";
-$username = "root";
-$password = "1q2w3e4r";
-$dbname = "HDP_PoalimBrainDB";
-
-$conn = new mysqli($servername, $username, $password, $dbname);
-
-// Check connection
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-} 
+require 'DB_utils.php';
 
 $algo_id = $_GET['algo_id'];
-$sql1 = "SELECT "
+$sql = "SELECT "
 			."a.id, "
 			."a.algo_code, "
 			."at.name as algo_type, "
@@ -22,25 +12,22 @@ $sql1 = "SELECT "
 			."from Algorithms a, AlgoTypes as at  "
 			."where a.algo_type=at.id and a.id=".$algo_id;
 
-if(!$result1 = $conn->query($sql1)) {
-	error_log('Error: '.$conn->error);
-	return;
-}
-$row1 = $result1->fetch_assoc();
+$algo_data = FetchData($sql, $conn);
 
 $sql = "select * from AlgoTypes";
-if(!$result = $conn->query($sql)) {
-	error_log('Error: '.$conn->error);
-	return;
-}
-$algo_types = array();
-while($row = $result->fetch_assoc()) {
-	array_push($algo_types, $row);
-}
+$algo_types = FetchData($sql, $conn);
+
+$sql = "select i.id,d.name from InputDataFrames i, DataFrames d where i.dataframe_id=d.id and i.algorithm_id=".$algo_id;
+$input_dataframes = FetchData($sql, $conn);
+
+$sql = "select * from DataFrames";
+$all_data_frames = FetchData($sql, $conn);
 
 $json_data = (object) array(
 				'error' => 'OK',
-				'algo_data' => $row1,
+				'algo_data' => $algo_data,
+				'input_dataframes' => $input_dataframes,
+				'all_data_frames' => $all_data_frames,
 				'algo_types' => $algo_types
 			);
 

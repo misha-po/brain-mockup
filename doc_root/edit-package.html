@@ -2,7 +2,7 @@
 <head>
 <base href="index.php" target="_self">
 <link href="static/css/editor.css" rel="stylesheet" type="text/css" />
-
+<script src="static/js/js_utils.js"></script>
 </head>
 
 <body onload='editSetValues()'>
@@ -593,22 +593,10 @@ function editSetValues() {
 			if (json_doc.length == 0) {
 				return;
 			}
-			var data_types = json_doc.data_types;
-			for (var i = 0; i < data_types.length; i++) {
-				var opt = document.createElement('option');
-				opt.value = data_types[i].id;
-				opt.innerHTML = data_types[i].name;
-				document.getElementById('edit-data_type').appendChild(opt);
-			}
 
-			var value_constraints = json_doc.value_constraints;
-			for (var i = 0; i < value_constraints.length; i++) {
-				var opt = document.createElement('option');
-				opt.value = value_constraints[i].id;
-				opt.innerHTML = value_constraints[i].name;
-				document.getElementById('edit-data_constraint').appendChild(opt);
-			}
-			
+			RewriteSelect('edit-data_type', json_doc.data_types);
+			RewriteSelect('edit-data_constraint', json_doc.value_constraints);
+
 			var pckg_data = json_doc.pckg_data;
 			var elems = document.getElementsByName('algorithmType');
 			if (pckg_data != null) {
@@ -658,7 +646,7 @@ function editSetValues() {
 			var features = json_doc.features;
 			var table = document.getElementById("edit-dataframes_list");
 			for (var i = 0; i < features.length; i++) {
-				var row = table.insertRow(-1);
+//				var row = table.insertRow(-1);
 				var td1 = row.insertCell(-1);
 				td1.innerHTML = features[i].id;
 				td1.style.visibility = 'hidden';
@@ -729,18 +717,8 @@ function editSetValues() {
 				types.appendChild(br);
 			}
 */
-			var table1 = document.getElementById('edit-algo_code')
-			var children = table1.getElementsByTagName('option');
-			for (var i = children.length-1; i> 0; i--) {
-				table1.removeChild(children[i]);
-			}
 			var algorithms = json_doc.algorithms;
-			for (var i = 0; i < algorithms.length; i++) {
-				var opt = document.createElement('option');
-				opt.value = algorithms[i].id;
-				opt.innerHTML = algorithms[i].Name;
-				table1.appendChild(opt);
-			}
+			RewriteSelect('edit-algo_code', algorithms);
 			editSetAvailableFeatures(json_doc.available_features)
 		}
 	};
