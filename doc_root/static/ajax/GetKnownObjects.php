@@ -32,7 +32,7 @@ if($type == 'pckg') {
 	$result = $conn->query($sql);
 	$row = $result->fetch_assoc();
 	$timestamp = $row['timestamp'];
-	$sql = "SELECT p.id, name Name, a.owner_name Owner, a.owner_email Email, run_status Status FROM Packages as p, Algorithms as a WHERE a.id=p.algorithm";
+	$sql = "SELECT p.id, p.name Name, a.owner_name Owner, a.owner_email Email, r.name Status FROM Packages as p, Algorithms as a, RunStates as r WHERE run_status=r.id and a.id=p.algorithm";
 }
 if($type == 'dataframe') {
 	$timestamp = -1;

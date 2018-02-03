@@ -22,10 +22,6 @@ $sql1 = "SELECT "
 
 $sql2 = "select * from InputDataFrames as f, DataFrames as df where df.id=f.dataframe_id and package_id=".$pid;
 
-$sql4 = "select f.id,f.name,q.quality_metrics,dt.name as data_type, v.name as value_constraint, f.is_target "
-		." from QualityMetrics q, Features f, DataFrames d, Data_types dt, Value_constraints v "
-		." where f.dataframe_id=d.id and q.feature_id=f.id and f.data_type=dt.id and f.value_constraint=v.id and q.package_id=".$pid;
-
 $sql5 = "SELECT * from Data_types";
 
 $sql6 = "SELECT * from Value_constraints";
@@ -60,14 +56,11 @@ else {
 	$output_df['name'] = '';
 }
 
-if(!$result4 = $conn->query($sql4)) {
-	error_log('Error: '.$conn->error);
-	return;
-}
-$features = array();
-while($row4 = $result4->fetch_assoc()) {
-	array_push($features, $row4);
-}
+$sql4 = "select f.id,f.name,q.quality_metrics,dt.name as data_type, v.name as value_constraint, f.is_target "
+		." from QualityMetrics q, Features f, DataFrames d, Data_types dt, Value_constraints v "
+		." where f.dataframe_id=d.id and q.feature_id=f.id and f.data_type=dt.id and f.value_constraint=v.id and q.package_id=".$pid;
+
+$features = FetchData($sql4, $conn);
 
 if(!$result5 = $conn->query($sql5)) {
 	error_log('Error: '.$conn->error);
@@ -111,7 +104,7 @@ while($row = $result->fetch_assoc()) {
 }
 */
 $algorithms = array();
-$sql = "select id,algo_code Name from Algorithms";
+$sql = "select id,algo_code name from Algorithms";
 if(!$result = $conn->query($sql)) {
 	error_log('Error: '.$conn->error);
 	return;

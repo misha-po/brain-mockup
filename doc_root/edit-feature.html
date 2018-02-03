@@ -2,7 +2,7 @@
 <head>
 <base href="index.php" target="_self">
 <link href="static/css/editor.css" rel="stylesheet" type="text/css" />
-
+<script src="static/js/js_utils.js"></script>
 </head>
 
 <body onload='editSetValues()'>
@@ -86,13 +86,12 @@
                 <button id='edit-save-package' class='action-button' onclick='editSaveValues();'>Save</button>
             </td>
             <td colspan=2>
-                <button id="edit-cancel" class='action-button' onclick='editCancelSavePackage(false);'>Cancel</button>
+                <button id="edit-cancel" class='action-button' onclick='editCancelSavePackage(popup_name);'>Cancel</button>
             </td>
         </tr>
         </table>
     </div>  
 <script>
-var popup_name = window.parent.document.getElementsByName('tab-name')[0].value+'-popup';
 var feature_id = window.parent.document.getElementsByName('object-feature_id')[0].value;
 var df_id = window.parent.document.getElementsByName('object-df_id')[0].value;
 var out_df_id = -1;
@@ -320,15 +319,11 @@ function editSaveValues() {
 				alert(json_doc.error);
 				return;
 			}
-			editCancelSavePackage();
+			editCancelSavePackage(popup_name);
 		}
 	};
 	xhttp.open("GET", 'static/ajax/SaveFeatureData.php?feature_id='+feature_id+'&feature_data='+encodeURI(JSON.stringify(feature_data)), true);
 	xhttp.send();		
-}
-
-function editCancelSavePackage() {
-	window.parent.document.getElementById(popup_name+'_close').onclick(popup_name);
 }
 
 function MoveTag(direction) {

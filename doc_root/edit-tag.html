@@ -2,7 +2,7 @@
 <head>
 <base href="index.php" target="_self">
 <link href="static/css/editor.css" rel="stylesheet" type="text/css" />
-
+<script src="static/js/js_utils.js"></script>
 </head>
 
 <body onload='editSetValues()'>
@@ -31,13 +31,12 @@
                 <button id='edit-save-package' class='action-button' onclick='editSaveValues();'>Save</button>
             </td>
             <td colspan=2>
-                <button id="edit-cancel" class='action-button' onclick='editCancelSavePackage(false);'>Cancel</button>
+                <button id="edit-cancel" class='action-button' onclick='editCancelSavePackage(popup_name);'>Cancel</button>
             </td>
         </tr>
         </table>
     </div>  
 <script>
-var popup_name = window.parent.document.getElementsByName('tab-name')[0].value+'-popup';
 var tag_id = window.parent.document.getElementsByName('object-tag_id')[0].value;
 console.log(tag_id);
 function selectLine(element, list_name, tag_name) {
@@ -123,21 +122,16 @@ function editSaveValues() {
 	var xhttp = new XMLHttpRequest();
 	xhttp.onreadystatechange = function() {
 		if (this.readyState == 4 && this.status == 200) {
-			console.log(this.responseText);
 			var 	json_doc = JSON.parse(this.responseText);
 			if (json_doc.error != 'OK') {
 				alert(json_doc.error);
 				return;
 			}
-			editCancelSavePackage();
+			editCancelSavePackage(popup_name);
 		}
 	};
 	xhttp.open("GET", 'static/ajax/SaveTagData.php?tag_id='+tag_id+'&tag_data='+encodeURI(JSON.stringify(tag_data)), true);
 	xhttp.send();		
-}
-
-function editCancelSavePackage() {
-	window.parent.document.getElementById(popup_name+'_close').onclick(popup_name);
 }
 
 </script>

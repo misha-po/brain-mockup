@@ -31,7 +31,7 @@ $_SESSION["next_page"] = 1;
 	</div>
 </head>
 
-<body onload="SelectTab(0);">
+<body onload="SelectTab(3);">
 
 	<div id="main_vew_tabs" class="tab_pane">
 		<button class="tab-button" type="button" 
@@ -151,11 +151,11 @@ $_SESSION["next_page"] = 1;
 		<div style='display:inline-block;width:100%;' onclick="this.parentElement.style.display='none';">Select row that you want to edit.</div> 
 	</div>
 	-->	
-	<div class="modal fade" id="alert-popup" role="dialog">
-		<div class="modal-content">
+	<div class="modal2 fade" id="alert-popup" role="dialog">
+		<div class="modal-content2">
 			<div style="border:solid black 1px;">
-				<span id="modal-title" style='float:left;font-size: 28px;'>Error</span>
-				<span id="tag-view-popup_close" class="close" onclick="CloseEditDialog('alert-popup','','');">&times;</span>
+				<h2 id="modal-title" style='float:left;margin-bottom:0'>Error</h2>
+				<span id="alert-view-popup_close" class="close" onclick="CloseEditDialog('alert-popup','','');">&times;</span>
 			</div>
 			<div style='display:inline-block;width:100%;' onclick="this.parentElement.style.display='none';">Select row that you want to edit.</div> 
 		</div>
@@ -169,7 +169,7 @@ $_SESSION["next_page"] = 1;
 	<div class="modal fade" id="tag-edit-popup" role="dialog" style="top:100px;">
 	  <div class="modal-content">
 		<div style="border:solid black 1px;">
-			<span id="modal-title" style='float:left;font-size: 28px;'>Tag propertes</span>
+			<h2 id="modal-title" style='float:left;margin-bottom:0'>Tag propertes</h2>
 			<span id="tag-view-popup_close" class="close" onclick="CloseEditDialog('tag-edit-popup','tag_list','tag');">&times;</span>
 		</div>
 		<div style="border:solid black 1px; height:140px;">
@@ -185,8 +185,8 @@ $_SESSION["next_page"] = 1;
 	<div class="modal fade" id="pkg-edit-popup" role="dialog" style="top:100px;">
 	  <div class="modal-content">
 		<div style="border:solid black 1px;">
-			<span id="modal-title" style='float:left;font-size: 28px;'>Package propertes</span>
-			<span id="modal-title_close" class="close" onclick="CloseEditDialog('pkg-edit-popup','pckg_list', 'pckg');">&times;</span>
+			<h2 id="modal-title" style='float:left;margin-bottom:0'>Package propertes</h2>
+			<span id="pckg-view-popup_close" class="close" onclick="CloseEditDialog('pkg-edit-popup','pckg_list', 'pckg');">&times;</span>
 		</div>
 		<div style="border:solid black 1px; height:700px;">
 			<object id="object-package_edit" type="text/html" style="width:100%;border: 0; height:100%;" data="edit-package.html">
@@ -202,7 +202,7 @@ $_SESSION["next_page"] = 1;
 	<div class="modal fade" id="algo-view-popup" role="dialog" style="top:100px;">
 	  <div class="modal-content">
 		<div style="border:solid black 1px;">
-			<span id="modal-title" style='float:left;font-size: 28px;'>Algorithm propertes</span>
+			<h2 id="modal-title" style='float:left;margin-bottom:0'>Algorithm propertes</h2>
 			<span id="algo-view-popup_close" class="close" onclick="CloseEditDialog('algo-view-popup','algo_list', 'algo');">&times;</span>
 		</div>
 		<div style="border:solid black 1px; height:400px;">
@@ -219,7 +219,7 @@ $_SESSION["next_page"] = 1;
 	<div class="modal fade" id="feature-view-popup" role="dialog"  style="top:100px;">
 	  <div class="modal-content">
 		<div style="border:solid black 1px;">
-			<span id="modal-title" style='float:left;font-size: 28px;'>Feature propertes</span>
+			<h2 id="modal-title" style='float:left;margin-bottom:0'>Feature propertes</h2>
 			<span id="feature-view-popup_close" class="close" onclick='CloseEditDialog("feature-view-popup","feature_list", "feature");'>&times;</span>
 		</div>
 		<div style="border:solid black 1px; height:300px;">
@@ -357,7 +357,8 @@ function highLightRow(row) {
 }
 
 
-function CloseEditDialog(dlg_id,tbl_name, type) {
+function CloseEditDialog(dlg_id, tbl_name, type) {
+	console.log('dlg_id='+dlg_id, 'tbl_name='+tbl_name, 'type='+type);
 	if (tbl_name != '') {
 		if (type == 'feature')
 			FillTable2('df_list', 0, 'dataframe','');
@@ -458,7 +459,7 @@ function SelectTab(tab_id) {
 		}
 	}
 	document.getElementById(tab_name).style.display='block';
-	document.getElementsByName('tab-name')[0].value=tab_name;
+	document.getElementsByName('tab-name')[0].value=type;
 	if (type == 'feature')
 		FillTable2('df_list', 0, 'dataframe','');
 	else

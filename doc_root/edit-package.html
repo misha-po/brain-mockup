@@ -2,6 +2,7 @@
 <head>
 <base href="index.php" target="_self">
 <link href="static/css/editor.css" rel="stylesheet" type="text/css" />
+<link href="static/css/action-button.css" rel="stylesheet" type="text/css" />
 <script src="static/js/js_utils.js"></script>
 </head>
 
@@ -32,11 +33,9 @@
             <td>
                 <div id="edit-new_dataframe" style='display: none;'>
                     <label>New dataframe:</label><br>
-					<!--
-                    <input id='edit-new_dataframe_name' type="text" />
-					-->
-					<select id="edit-new_dataframe_name" class='edit-row_data' style="width:150;">
-					</select>
+					<select id="edit-new_dataframe_name" class='edit-row_data' style="width:150;"></select><br>
+                    <label>Feature:</label><br>
+					<select id="edit-new_dataframe_name" class='edit-row_data' style="width:150;"></select>
                 </div>
             </td>
         </tr>
@@ -84,7 +83,8 @@
                 </select>
             </td>
         </tr>
-        <tr id='edit-add_feature3' class='edit_row' style="visibility:collapse;">
+		<!--
+        <tr id='edit-add_feature3' class='edit_row'>
             <td class="edit-row_label basic_part">Tag list:</td>
             <td class="basic_part">
                 <input id='edit-feature_tag_list' type="text" id='edit-tag_list'/>
@@ -93,6 +93,7 @@
                 <input type="checkbox" id='edit-is-target'>is target</input>
             </td>
         </tr>
+		-->
         <tr id='edit-add_feature4' class='edit_row' style="visibility:collapse;">
             <td>
             </td>
@@ -183,8 +184,8 @@
                 </div>
             </td>
         </tr>
-        <tr id='visibility_tags_header' class='edit_row section_start complex_part' style="visibility:collapse;"><td colspan="2">Prohibited tags:</td></tr>
-        <tr id='visibility_tags_editor' class='edit_row' style="visibility:collapse;">
+        <tr id='visibility_tags_header' class='edit_row section_start complex_part' ><td colspan="2">Prohibited tags:</td></tr>
+        <tr id='visibility_tags_editor' class='edit_row' >
             <td>
                 <ul id="edit-tags" class='selectable_list' style='display: table-cell;'>
                     <li value="Tag1" onclick='selectLine(this, "edit-tags", "li")'>Tag1</li>
@@ -208,6 +209,23 @@
             </td>
         </tr>
 		<!-- ------------------------------------------------------------ -->
+        <tr class='edit_row section_start  common_part'><td colspan="2">Deployment:</td></tr>
+            <td>
+                <input type="checkbox" id='edit-is-target' onchange='document.getElementById("edit-rt_properties").style.visibility = (this.checked?"visible":"collapse");'>Real time</input>
+            </td>
+        </tr>
+        <tr id='edit-rt_properties' class='edit_row common_part' style="visibility: collapse;">
+            <td></td>
+            <td>
+                <input type="radio" name="edit-rt_Type" value="rt_data" checked onchange="selectRT_Type(this);">RT data access</input><br>
+                <input type="radio" name="edit-rt_Type" value="rt_calc" onchange="selectRT_Type(this);">RT calculation</input>
+            </td>
+        </tr>
+        <tr id='edit-rt_data' class='edit_row' style="visibility:collapse;">
+        </tr>
+        <tr id='edit-rt_calc' class='edit_row' style="visibility:collapse;">
+        </tr>
+		<!-- ------------------------------------------------------------ -->
         <tr class='edit_row'>
 			<td colspan="4">
 			<hr>
@@ -218,7 +236,7 @@
                 <button id='edit-save-package' class='action-button' onclick='editSavePackage();'>Save</button>
             </td>
             <td colspan=2>
-                <button id="edit-cancel" class='action-button' onclick='editCancelSavePackage(false);'>Cancel</button>
+                <button id="edit-cancel" class='action-button' onclick='editCancelSavePackage(popup_name);'>Cancel</button>
             </td>
         </tr>
         </table>
@@ -643,48 +661,10 @@ function editSetValues() {
 				ul.appendChild(li);
 			}
 			
-			var features = json_doc.features;
-			var table = document.getElementById("edit-dataframes_list");
-			for (var i = 0; i < features.length; i++) {
-//				var row = table.insertRow(-1);
-				var td1 = row.insertCell(-1);
-				td1.innerHTML = features[i].id;
-				td1.style.visibility = 'hidden';
-				var td2 = row.insertCell(-1);
-				td2.innerHTML = features[i].name;
-				var td3 = row.insertCell(-1);
-				td3.innerHTML = features[i].data_type;
-				var td4 = row.insertCell(-1);
-				td4.innerHTML = features[i].value_constraint;
-				var td5 = row.insertCell(-1);
-				td5.innerHTML = (features[i].is_target == 0)?'N':'Y';
-				var td6 = row.insertCell(-1);
-				row.setAttribute('onclick', 'selectLine(this, "edit-dataframes_list", "tr")');		
-			}
-			var table1 = document.getElementById('edit-new_dataframe_name')
-			var table2 = document.getElementById('edit-output_df_name')
-			var children = table1.getElementsByTagName('option');
-			for (var i = children.length-1; i> 0; i--) {
-				table1.removeChild(children[i]);
-			}
-			children = table2.getElementsByTagName('option');
-			for (var i = children.length-1; i> 0; i--) {
-				table2.removeChild(children[i]);
-			}
-			var data_frames = json_doc.all_data_frames;
-			for (var i = 0; i < data_frames.length; i++) {
-				var opt1 = document.createElement('option');
-				var opt2 = document.createElement('option');
-				opt1.value = data_frames[i].id;
-				opt1.innerHTML = data_frames[i].name;
-				opt2.value = data_frames[i].id;
-				opt2.innerHTML = data_frames[i].name;
-				//console.log("output_df="+json_doc.output_df.id);
-				if(data_frames[i].id == json_doc.output_df.id)
-					opt2.selected = true;
-				table1.appendChild(opt1);
-				table2.appendChild(opt2);
-			}
+			RewriteSelect('edit-output_features', json_doc.features);
+			RewriteSelect('edit-new_dataframe_name', json_doc.all_data_frames);
+			RewriteSelect('edit-output_df_name', json_doc.all_data_frames, json_doc.output_df.id);
+			
 			var algo_types = json_doc.algo_types;
 
 /*
@@ -760,10 +740,6 @@ function editSavePackage() {
 	xhttp.send();		
 }
 
-function editCancelSavePackage() {
-	window.parent.document.getElementById('modal-title_close').onclick('edit-popup');
-}
-
 /*
 function addDataFrame() {
 	var xhttp = new XMLHttpRequest();
@@ -810,6 +786,17 @@ function editSetAvailableFeatures(available_features) {
 		opt1.value = available_features[i].id;
 		opt1.innerHTML = available_features[i].name;
 		table3.appendChild(opt1);
+	}
+}
+
+function selectRT_Type(button) {
+	if (button.value == "rt_data") {
+        document.getElementById("edit-rt_data").style.visibility = "visible";
+        document.getElementById("edit-rt_calc").style.visibility = "collapse";
+	}
+	if (button.value == "rt_calc") {
+        document.getElementById("edit-rt_data").style.visibility = "collapse";
+        document.getElementById("edit-rt_calc").style.visibility = "visible";
 	}
 }
 </script>

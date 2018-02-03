@@ -2,7 +2,7 @@
 <head>
 <base href="index.php" target="_self">
 <link href="static/css/editor.css" rel="stylesheet" type="text/css" />
-
+<script src="static/js/js_utils.js"></script>
 </head>
 
 <body onload='editSetValues()'>
@@ -79,13 +79,12 @@
                 <button id='edit-save-package' class='action-button' onclick='editSavePackage();'>Save</button>
             </td>
             <td colspan=2>
-                <button id="edit-cancel" class='action-button' onclick='editCancelSavePackage(false);'>Cancel</button>
+                <button id="edit-cancel" class='action-button' onclick='editCancelSavePackage(popup_name);'>Cancel</button>
             </td>
         </tr>
         </table>
     </div>  
 <script>
-var popup_name = window.parent.document.getElementsByName('tab-name')[0].value+'-popup';
 var algo_id = window.parent.document.getElementsByName('object-algo_id')[0].value;
 var out_df_id = -1;
 
@@ -536,15 +535,11 @@ function editSavePackage() {
 	xhttp.onreadystatechange = function() {
 		if (this.readyState == 4 && this.status == 200) {
 			var 	json_doc = JSON.parse(this.responseText);
-			window.parent.document.getElementById('modal-title_close').onclick('edit-popup');
+			editCancelSavePackage(popup_name);
 		}
 	};
 	xhttp.open("GET", 'static/ajax/SaveAlgoData.php?algo_id='+algo_id+'&algo_data='+encodeURI(JSON.stringify(algo_data)), true);
 	xhttp.send();		
-}
-
-function editCancelSavePackage() {
-	window.parent.document.getElementById(popup_name+'_close').onclick(popup_name);
 }
 
 /*
