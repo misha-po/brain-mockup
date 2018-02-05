@@ -81,12 +81,18 @@ else {
 		$packages[$i]->visited = True;
 		$p_in_name = '';
 		$p_out_name = '';
-		if(!$result = $conn->query($sql3.$packages[$i]->p_in))
+		$sql = $sql3.$packages[$i]->p_in;
+		if(!$result = $conn->query($sql)) {
 			error_log('Error: '.$conn->error);
+			continue;
+		}
 		if ($row = $result->fetch_assoc())
 			$p_in_name = $row['name'];
-		if(!$result = $conn->query($sql3.$packages[$i]->p_out))
+		$sql = $sql3.$packages[$i]->p_out;
+		if(!$result = $conn->query($sql)) {
 			error_log('Error: '.$conn->error);
+			continue;
+		}
 		if ($row = $result->fetch_assoc())
 			$p_out_name = $row['name'];
 		fwrite($file, "\t" . $p_in_name . " -> " . $p_out_name .'[ label="'.$packages[$i]->df_name.'" ]'.";\n");
@@ -99,6 +105,7 @@ $conn->close();
 
 
 system ("dot -Tsvg ../../data/graph1.gv -o ../../data/graph1.svg");
+echo(json_encode((object) array('error' => "OK")));
 return;
 
 
@@ -108,8 +115,11 @@ return;
 ///////////////////////////////////////////////////
 
 function GetSiblings($conn, $packages, $sql, $pid, $go_back) {
-	error_log(($go_back?'back':'for').'  '.count($packages).'   pid='.$pid);
+	if ($pid == '')
+		return $packages;
+	//error_log(($go_back?'back':'for').'  '.count($packages).'   pid='.$pid);
 	if(!$result = $conn->query($sql.$pid)) {
+		error_log($sql);
 		error_log('Error: '.$conn->error);
 	}
 	while($row = $result->fetch_assoc()) {
@@ -121,7 +131,7 @@ function GetSiblings($conn, $packages, $sql, $pid, $go_back) {
 		);
 		if ($node->p_in == $node->p_out)
 			continue;
-		error_log('pin='.$node->p_in.' pout='.$node->p_out);
+//		error_log('pin='.$node->p_in.' pout='.$node->p_out);
 		$packages = GetSiblings($conn, $packages, $sql, ($go_back)?$node->p_in:$node->p_out, $go_back);
 		array_push($packages , $node);
 	}

@@ -7,7 +7,7 @@
 
 <body onload='editSetValues()'>
     <div id="constantPart" class='edit-package_part'>
-        <table>
+        <table style="border-collapse: collapse;">
 		<!-- ------------------------------------------------------------ -->
         <tr class='edit_row section_start'>
 			<td colspan="2">Common features</td>
@@ -69,6 +69,35 @@
             </td>
         </tr>
 		<!-- ------------------------------------------------------------ -->
+		<tr id="edit-basic_algo_properties_title" class='edit_row section_start common_part'><td colspan="2">Basic algo properties:</td></tr>
+        <tr id="edit-basic_algo_properties" class='edit_row'>
+            <td></td>
+            <td class='edit_row' colspan="2">
+				<input type="checkbox" id="edit-build_pdf" onchange="basicProperties(this)"><label for="autoML">Calculate metrics and build PDF</label><br>
+				<input type="checkbox" id="edit-quality_control" onchange="basicProperties(this)"><label for="autoML">Output quality control</label><br>
+				<div>
+					<input type="checkbox" id="edit-stop_on_fail" style="margin-left: 2em;" disabled 
+						onchange="basicProperties(this)"><label for="edit-stop_on_fail">Stop schedule if quality failed</label>
+				</div>
+            </td>
+            <td></td>
+        </tr>
+		<tr id="edit-ml_training_properties_title" class='edit_row section_start common_part' style="display: none;"><td colspan="2">ML training properties:</td></tr>
+        <tr id="edit-ml_training_properties" class='edit_row' style="display: none;">
+            <td colspan="4" style="font-size: x-large;">ml_training_properties...</td>
+            <td></td>
+        </tr>
+		<tr id="edit-ml_invocation_properties_title" class='edit_row section_start common_part' style="display: none;"><td colspan="2">ML invocation properties:</td></tr>
+        <tr id="edit-ml_invocation_properties" class='edit_row' style="display: none;">
+            <td colspan="4" style="font-size: x-large;">ml_invocation_properties...</td>
+            <td></td>
+        </tr>
+		<tr id="edit-routing_properties_title" class='edit_row section_start common_part' style="display: none;"><td colspan="2">Routing properties:</td></tr>
+        <tr id="edit-routing_properties" class='edit_row' style="display: none;">
+            <td colspan="4" style="font-size: x-large;">create routing tables here...</td>
+            <td></td>
+        </tr>
+		<!-- ------------------------------------------------------------ -->
         <tr class='edit_row'>
 			<td colspan="4">
 			<hr>
@@ -126,16 +155,16 @@ function editSetValues() {
 			var algo_type;
 			for (var i = 0; i < algo_types.length; i++) {
 				id = algo_types[i].id;
-				name = algo_types[i].name;
+				name = algo_types[i].display_name;
 				var button = document.createElement('input');
 				button.setAttribute('type', 'radio');
 				button.setAttribute('name', 'algorithmType');
 				button.setAttribute('id', algo_types[i].name+'algorithmType');
 				button.setAttribute('value', id);
 				if (algo_data != null ) {
-					if (algo_data.algo_type == name) {
+					if (algo_data.algo_type == algo_types[i].name) {
 						button.setAttribute('checked', true);
-						algo_type = name;
+						algo_type = algo_types[i].name;
 					}
 				}
 				else if (i == 0) {
@@ -143,7 +172,7 @@ function editSetValues() {
 					algo_type = 'basic';
 				}
 				var panel = name+'AlgoPart';
-				button.setAttribute('onchange', 'selectAlgoType("'+name+'")');
+				button.setAttribute('onchange', 'selectAlgoType(id)');
 				//console.log(panel);
 				types.appendChild(button);
 				var label = document.createElement('label');
@@ -177,7 +206,7 @@ function editSetValues() {
 				//console.log("output_df="+json_doc.output_df.id);
 				document.getElementById('edit-new_dataframe_name').appendChild(opt1);
 			}
-			document.getElementById("edit-complex_algotype").style.visibility = ((algo_type == 'complex')?"visible":"collapse");
+			document.getElementById("edit-complex_algotype").style.visibility = ((algo_type == 'complexalgorithmType')?"visible":"collapse");
 		}
 	};
 	xhttp.open("GET", 'static/ajax/GetAlgoData.php?algo_id='+algo_id, true);
@@ -186,43 +215,40 @@ function editSetValues() {
 }
 
 function selectAlgoType(algo_type) {
-	document.getElementById("edit-complex_algotype").style.visibility = ((algo_type == 'complex')?"visible":"collapse");
-	return;
-    if (panelName == 'basicAlgoPart') {
-        document.getElementById("visibility_tags_header").style.visibility = "collapse";
-        document.getElementById("visibility_tags_editor").style.visibility = "collapse";
-        document.getElementById("edit-complex_type").style.visibility = "collapse";
-        document.getElementById("edit-algo_output12").style.visibility = "visible";
-        document.getElementById("edit-input_model2").style.visibility = "collapse";
-        document.getElementById("edit-algo_universe").style.visibility = "visible";
-        document.getElementById("edit-algo_output3").style.visibility = "collapse";
-
-        document.getElementById("edit-output_features2").style.visibility = "visible";
-        document.getElementById("edit-output_features3").style.visibility = "visible";
-        document.getElementById("edit-feature_list_buttons").style.visibility = "visible";
-        document.getElementById("edit-output_model").style.visibility = "collapse";
-        document.getElementById("edit-output_model1").style.visibility = "collapse";
-        document.getElementById("edit-add_feature").style.visibility = "collapse";
-        document.getElementById("edit-add_feature3").style.visibility = "collapse";
+    if (algo_type == 'basicalgorithmType') {
+        document.getElementById("edit-basic_algo_properties_title").style.display = "table-row";
+        document.getElementById("edit-basic_algo_properties").style.display = "table-row";
     }
-    if (panelName == 'invocationAlgoPart') {
-        document.getElementById("visibility_tags_header").style.visibility = "collapse";
-        document.getElementById("visibility_tags_editor").style.visibility = "collapse";
-        document.getElementById("edit-complex_type").style.visibility = "collapse";
-        document.getElementById("edit-algo_output12").style.visibility = "visible";
-        document.getElementById("edit-input_model2").style.visibility = "visible";
-        document.getElementById("edit-algo_universe").style.visibility = "collapse";
-        document.getElementById("edit-algo_output3").style.visibility = "visible";
-
-        document.getElementById("edit-output_features2").style.visibility = "collapse";
-        document.getElementById("edit-output_features3").style.visibility = "collapse";
-        document.getElementById("edit-feature_list_buttons").style.visibility = "collapse";
-        document.getElementById("edit-output_model").style.visibility = "collapse";
-        document.getElementById("edit-output_model").style.visibility = "collapse";
-        document.getElementById("edit-add_feature").style.visibility = "visible";
-        document.getElementById("edit-add_feature3").style.visibility = "visible";
-        document.getElementById("edit-add_feature5").style.visibility = "collapse";
-    }
+	else {
+        document.getElementById("edit-basic_algo_properties_title").style.display = "none";
+        document.getElementById("edit-basic_algo_properties").style.display = "none";
+	}
+    if (algo_type == 'complexalgorithmType') {
+        document.getElementById("edit-ml_training_properties_title").style.display = "table-row";
+        document.getElementById("edit-ml_training_properties").style.display = "table-row";
+		document.getElementById("edit-complex_algotype").style.visibility = "visible";
+	}
+	else {
+        document.getElementById("edit-ml_training_properties_title").style.display = "none";
+        document.getElementById("edit-ml_training_properties").style.display = "none";
+		document.getElementById("edit-complex_algotype").style.visibility = "collapse";
+	}
+    if (algo_type == 'invocationalgorithmType') {
+        document.getElementById("edit-ml_invocation_properties_title").style.display = "table-row";
+        document.getElementById("edit-ml_invocation_properties").style.display = "table-row";
+	}
+	else {
+        document.getElementById("edit-ml_invocation_properties_title").style.display = "none";
+        document.getElementById("edit-ml_invocation_properties").style.display = "none";
+	}
+    if (algo_type == 'routingalgorithmType') {
+        document.getElementById("edit-routing_properties_title").style.display = "table-row";
+        document.getElementById("edit-routing_properties").style.display = "table-row";
+	}
+	else {
+        document.getElementById("edit-routing_properties_title").style.display = "none";
+        document.getElementById("edit-routing_properties").style.display = "none";
+	}
 }
 
 function selectComplexAlgo(checkbox) {
@@ -367,34 +393,6 @@ function addOutputDataFrame() {
 	xhttp.send();
 }
 
-function selectEditSchedule(view) {
-    var view1 = 'edit-schedule_standard';
-    var view2 = 'edit-schedule_custom1';
-    var view3 = 'edit-schedule_custom2';
-    if (view == 1) {
-        document.getElementById(view1).style.display = "table-cell";
-        document.getElementById(view2).style.display = "none";
-        document.getElementById(view3).style.display = "none";
-    }
-    else {
-        document.getElementById(view1).style.display = "none";
-        document.getElementById(view2).style.display = "table-cell";
-        document.getElementById(view3).style.display = "table-cell";
-    }
-    editSchedulePeriod();
-}
-
-/*
-function editDeleteParam() {
-    var elements = document.getElementById("edit-input_params").getElementsByTagName('li');
-    for (var i = 0; i < elements.length; i++) {
-        var li = elements[i];
-        if (li.classList.contains('selected_line')) {
-            li.parentNode.removeChild(li);
-        }
-    }
-}
-*/
 function selectLine(element, list_name, tag_name) {
     var the_list = document.getElementById(list_name);
     var list_elems = the_list.getElementsByTagName(tag_name);
@@ -576,6 +574,14 @@ function GetFeatures(e) {
 	xhttp.send();		
 }
 
+function basicProperties(element) {
+	if (element.id == 'edit-quality_control') {
+		if(element.checked)
+			document.getElementById('edit-stop_on_fail').disabled = false;
+		else
+			document.getElementById('edit-stop_on_fail').disabled = true;
+	}
+}
 </script>
 </body>
 </html>

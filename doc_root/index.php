@@ -54,7 +54,10 @@ $_SESSION["next_page"] = 1;
 		<button class="tab-button" type="button" onclick="SelectTab(4);">Airflow</button>
 		<button class="tab-button" type="button" onclick="SelectTab(5);">Atlas</button>
 		-->
-		<button class="tab-button" type="button" onclick="ReloadGraph('pckg_list');SelectTab(6);">Depends</button>
+		<button class="tab-button" type="button" 
+				onclick="ReloadGraph('pckg_list');SelectTab(4, false);">
+				Depends
+		</button>
 	</div>
 	
 	<div id='tab-vew'>
@@ -85,7 +88,7 @@ $_SESSION["next_page"] = 1;
 				<ul class='menu-bar1'>
 					<li><button class="action-button project-button" type="button"  data-toggle="modal" data-target="#select-feature-popup" onclick="ShowEditDialog('pkg-edit-popup', 'pckg_list', 'object-package_id', false);">Edit</button></li>
 					<li><button class="action-button project-button" type="button"  data-toggle="modal" data-target="#select-feature-popup" >Show PDF</button></li>
-					<li><button class="action-button project-button" type="button"  data-toggle="modal" data-target="#select-feature-popup"  onclick="ReloadGraph('pckg_list');SelectTab(6);" >Dependencies</button></li>
+					<li><button class="action-button project-button" type="button"  data-toggle="modal" data-target="#select-feature-popup"  onclick="ReloadGraph('pckg_list');SelectTab(4, false);" >Dependencies</button></li>
 					<li><button class="action-button project-button" type="button">Delete</button></li>
 					<li> &nbsp </li>
 					<li><button class="action-button project-button" type="button"  data-toggle="modal" data-target="#pkg-edit-popup" onclick="ShowEditDialog('pkg-edit-popup', 'pckg_list', 'object-package_id', true);">New</button></li>
@@ -127,10 +130,10 @@ $_SESSION["next_page"] = 1;
 				</ul>
 			</div>
 		</div>
+		<!--
 		<div id='event-view' style='height:500px;display:none;' >
 			<iframe src="http://127.0.0.1:8983/banana" style="padding-top: 1px;width: 95%; height: 95%;border:0;"></iframe>
 		</div>
-		<!--
 		<div id='airflow-view' style='height:500px;display:none;' class='data-pane'>
 			<iframe src="http://192.168.56.101:8080/admin" style="padding-top: 1px;width: 95%; height: 95%;border:0;"></iframe>
 		</div>
@@ -138,8 +141,8 @@ $_SESSION["next_page"] = 1;
 			<iframe src="http://127.0.0.2:21001" style="padding-top: 1px;width: 95%; height: 95%;border:0;"></iframe>
 		</div>
 		-->
-		<div id='depends-view' style='height:600px;display:none;' class='data-pane'>
-			<iframe id="graph_area" src="data/graph1.svg" style="padding-top: 1px;width: 95%; height: 90%;border:0;"></iframe>
+		<div id='depends-view' style='height:500px;' class='data-pane'>
+			<iframe id="graph_area" src="data/graph1.svg" style="padding-top: 1px;width: 95%; height: 100%;border:0;"></iframe>
 		</div>
 	</div>
 	<!-- -------------------------------------------------------------------------------------- -->
@@ -205,7 +208,7 @@ $_SESSION["next_page"] = 1;
 			<h2 id="modal-title" style='float:left;margin-bottom:0'>Algorithm propertes</h2>
 			<span id="algo-view-popup_close" class="close" onclick="CloseEditDialog('algo-view-popup','algo_list', 'algo');">&times;</span>
 		</div>
-		<div style="border:solid black 1px; height:400px;">
+		<div style="border:solid black 1px; height:550px;">
 			<object id="object-algo_edit" type="text/html" style="width:100%;border: 0; height:100%;" data="edit-algorithm.html">
 				<param name="object-algo_id" value="unknown"/>
 			</object>
@@ -222,7 +225,7 @@ $_SESSION["next_page"] = 1;
 			<h2 id="modal-title" style='float:left;margin-bottom:0'>Feature propertes</h2>
 			<span id="feature-view-popup_close" class="close" onclick='CloseEditDialog("feature-view-popup","feature_list", "feature");'>&times;</span>
 		</div>
-		<div style="border:solid black 1px; height:300px;">
+		<div style="border:solid black 1px; height:350px;">
 			<object id="object-feature_edit" type="text/html" style="width:100%;border: 0; height:100%;" data="edit-feature.html">
 				<param name="object-feature_id" value="-1"/>
 				<param name="object-df_id" value="-1"/>
@@ -241,8 +244,6 @@ var		tab_names = [
 	'feature',
 	'algo',
 	'pckg',
-	'airflow',
-	'atlas',
 	'depends'
 ];
 
@@ -374,7 +375,6 @@ function ShowEditDialog(popup_name, table_name, param_name, new_object) {
 	var  row;
 	var  object_id;
 	var  modal_title = document.getElementById('modal-title');
-//	console.log('is_new='+new_object);
 	if (!new_object) {
 		for (var i = 1; i < tbl.childNodes.length; i++) {
 			row = tbl.childNodes[i]
@@ -442,15 +442,15 @@ function ShowButtons(obj, show, cancel_button_id, save_button_id) {
 	}
 }
 
-function SelectTab(tab_id) {
+function SelectTab(tab_id, get_data=true) {
 	var type = tab_names[tab_id];
 	var tab_name = type+'-view';
 	var buttons = document.getElementById('main_vew_tabs').getElementsByTagName('button');
-	var button = buttons[tab_id];
 	for (var i = 0; i < buttons.length; i++) {
 		if (buttons[i].type == 'button')
 			buttons[i].classList.remove('tab-button-selected');
 	}
+	var button = buttons[tab_id];
 	button.classList.add('tab-button-selected');
 	var tabs = document.getElementById('tab-vew').childNodes;
 	for (var i = 0; i < tabs.length; i++) {
@@ -460,6 +460,8 @@ function SelectTab(tab_id) {
 	}
 	document.getElementById(tab_name).style.display='block';
 	document.getElementsByName('tab-name')[0].value=type;
+	if (!get_data)
+		return;
 	if (type == 'feature')
 		FillTable2('df_list', 0, 'dataframe','');
 	else

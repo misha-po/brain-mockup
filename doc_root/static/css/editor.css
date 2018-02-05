@@ -19,7 +19,7 @@
 }
 
 .section_start {
-	display: block;
+	display: table-row;
 	border-top: 1px solid black;
 	text-align:left;
 	font-weight: bold;
