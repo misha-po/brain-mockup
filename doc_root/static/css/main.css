@@ -30,6 +30,8 @@ li:hover {
 .data-pane {
 	background: #f2f2f2;
 	width:100%;
+    overflow: hidden;
+    padding-bottom: 100px;
 }
 
 .vertical-pane {

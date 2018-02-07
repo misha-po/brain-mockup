@@ -2,6 +2,7 @@
 <head>
 <base href="index.php" target="_self">
 <link href="static/css/editor.css" rel="stylesheet" type="text/css" />
+<link href="static/css/action-button.css" rel="stylesheet" type="text/css" />
 <script src="static/js/js_utils.js"></script>
 </head>
 
@@ -75,28 +76,55 @@
             <td class='edit_row' colspan="2">
 				<input type="checkbox" id="edit-build_pdf" onchange="basicProperties(this)"><label for="autoML">Calculate metrics and build PDF</label><br>
 				<input type="checkbox" id="edit-quality_control" onchange="basicProperties(this)"><label for="autoML">Output quality control</label><br>
-				<div>
-					<input type="checkbox" id="edit-stop_on_fail" style="margin-left: 2em;" disabled 
-						onchange="basicProperties(this)"><label for="edit-stop_on_fail">Stop schedule if quality failed</label>
+				<div id="edit-stop_on_fail" disabled>
+					<input type="radio" name=='StopSchedule' style="margin-left: 2em;" disabled><label for="edit-stop_on_fail">Never stop schedule</label><br>
+					<input type="radio" name=='StopSchedule' style="margin-left: 2em;" disabled><label for="edit-stop_on_fail">Stop schedule if first quality check failed</label><br>
+					<input type="radio" name=='StopSchedule' style="margin-left: 2em;" disabled><label for="edit-stop_on_fail">Stop schedule if any quality check failed</label>
 				</div>
             </td>
             <td></td>
         </tr>
+		<!-- ------------------------------------------------------------ -->
 		<tr id="edit-ml_training_properties_title" class='edit_row section_start common_part' style="display: none;"><td colspan="2">ML training properties:</td></tr>
         <tr id="edit-ml_training_properties" class='edit_row' style="display: none;">
             <td colspan="4" style="font-size: x-large;">ml_training_properties...</td>
             <td></td>
         </tr>
+		<!-- ------------------------------------------------------------ -->
 		<tr id="edit-ml_invocation_properties_title" class='edit_row section_start common_part' style="display: none;"><td colspan="2">ML invocation properties:</td></tr>
         <tr id="edit-ml_invocation_properties" class='edit_row' style="display: none;">
             <td colspan="4" style="font-size: x-large;">ml_invocation_properties...</td>
             <td></td>
         </tr>
+		<!-- ------------------------------------------------------------ -->
 		<tr id="edit-routing_properties_title" class='edit_row section_start common_part' style="display: none;"><td colspan="2">Routing properties:</td></tr>
         <tr id="edit-routing_properties" class='edit_row' style="display: none;">
-            <td colspan="4" style="font-size: x-large;">create routing tables here...</td>
-            <td></td>
+            <td colspan="3" style="font-size: x-large;">
+				<div style="font-size: x-large;">
+					<table style="width:100%;">
+						<tr>
+							<th>Variable</th>
+							<th>operator</th>
+							<th>Value</th>
+							<th>Action</th>
+						</tr>
+						<tr>
+							<td colspan='4'>
+								create routing tables here...
+							</td>
+						</tr>
+					</table>
+				</div>
+            </td>
+            <td>
+                <button id='edit-add_routing_rule' style='width:6.5em;' class='move-up'>Move rule</button><br>
+                <button id='edit-add_routing_rule' style='width:6.5em;' class='move-down' >Move rule</button><br>
+                <button id='edit-add_routing_rule' style='width:6.5em;' >New rule</button><br>
+                <button id='edit-add_routing_rule' style='width:6.5em;' >Delete rule</button><br>
+            </td>
         </tr>
+		<!-- ------------------------------------------------------------ -->
+		<!-- ------------------------------------------------------------ -->
 		<!-- ------------------------------------------------------------ -->
         <tr class='edit_row'>
 			<td colspan="4">
@@ -576,10 +604,12 @@ function GetFeatures(e) {
 
 function basicProperties(element) {
 	if (element.id == 'edit-quality_control') {
+		var controls = document.getElementById('edit-stop_on_fail').getElementsByTagName("input");
+		var disabled = true;
 		if(element.checked)
-			document.getElementById('edit-stop_on_fail').disabled = false;
-		else
-			document.getElementById('edit-stop_on_fail').disabled = true;
+			disabled = false;
+		for (var i = 0; i < controls.length; i++)
+			controls[i].disabled = disabled;
 	}
 }
 </script>

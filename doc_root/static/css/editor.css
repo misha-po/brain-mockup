@@ -63,3 +63,17 @@
 #edit-dataframes_list td,th{
 	border: 1px solid black;
 }
+
+.move-up {
+	background-image: url('../../static/img/Up_Arrow_Icon.png');
+	background-repeat: no-repeat;
+	background-size: 15px 15px;
+	background-position: left center;
+}
+
+.move-down {
+	background-image: url('../../static/img/Down_Arrow_Icon.png');
+	background-repeat: no-repeat;
+	background-size: 15px 15px;
+	background-position: left center;
+}

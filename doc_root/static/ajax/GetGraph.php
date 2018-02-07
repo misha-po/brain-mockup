@@ -64,7 +64,7 @@ $file = fopen("../../data/graph1.gv", "w");
 fwrite($file, $txt);
 
 if(!$result = $conn->query($sql3.$pid))
-	error_log('Error: '.$conn->error);
+	error_log('Error in line '.__LINE__.': '.$conn->error);
 if ($row = $result->fetch_assoc())
 	$p_name = $row['name'];
 fwrite($file, '"'.$p_name.'" [shape=ellipse color=red];'."\n");
@@ -83,14 +83,14 @@ else {
 		$p_out_name = '';
 		$sql = $sql3.$packages[$i]->p_in;
 		if(!$result = $conn->query($sql)) {
-			error_log('Error: '.$conn->error);
+			error_log('Error in line '.__LINE__.': '.$conn->error);
 			continue;
 		}
 		if ($row = $result->fetch_assoc())
 			$p_in_name = $row['name'];
 		$sql = $sql3.$packages[$i]->p_out;
 		if(!$result = $conn->query($sql)) {
-			error_log('Error: '.$conn->error);
+			error_log('Error in line '.__LINE__.': '.$conn->error);
 			continue;
 		}
 		if ($row = $result->fetch_assoc())
@@ -120,7 +120,7 @@ function GetSiblings($conn, $packages, $sql, $pid, $go_back) {
 	//error_log(($go_back?'back':'for').'  '.count($packages).'   pid='.$pid);
 	if(!$result = $conn->query($sql.$pid)) {
 		error_log($sql);
-		error_log('Error: '.$conn->error);
+		error_log('Error in line '.__LINE__.': '.$conn->error);
 	}
 	while($row = $result->fetch_assoc()) {
 		$node = (object) array(
