@@ -16,8 +16,32 @@ function RewriteSelect(select, list, selected_value=-1) {
 
 var popup_name = window.parent.document.getElementsByName('tab-name')[0].value;
 function editCancelSavePackage(popup_name) {
-	console.log(popup_name+'-view-popup_close');
+	//console.log(popup_name+'-view-popup_close');
 	window.parent.document.getElementById(popup_name+'-view-popup_close').onclick();
 }
 
+function highLightRow(row) {
+	var  tbl = row.parentElement;
+	// console.log(row.parentElement.nodeName);
+	if (row.classList.contains("highlighted-strong")) {
+		for (var i = 1; i < tbl.childNodes.length; i++) {
+			tbl.childNodes[i].classList.remove("highlighted-strong");
+		}
+	}
+	else {
+		for (var i = 1; i < tbl.childNodes.length; i++) {
+			tbl.childNodes[i].classList.remove("highlighted-strong");
+		}
+		row.classList.add("highlighted-strong");
+	}
+}
 
+function getSelectedRow(table_name) {
+	console.log('oooooooooooooo');
+	var  rows = document.getElementById(table_name).getElementsByTagName('tr');
+	for (var i = 1; i < rows.length; i++) {
+		if (rows[i].classList.contains("highlighted-strong")) {
+			return rows[i].cells[0].innerText;
+		}
+	}
+}

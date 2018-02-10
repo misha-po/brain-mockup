@@ -22,6 +22,7 @@ $_SESSION["next_page"] = 1;
 
 <script src="static/js/read-csv.js"></script>
 <script src="static/js/canvasjs.min.js"></script>
+<script src="static/js/js_utils.js"></script>
 
 <head>
 	<div id="header">
@@ -264,6 +265,7 @@ var		tab_names = [
 
 function FillTable(tbl_name, timestamp, type, extra_data)
 {
+	var selected = getSelectedRow(tbl_name);
 	var xhttp = new XMLHttpRequest();
 	xhttp.onreadystatechange = function() {
 		if (this.readyState == 4 && this.status == 200) {
@@ -306,8 +308,11 @@ function FillTable(tbl_name, timestamp, type, extra_data)
 				for(var i in json_row) {
 					var td = document.createElement('td');
 					td.innerText = json_row[i];
-					if (i == 'id')
+					if (i == 'id') {
 						td.style.display = 'none';
+						if (json_row[i] == selected)
+							tr.classList.add("highlighted-strong");
+					}
 					tr.appendChild(td)
 				}
 				tr.onclick = function() { 
@@ -353,23 +358,6 @@ function FillTable2(tbl_name, timestamp, type)
 	xhttp.send();		
 
 }
-
-function highLightRow(row) {
-	var  tbl = row.parentElement;
-	// console.log(row.parentElement.nodeName);
-	if (row.classList.contains("highlighted-strong")) {
-		for (var i = 1; i < tbl.childNodes.length; i++) {
-			tbl.childNodes[i].classList.remove("highlighted-strong");
-		}
-	}
-	else {
-		for (var i = 1; i < tbl.childNodes.length; i++) {
-			tbl.childNodes[i].classList.remove("highlighted-strong");
-		}
-		row.classList.add("highlighted-strong");
-	}
-}
-
 
 function CloseEditDialog(dlg_id, tbl_name, type) {
 	console.log('dlg_id='+dlg_id, 'tbl_name='+tbl_name, 'type='+type);
