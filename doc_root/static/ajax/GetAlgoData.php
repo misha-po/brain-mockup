@@ -31,6 +31,6 @@ $json_data = (object) array(
 				'algo_types' => $algo_types
 			);
 
-//error_log(json_encode($json_data));
+error_log(json_encode($json_data));
 echo(json_encode($json_data));
 ?>

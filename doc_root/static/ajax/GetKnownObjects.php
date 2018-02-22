@@ -25,7 +25,7 @@ if($type == 'algo') {
 	$row = $result->fetch_assoc();
 	$timestamp = $row['timestamp'];
 
-	$sql = "SELECT a.id id, a.algo_code 'Algo name', t.name 'Algo type',a.owner_name Owner, a.owner_email Email FROM Algorithms as a,AlgoTypes t WHERE a.algo_type=t.id";
+	$sql = "SELECT a.id id, a.algo_code 'Name', t.name 'Algo type',a.owner_name Owner, a.owner_email Email FROM Algorithms as a,AlgoTypes t WHERE a.algo_type=t.id";
 }
 if($type == 'pckg') {
 	$sql = "select UNIX_TIMESTAMP(max(last_modified)) as timestamp from Packages;";

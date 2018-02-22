@@ -8,18 +8,19 @@
 
 <body onload='editSetValues()'>
     <div id="constantPart" class='edit-package_part'>
-        <table>
+        <table style="border-collapse: collapse;">
         <tr class='edit_row'>
 			<td>Algorithm:</td>
 			<td colspan=3>
 				<select id="edit-algo_code" style="width:100%;"></select>
+			</td>
 			<td></td>
 			<td></td>
 		</tr>
         
-        <tr class='edit_row common_part'><td colspan="2">Input:</td></tr>
+        <tr class='edit_row section_start'><td colspan="2">Input:</td></tr>
         <tr class='edit_row'>
-            <td class="edit-row_label common_part">Dataframes:</td>
+            <td class="edit-row_label basic_part">Dataframes:</td>
             <td>
                 <ul id="edit-input_dataframes" class="edit-row_data  selectable_list">
                 </ul>
@@ -43,34 +44,63 @@
             <td class="edit-row_label invocation_part">Model name:</td>
             <td><input type="text" /></td>
         </tr>
-        <tr id='edit-output_features1' class='edit_row section_start basic_part'><td colspan="2">Output:</td></tr>
+        <tr id='edit-output_features1' class='edit_row section_start'><td colspan="2">Output:</td></tr>
         <tr id='edit-output_features3' class='edit_row'>
-            <td class='edit-row_label basic_part'>Dataframe name:</td>
-            <td>
-				<select id="edit-output_df_name" class='edit-row_data' style="width:150;" onchange="GetFeatures(this);"></select>
-			</td>
-            <td class='edit-row_label basic_part'>Feature name:</td>
-            <td>
-				<select id="edit-output_features" class='edit-row_data' style="width:150;"></select>
-            </td>
-        </tr>
-
-        <tr id='edit-add_feature'  style="visibility:collapse;">        
-            <td id='edit-algo_output11' class="edit-row_label basic_part">Feature name:</td>
-            <td id='edit-algo_output12'>
-				<!--
-                <input id='edit-new_feature_name' type="text" />
-				-->
-				<select id="edit-new_feature_name" class='edit-row_data' style="width:150;">
+            <td class='edit-row_label'>Dataframe:</td>
+            <td colspan="2">
+				<select id="edit-output_df_name" class='edit-row_data' style="width:150;" onchange="GetFeatures(this);">
 				</select>
-            </td>
-            <td class="edit-row_label basic_part">Quality thresholds:</td>
+			</td>
+        </tr>
+
+        <tr id='edit-output_features2' class='edit_row'>
             <td>
-                <input type="text" id="edit-quality_thresholds" class='edit-row_data'/>
+            </td>
+            <td  colspan="3">
+                <table id='edit-dataframes_list'>
+                    <tr>
+						<th style='visibility:hidden;'>id</th>
+                        <th>Feature name</th><th>Data type</th><th>Constraint</th><th>Is target</th><th>Tags</th>
+                    </tr>
+                    <tr class='selectable_list' onclick='selectLine(this, "edit-dataframes_list", "tr")'>
+						<td style='visibility:hidden;'>1</td>
+                        <td>feature1</td><td>int</td><td>numeric</td><td>Y</td>
+                        <td>
+                            <select>
+                                <option>Tag1</option>
+                                <option>Tag2</option>
+                                <option>Tag3</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr class='selectable_list' onclick='selectLine(this, "edit-dataframes_list", "tr")'>
+						<td style='visibility:hidden;'>1</td>
+                        <td>feature1</td><td>int</td><td>numeric</td><td>Y</td>
+                        <td>
+                            <select>
+                                <option>Tag1</option>
+                                <option>Tag2</option>
+                                <option>Tag3</option>
+                            </select>
+                        </td>
+                    </tr>
+                </table>
             </td>
         </tr>
 
+        <tr id='edit-feature_list_buttons' class='edit_row'>
+            <td>
+            </td>
+            <td colspan="3">
+                <button id='edit-add_output_feature' class='edit-button' 
+                        onclick='showEditPanel(true);'>Add</button>
+                <button id="edit-delete_output_feature" class='edit-button' 
+                        onclick='deleteSelectedRow("edit-dataframes_list");'>Delete</button>
+                <button id="edit-edit_output_feature" class='edit-button' 
+                        onclick='editOutputFeature("edit-dataframes_list");'>Edit</button>
+            </td>
         </tr>
+
         <tr id='edit-add_feature2' style="visibility:collapse;">
             <td class="edit-row_label basic_part">Data type:</td>
             <td>
@@ -124,7 +154,7 @@
             <td><input type="text" class='edit-row_data'/></td>
         </tr>
         
-        <tr id='editparams_header' class='edit_row section_start common_part'><td colspan="2">Parameters:</td></tr>
+        <tr id='editparams_header' class='edit_row section_start'><td colspan="2">Parameters:</td></tr>
         <tr id='editparams_editor' class='edit_row'>
             <td></td>
             <td>
@@ -147,7 +177,7 @@
                 </div>
             </td>
         </tr>
-        <tr class='edit_row section_start  common_part'><td colspan="2">Schedule:</td></tr>
+        <tr class='edit_row section_start'><td colspan="2">Schedule:</td></tr>
         <tr class='edit_row'>
             <td class="edit-row_label">Schedule type:</td>
             <td>
@@ -184,6 +214,7 @@
                 </div>
             </td>
         </tr>
+        <!-- ------------------------------------------------------ --> 
         <tr id='visibility_tags_header' class='edit_row section_start complex_part' ><td colspan="2">Prohibited tags:</td></tr>
         <tr id='visibility_tags_editor' class='edit_row' >
             <td>
@@ -208,18 +239,44 @@
                 </div>
             </td>
         </tr>
+        <!-- ------------------------------------------------------ --> 
+        <tr class='edit_row section_start common_part'><td colspan="2">Resource management:</td></tr>
+		<tr>
+            <td class="edit-row_label common_part">Cores:</td>
+            <td><input id="edit-n_cores" type="number" min="1" max="16" value="2"/></td>
+            <td class="edit-row_label common_part">Memory:</td>
+            <td><input id="edit-ram_size" type="number"  min="1" max="32" value="2"/>GB</td>
+            <td></td>
+            <td></td>
+        </tr>
+		<tr>
+            <td class="edit-row_label common_part">Max execution time:</td>
+            <td><input id="edit-max_execution-time" type="time" name="appt-time" value="00:05"></td>
+
+		</tr>
 		<!-- ------------------------------------------------------------ -->
-        <tr class='edit_row section_start  common_part'><td colspan="2">Deployment:</td></tr>
+        <tr class='edit_row section_start common_part'><td colspan="2">Deployment:</td></tr>
+		<tr>
             <td>
                 <input type="checkbox" id='edit-is-target' onchange='document.getElementById("edit-rt_properties").style.visibility = (this.checked?"visible":"collapse");'>Real time</input>
             </td>
         </tr>
-        <tr id='edit-rt_properties' class='edit_row common_part' style="visibility: collapse;">
-            <td></td>
+        <tr id='edit-rt_properties' class='edit_row' style="visibility: collapse;">
             <td>
-                <input type="radio" name="edit-rt_Type" value="rt_data" checked onchange="selectRT_Type(this);">RT data access</input><br>
-                <input type="radio" name="edit-rt_Type" value="rt_calc" onchange="selectRT_Type(this);">RT calculation</input>
+                &nbsp&nbsp<input type="radio" name="edit-rt_Type" value="rt_data" checked onchange="selectRT_Type(this);">RT data access</input>
+			<br>
+                &nbsp&nbsp<input type="radio" name="edit-rt_Type" value="rt_calc" onchange="selectRT_Type(this);">RT calculation</input>
             </td>
+            <td colspan="2">
+				<div id='edit_rt_data_access' style='font-size: smaller;font-style: italic;'>
+					The entire output dataframe<br>will be copied to HBase for fast access
+				</div>
+				<div id='edit_rt_calculation' style='font-size: smaller;font-style: italic;visibility:hidden'>
+					This algorithms will be deployed on RealTime server<br>and not scheduled.
+				</div>
+			</td>
+            <td></td>
+            <td></td>
         </tr>
         <tr id='edit-rt_data' class='edit_row' style="visibility:collapse;">
         </tr>
@@ -604,6 +661,10 @@ function editSchedulePeriod() {
 }
 
 function editSetValues() {
+	fillSelect("edit-algo_code", 'algo');
+	fillSelect("edit-new_dataframe_name", 'dataframe');
+	fillSelect("edit-output_df_name", 'dataframe');
+	
 	var xhttp = new XMLHttpRequest();
 	xhttp.onreadystatechange = function() {
 		if (this.readyState == 4 && this.status == 200) {
@@ -791,14 +852,15 @@ function editSetAvailableFeatures(available_features) {
 
 function selectRT_Type(button) {
 	if (button.value == "rt_data") {
-        document.getElementById("edit-rt_data").style.visibility = "visible";
-        document.getElementById("edit-rt_calc").style.visibility = "collapse";
+        document.getElementById("edit_rt_data_access").style.visibility = "visible";
+        document.getElementById("edit_rt_calculation").style.visibility = "collapse";
 	}
 	if (button.value == "rt_calc") {
-        document.getElementById("edit-rt_data").style.visibility = "collapse";
-        document.getElementById("edit-rt_calc").style.visibility = "visible";
+        document.getElementById("edit_rt_data_access").style.visibility = "collapse";
+        document.getElementById("edit_rt_calculation").style.visibility = "visible";
 	}
 }
+
 </script>
 </body>
 </html>

@@ -7,7 +7,10 @@ function RewriteSelect(select, list, selected_value=-1) {
 	for (var i = 0; i < list.length; i++) {
 		var opt = document.createElement('option');
 		opt.value = list[i].id;
-		opt.innerHTML = list[i].name;
+		if (list[i].name != undefined)
+			opt.innerHTML = list[i].name;
+		else
+			opt.innerHTML = list[i].Name;
 		if(opt.value == selected_value)
 			opt.selected = true;
 		table1.appendChild(opt);
@@ -45,3 +48,20 @@ function getSelectedRow(table_name) {
 		}
 	}
 }
+
+function fillSelect(select_id, obj_type) {
+	var xhttp = new XMLHttpRequest();
+	xhttp.onreadystatechange = function() {
+		if (this.readyState == 4 && this.status == 200) {
+			var 	json_doc = JSON.parse(this.responseText);
+			if (json_doc.length == 0) {
+				return;
+			}
+			RewriteSelect(select_id, json_doc.rows, selected_value=-1)
+			//console.log(e.options[e.selectedIndex].text);
+		}
+	};
+	xhttp.open("GET", 'static/ajax/GetKnownObjects.php?type='+obj_type, true);
+	xhttp.send();		
+}
+
