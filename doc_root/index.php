@@ -372,7 +372,6 @@ function CloseEditDialog(dlg_id, tbl_name, type) {
 }
 
 function ShowEditDialog(popup_name, table_name, param_name, new_object) {
-	console.log('here we go')
 	var  tbl = document.getElementById(table_name);
 	var  row;
 	var  object_id;

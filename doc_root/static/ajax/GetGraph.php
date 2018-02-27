@@ -1,4 +1,6 @@
 <?php
+require 'DB_utils.php';
+
 $pid = $_GET['id'];
 $servername = "localhost";
 $username = "root";
@@ -9,8 +11,7 @@ digraph unix {
 	size="7,7";
 	bgcolor="#f2f2f2";
 	node [shape=box, color=blue, style="filled",URL="../static/img/matrixBi.png"];
-	node [fillcolor=floralwhite, fontcolor=brown4, setlinewidth=bold, tooltip="This is a tooltip"];
-	
+	node [fillcolor=floralwhite, fontcolor=brown4, setlinewidth=bold, tooltip="This is a tooltip"];	
 EOD;
 
 // Create connection
@@ -22,47 +23,18 @@ if ($conn->connect_error) {
 } 
 unlink("../../data/graph1.svg");
 
-$packages = array();
-$sql1 = "select distinct q.package_id as p_start,i.package_id as p_end,d.name as df_name from QualityMetrics as q, Features as f, DataFrames d,InputDataFrames i where i.dataframe_id=f.dataframe_id and d.id=f.dataframe_id and f.id=q.feature_id and q.package_id=";
-$sql2 = "select distinct i.package_id p_end,q.package_id p_start,d.name as df_name from InputDataFrames i,Features f,QualityMetrics q,DataFrames d where d.id=f.dataframe_id and q.feature_id=f.id and f.dataframe_id=i.dataframe_id and i.package_id=";
-$sql3 = 'select name from Packages where id=';
-//*
-$packages = GetSiblings($conn, $packages, $sql1, $pid, false);
-$packages = GetSiblings($conn, $packages, $sql2, $pid, true);
+$packages1 = array();
+$packages2 = array();
 
-/*/
-if(!$result = $conn->query($sql1)) {
-	error_log('Error: '.$conn->error);
-}
-while($row = $result->fetch_assoc()) {
-	$node = (object) array(
-		'p_in' => $row['p_start'],
-		'p_out' => $row['p_end'],
-		'df_name' => $row['df_name'],
-		'visited' => False
-	);
-	array_push($packages , $node);
-}
+$packages1 = GetAncestor($conn, $packages1, $pid);
+$packages2 = GetPredecessor($conn, $packages2, $pid);
 
-$sql = "select distinct i.package_id p_end,q.package_id p_start,d.name as df_name from InputDataFrames i,Features f,QualityMetrics q,DataFrames d where d.id=f.dataframe_id and q.feature_id=f.id and f.dataframe_id=i.dataframe_id and i.package_id=".$pid;
-if(!$result = $conn->query($sql2)) {
-	error_log('Error: '.$conn->error);
-}
-while($row = $result->fetch_assoc()) {
-	$node = (object) array(
-		'p_in' => $row['p_start'],
-		'p_out' => $row['p_end'],
-		'df_name' => $row['df_name'],
-		'visited' => False
-	);
-	array_push($packages , $node);
-}
-//*/
-
+$packages = array_merge($packages1, $packages2);
 
 $file = fopen("../../data/graph1.gv", "w");
 fwrite($file, $txt);
 
+$sql3 = 'select name from Packages where id=';
 if(!$result = $conn->query($sql3.$pid))
 	error_log('Error in line '.__LINE__.': '.$conn->error);
 if ($row = $result->fetch_assoc())
@@ -71,32 +43,8 @@ fwrite($file, '"'.$p_name.'" [shape=ellipse color=red];'."\n");
 
 
 //$n = FindSiblings($file, $array, $root);
-if ( count($packages) == 0){
-	fwrite($file, "\t" . $pid . ";\n");
-}
-else {
-	for ($i = 0; $i < count($packages); $i++) {
-		if($packages[$i]->visited == True)
-			return 0;
-		$packages[$i]->visited = True;
-		$p_in_name = '';
-		$p_out_name = '';
-		$sql = $sql3.$packages[$i]->p_in;
-		if(!$result = $conn->query($sql)) {
-			error_log('Error in line '.__LINE__.': '.$conn->error);
-			continue;
-		}
-		if ($row = $result->fetch_assoc())
-			$p_in_name = $row['name'];
-		$sql = $sql3.$packages[$i]->p_out;
-		if(!$result = $conn->query($sql)) {
-			error_log('Error in line '.__LINE__.': '.$conn->error);
-			continue;
-		}
-		if ($row = $result->fetch_assoc())
-			$p_out_name = $row['name'];
-		fwrite($file, "\t" . $p_in_name . " -> " . $p_out_name .'[ label="'.$packages[$i]->df_name.'" ]'.";\n");
-	}
+for ($i = 0; $i < count($packages); $i++) {
+	fwrite($file, "\t" . $packages[$i]->p_in . " -> " . $packages[$i]->p_out .'[ label="'.$packages[$i]->df_name.'" ]'.";\n");
 }
 
 fwrite($file, "}");
@@ -113,28 +61,69 @@ return;
 ///////////////////////////////////////////////////
 ///////////////////////////////////////////////////
 ///////////////////////////////////////////////////
-
-function GetSiblings($conn, $packages, $sql, $pid, $go_back) {
+function GetAncestor($conn, $packages, $pid) {
 	if ($pid == '')
 		return $packages;
-	//error_log(($go_back?'back':'for').'  '.count($packages).'   pid='.$pid);
-	if(!$result = $conn->query($sql.$pid)) {
-		error_log($sql);
-		error_log('Error in line '.__LINE__.': '.$conn->error);
+
+	$sql = "SELECT name FROM Packages where id=".$pid;
+	$p_name = FetchData($sql, $conn)[0]['name'];
+
+	foreach ($packages as $pkg) {
+		if ($pkg->p_in == $p_name) {
+			return $packages;
+		}
 	}
-	while($row = $result->fetch_assoc()) {
+
+	$sql = "SELECT distinct d.name as df_name, p.name p_end, p.id as pid"
+			." FROM QualityMetrics q, Features as f, InputDataFrames as i,Packages as p, DataFrames d "
+			." where f.dataframe_id=d.id and i.package_id=p.id and i.dataframe_id=f.dataframe_id and q.feature_id=f.id and q.package_id=".$pid;
+	
+	$the_list = FetchData($sql, $conn);
+	foreach ($the_list as $item) {
 		$node = (object) array(
-			'p_in' => $row['p_start'],
-			'p_out' => $row['p_end'],
-			'df_name' => $row['df_name'],
+			'p_in' => $p_name,
+			'p_out' => $item['p_end'],
+			'df_name' => $item['df_name'],
 			'visited' => False
 		);
-		if ($node->p_in == $node->p_out)
-			continue;
-//		error_log('pin='.$node->p_in.' pout='.$node->p_out);
-		$packages = GetSiblings($conn, $packages, $sql, ($go_back)?$node->p_in:$node->p_out, $go_back);
+		$packages = GetAncestor($conn, $packages, $item['pid']);
 		array_push($packages , $node);
 	}
 	return $packages;
 }
+
+function GetPredecessor($conn, $packages, $pid) {
+	error_log("Here we go, pid=".$pid);
+
+	if ($pid == '')
+		return $packages;
+
+	$sql = "SELECT name FROM Packages where id=".$pid;
+	$p_name = FetchData($sql, $conn)[0]['name'];
+
+	foreach ($packages as $pkg) {
+		if ($pkg->p_in == $p_name) {
+			return $packages;
+		}
+	}
+
+	$sql = "SELECT i.package_id,i.dataframe_id,f.id f_id,d.name as df_name, q.package_id pid, p.name p_in"
+			." FROM DataFrames d,InputDataFrames i, Features f, QualityMetrics q, Packages p"
+			." where q.package_id=p.id and q.feature_id=f.id and i.dataframe_id=f.dataframe_id and d.id=i.dataframe_id and i.package_id=".$pid;
+	$features = FetchData($sql, $conn);
+
+	$the_list = FetchData($sql, $conn);
+	foreach ($the_list as $item) {
+		$node = (object) array(
+			'p_in' => $item['p_in'],
+			'p_out' => $p_name,
+			'df_name' => $item['df_name'],
+			'visited' => False
+		);
+		$packages = GetAncestor($conn, $packages, $item['pid']);
+		array_push($packages , $node);
+	}
+	return $packages;
+}
+
 ?>

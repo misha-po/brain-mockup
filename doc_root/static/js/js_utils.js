@@ -15,6 +15,26 @@ function RewriteSelect(select, list, selected_value=-1) {
 			opt.selected = true;
 		table1.appendChild(opt);
 	}
+	var opt = document.createElement('option');
+	opt.innerHTML = '--none--';
+	opt.value = -1;
+	if (selected_value == -1) {
+		opt.selected = true;		
+	}
+	table1.appendChild(opt);
+}
+
+function RewriteUL(ul_name, list) {
+	var ul = document.getElementById(ul_name);
+	while( ul.firstChild )
+		ul.removeChild(ul.firstChild );
+	for (var i =0; i < list.length; i++) {
+		var li = document.createElement("li");
+		li.appendChild(document.createTextNode(list[i].name));
+		// li.onclick = function(){ulSelectLine(li, ul_name)}
+		li.setAttribute('onclick', 'ulSelectLine(this, "'+ul_name+'")');
+		ul.appendChild(li);
+	}
 }
 
 var popup_name = window.parent.document.getElementsByName('tab-name')[0].value;
@@ -40,7 +60,6 @@ function highLightRow(row) {
 }
 
 function getSelectedRow(table_name) {
-	console.log('oooooooooooooo');
 	var  rows = document.getElementById(table_name).getElementsByTagName('tr');
 	for (var i = 1; i < rows.length; i++) {
 		if (rows[i].classList.contains("highlighted-strong")) {
@@ -65,3 +84,47 @@ function fillSelect(select_id, obj_type) {
 	xhttp.send();		
 }
 
+function selectValue(select_id, val) {
+	var table1 = document.getElementById(select_id);
+	var children = table1.getElementsByTagName('option');
+	for (i=0; i < children.length; i++) {
+		if (table1.options[i].value == val) {
+			table1.selectedIndex = i;
+			return;
+		}
+	}
+}
+
+function ulSelectLine(element, list_name) {
+	if (element.classList.contains('selected_line')) {
+		element.classList.remove('selected_line');
+		return;
+	}
+
+    var the_list = document.getElementById(list_name);
+    var list_elems = the_list.getElementsByTagName('li');
+    for (var i = 0; i < list_elems.length; i++) {
+        list_elems[i].classList.remove('selected_line');
+    }
+    element.classList.add('selected_line');
+}
+
+function ulDeleteSelectedLine(list_name) {
+    var the_list = document.getElementById(list_name);
+    var list_elems = the_list.getElementsByTagName('li');
+    for (var i = 1; i < list_elems.length; i++) {
+        if (list_elems[i].classList.contains('selected_line')) {
+			li=list_elems[i];
+			li.parentNode.removeChild(li);
+            return;
+        }
+    }
+}
+
+function ulAddLine(ul_name, name) {
+	var ul = document.getElementById(ul_name);
+	var li = document.createElement("li");
+	li.appendChild(document.createTextNode(name));
+	li.setAttribute('onclick', 'ulSelectLine(this, "'+ul_name+'")');
+	ul.appendChild(li);
+}

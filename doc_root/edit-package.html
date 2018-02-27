@@ -29,7 +29,7 @@
                 <button id='edit-add_dataframe' class='edit-button' 
                         onclick='editAddDataframe("edit-new_dataframe", "edit-new_dataframe_name", "edit-input_dataframes", "edit-delete_dataframe");'>Add</button><br>
                 <button id="edit-delete_dataframe" class='edit-button' 
-                        onclick='editDeleteLiElement("edit-input_dataframes");'>Delete</button>
+                        onclick='ulDeleteSelectedLine("edit-input_dataframes");'>Delete</button>
             </td>
             <td>
                 <div id="edit-new_dataframe" style='display: none;'>
@@ -52,55 +52,22 @@
 				</select>
 			</td>
         </tr>
-
         <tr id='edit-output_features2' class='edit_row'>
+            <td class='edit-row_label'>Features:</td>
             <td>
+                <ul id="edit-output_features_lst" class="edit-row_data  selectable_list">
+                </ul>
             </td>
-            <td  colspan="3">
-                <table id='edit-dataframes_list'>
-                    <tr>
-						<th style='visibility:hidden;'>id</th>
-                        <th>Feature name</th><th>Data type</th><th>Constraint</th><th>Is target</th><th>Tags</th>
-                    </tr>
-                    <tr class='selectable_list' onclick='selectLine(this, "edit-dataframes_list", "tr")'>
-						<td style='visibility:hidden;'>1</td>
-                        <td>feature1</td><td>int</td><td>numeric</td><td>Y</td>
-                        <td>
-                            <select>
-                                <option>Tag1</option>
-                                <option>Tag2</option>
-                                <option>Tag3</option>
-                            </select>
-                        </td>
-                    </tr>
-                    <tr class='selectable_list' onclick='selectLine(this, "edit-dataframes_list", "tr")'>
-						<td style='visibility:hidden;'>1</td>
-                        <td>feature1</td><td>int</td><td>numeric</td><td>Y</td>
-                        <td>
-                            <select>
-                                <option>Tag1</option>
-                                <option>Tag2</option>
-                                <option>Tag3</option>
-                            </select>
-                        </td>
-                    </tr>
-                </table>
-            </td>
-        </tr>
-
-        <tr id='edit-feature_list_buttons' class='edit_row'>
             <td>
-            </td>
-            <td colspan="3">
                 <button id='edit-add_output_feature' class='edit-button' 
-                        onclick='showEditPanel(true);'>Add</button>
+                        onclick='addOutputFeature();'>Add</button><br>
                 <button id="edit-delete_output_feature" class='edit-button' 
-                        onclick='deleteSelectedRow("edit-dataframes_list");'>Delete</button>
-                <button id="edit-edit_output_feature" class='edit-button' 
-                        onclick='editOutputFeature("edit-dataframes_list");'>Edit</button>
+                        onclick='ulDeleteSelectedLine("edit-output_features_lst");'>Delete</button>
+            <td style="padding-top:5;">
+				<select id="edit-output_all_features" class='edit-row_data' style="width:150;visibility:hidden;" onchange="GetFeatures(this);">
+				</select>
             </td>
         </tr>
-
         <tr id='edit-add_feature2' style="visibility:collapse;">
             <td class="edit-row_label basic_part">Data type:</td>
             <td>
@@ -168,7 +135,7 @@
                 <button id='edit-add_param' class='edit-button' 
                         onclick='editAddLiElement("edit-new_param", "edit-new_param_name", "edit-input_params", "edit-delete_param");'>Add</button><br>
                 <button  id="edit-delete_param" class='edit-button' 
-                        onclick='editDeleteLiElement("edit-input_params");'>Delete</button>
+                        onclick='ulDeleteSelectedLine("edit-input_params");'>Delete</button>
             </td>
             <td>
                 <div id="edit-new_param" style='display: none;'>
@@ -228,7 +195,7 @@
                 <button id='edit-add_tag' class='edit-button' 
                         onclick='editAddLiElement("edit-new_tags", "edit-new_tag_name", "edit-tags", "edit-delete_tag");'>Add</button><br>
                 <button id="edit-delete_tag" class='edit-button' 
-                        onclick='editDeleteLiElement("edit-tags");'>Delete</button>
+                        onclick='ulDeleteSelectedLine("edit-tags");'>Delete</button>
             </td>
             <td>
             </td>
@@ -315,113 +282,14 @@ changeListener("edit-new_dataframe_name", "edit-add_dataframe");
 changeListener("edit-new_param_name", "edit-add_param");
 changeListener("edit-new_tag_name", "edit-add_tag");
 
-function selectAlgoType(panelName) {
-    if (panelName == 'basicAlgoPart') {
-        document.getElementById("visibility_tags_header").style.visibility = "collapse";
-        document.getElementById("visibility_tags_editor").style.visibility = "collapse";
-        document.getElementById("edit-complex_type").style.visibility = "collapse";
-        document.getElementById("edit-algo_output12").style.visibility = "visible";
-        document.getElementById("edit-input_model2").style.visibility = "collapse";
-        document.getElementById("edit-algo_universe").style.visibility = "visible";
-        document.getElementById("edit-algo_output3").style.visibility = "collapse";
-
-        document.getElementById("edit-output_features2").style.visibility = "visible";
-        document.getElementById("edit-output_features3").style.visibility = "visible";
-        document.getElementById("edit-feature_list_buttons").style.visibility = "visible";
-        document.getElementById("edit-output_model").style.visibility = "collapse";
-        document.getElementById("edit-output_model1").style.visibility = "collapse";
-        document.getElementById("edit-add_feature").style.visibility = "collapse";
-        document.getElementById("edit-add_feature3").style.visibility = "collapse";
-    }
-    if (panelName == 'complexAlgoPart') {
-        document.getElementById("visibility_tags_header").style.visibility = "visible";
-        document.getElementById("visibility_tags_editor").style.visibility = "visible";
-        document.getElementById("edit-complex_type").style.visibility = "visible";
-        document.getElementById("edit-algo_output12").style.visibility = "collapse";
-        document.getElementById("edit-input_model2").style.visibility = "collapse";
-        document.getElementById("edit-algo_universe").style.visibility = "collapse";
-        document.getElementById("edit-algo_output3").style.visibility = "collapse";
-
-        document.getElementById("edit-output_features2").style.visibility = "collapse";
-        document.getElementById("edit-output_features3").style.visibility = "collapse";
-        document.getElementById("edit-feature_list_buttons").style.visibility = "collapse";
-        document.getElementById("edit-output_model").style.visibility = "visible";
-        document.getElementById("edit-output_model1").style.visibility = "visible";
-        document.getElementById("edit-add_feature").style.visibility = "collapse";
-        document.getElementById("edit-add_feature3").style.visibility = "collapse";
-    }
-    if (panelName == 'invocationAlgoPart') {
-        document.getElementById("visibility_tags_header").style.visibility = "collapse";
-        document.getElementById("visibility_tags_editor").style.visibility = "collapse";
-        document.getElementById("edit-complex_type").style.visibility = "collapse";
-        document.getElementById("edit-algo_output12").style.visibility = "visible";
-        document.getElementById("edit-input_model2").style.visibility = "visible";
-        document.getElementById("edit-algo_universe").style.visibility = "collapse";
-        document.getElementById("edit-algo_output3").style.visibility = "visible";
-
-        document.getElementById("edit-output_features2").style.visibility = "collapse";
-        document.getElementById("edit-output_features3").style.visibility = "collapse";
-        document.getElementById("edit-feature_list_buttons").style.visibility = "collapse";
-        document.getElementById("edit-output_model").style.visibility = "collapse";
-        document.getElementById("edit-output_model").style.visibility = "collapse";
-        document.getElementById("edit-add_feature").style.visibility = "visible";
-        document.getElementById("edit-add_feature3").style.visibility = "visible";
-        document.getElementById("edit-add_feature5").style.visibility = "collapse";
-    }
-}
-
 function showEditPanel(show) {
+	console.log('Here we go '+show);
     var show1 = show?"visible":"collapse";
     var show2 = show?"collapse":"visible";
-    document.getElementById("edit-add_feature").style.visibility = show1;
     document.getElementById("edit-add_feature2").style.visibility = show1;
-    document.getElementById("edit-add_feature3").style.visibility = show1;
     document.getElementById("edit-feature_list_buttons").style.visibility = show2;
     document.getElementById("edit-add_feature4").style.visibility = show1;
     document.getElementById("edit-add_feature5").style.visibility = show1;
-}
-
-function editOutputFeature(table_name) {
-    var table = document.getElementById(table_name);
-    for (var i = 1; i < table.rows.length; i++) {
-        if (table.rows[i].classList.contains('selected_line')) {
-            break;
-        }
-    }
-    if (i >= table.rows.length)
-        return;
-    var tds = table.rows[i].getElementsByTagName('td');
-    document.getElementById('edit-new_feature_name').value = tds[0].innerHTML;
-    /*
-    document.getElementById('edit-data_type');
-    var e = document.getElementById('edit-data_type');
-    var data_type = e.options[e.selectedIndex].text;
-    e = document.getElementById('edit-data_constraint');
-    var data_constraint = e.options[e.selectedIndex].text;
-    var table = document.getElementById("edit-dataframes_list");
-    var row = table.insertRow(-1);
-    var td2 = row.insertCell(-1);
-    td2.innerHTML = feature_name;
-    var td3 = row.insertCell(-1);
-    td3.innerHTML = data_type;
-    var td4 = row.insertCell(-1);
-    td4.innerHTML = data_constraint;
-    var td5 = row.insertCell(-1);
-    td5.innerHTML = document.getElementById("edit-is-target").checked?'Y':'N';
-    var td6 = row.insertCell(-1);
-    */
-    showEditPanel(true);
-}
-
-function deleteSelectedRow(table_name) {
-    var table = document.getElementById(table_name);
-    for (var i = 1; i < table.rows.length; i++) {
-        if (table.rows[i].classList.contains('selected_line')) {
-            break;
-        }
-    }
-    if (i < table.rows.length)
-        table.deleteRow(i);
 }
 
 function addOutputDataFrame() {
@@ -597,30 +465,6 @@ function editAddDataframe(panel_name, text_box, list_name, delete_button) {
     }
 }
 
-
-function editDeleteLiElement(elem_name) {
-    var elements = document.getElementById(elem_name).getElementsByTagName('li');
-    for (var i = 0; i < elements.length; i++) {
-        var li = elements[i];
-        if (li.classList.contains('selected_line')) {
-            li.parentNode.removeChild(li);
-        }
-    }
-}
-
-function selectComplexAlgo(selection) {
-    /*
-    if(selection.value == 'manual') {
-        document.getElementById("editparams_header").style.visibility = "visible";
-        document.getElementById("editparams_editor").style.visibility = "visible";
-    }
-    else {
-        document.getElementById("editparams_header").style.visibility = "collapse";
-        document.getElementById("editparams_editor").style.visibility = "collapse";
-    }
-    */
-}
-
 function editSchedulePeriod() {
     var selector = document.getElementById('edit-schedule_custom11');
     var start_at = document.getElementById('edit-schedule_start_at');
@@ -661,10 +505,6 @@ function editSchedulePeriod() {
 }
 
 function editSetValues() {
-	fillSelect("edit-algo_code", 'algo');
-	fillSelect("edit-new_dataframe_name", 'dataframe');
-	fillSelect("edit-output_df_name", 'dataframe');
-	
 	var xhttp = new XMLHttpRequest();
 	xhttp.onreadystatechange = function() {
 		if (this.readyState == 4 && this.status == 200) {
@@ -686,86 +526,23 @@ function editSetValues() {
 						elems[i].checked = false;
 				}
 				aid = pckg_data.aid;
-				/*
-				var elems = document.getElementById('edit-universe').getElementsByTagName('option');
-				for (var i=0; i < elems.length; i++) {
-					if (elems[i].value == pckg_data.universe)
-						elems[i].selected = true;
-					else 
-						elems[i].selected = false;
-				}
-				var elems = document.getElementById('edit-key_enity').getElementsByTagName('option');
-				for (var i=0; i < elems.length; i++) {
-					if (elems[i].value == pckg_data.input_entity)
-						elems[i].selected = true;
-					else 
-						elems[i].selected = false;
-				}
-				*/
 			}
 			else {
-				aid = 0;
+				aid = -1;
 			}
 			//////////////////////////////////////////////////////
-			document.getElementById('edit-output_df_name').value = features = json_doc.output_df.name;
-			out_df_id = json_doc.output_df.id;
-			//////////////////////////////////////////////////////
-			var data_frames = json_doc.data_frames;
-			var ul = document.getElementById('edit-input_dataframes')
-			while( ul.firstChild )
-				ul.removeChild(ul.firstChild );
-			for (var i =0; i < data_frames.length; i++) {
-				var li = document.createElement("li");
-				var li = document.createElement("li");
-				li.appendChild(document.createTextNode(data_frames[i].name));
-				li.onclick = function(){selectLine(li, 'edit-input_dataframes', 'li')}
-				ul.appendChild(li);
-			}
-			
-			RewriteSelect('edit-output_features', json_doc.features);
+			RewriteSelect('edit-algo_code', json_doc.algorithms);
+			selectValue('edit-algo_code', pckg_data.aid);
 			RewriteSelect('edit-new_dataframe_name', json_doc.all_data_frames);
-			RewriteSelect('edit-output_df_name', json_doc.all_data_frames, json_doc.output_df.id);
-			
-			var algo_types = json_doc.algo_types;
-
-/*
-			var types = document.getElementById('edit-algo_type');
-			types.innerHTML = '';
-			var id;
-			var name;
-			for (var i = 0; i < algo_types.length; i++) {
-				id = algo_types[i].id;
-				name = algo_types[i].name;
-				var button = document.createElement('input');
-				button.setAttribute('type', 'radio');
-				button.setAttribute('name', 'algorithmType');
-				button.setAttribute('id', algo_types[i].name+'algorithmType');
-				button.setAttribute('value', id);
-				if (pckg_data != null ) {
-					if (pckg_data.algo_type == name)
-						button.setAttribute('checked', true);
-				}
-				var panel = name+'AlgoPart';
-				//button.onchange=function(){selectAlgoType(name+"AlgoPart");};
-				button.setAttribute('onchange', 'selectAlgoType("'+name+'AlgoPart")');
-				//console.log(panel);
-				types.appendChild(button);
-				var label = document.createElement('label');
-				label.setAttribute('for', name+'algorithmType');
-				label.innerHTML = name;
-				types.appendChild(label);
-				var br = document.createElement('br');
-				types.appendChild(br);
-			}
-*/
-			var algorithms = json_doc.algorithms;
-			RewriteSelect('edit-algo_code', algorithms);
-			editSetAvailableFeatures(json_doc.available_features)
+			RewriteSelect('edit-output_df_name', json_doc.all_data_frames);
+			selectValue('edit-output_df_name', json_doc.output_df.id);
+			RewriteUL('edit-output_features_lst', json_doc.features);
+			RewriteUL('edit-input_dataframes', json_doc.data_frames);
+			RewriteSelect('edit-output_all_features', json_doc.available_features);
 		}
 	};
 	xhttp.open("GET", 'static/ajax/GetPackageData.php?id='+pid, true);
-	xhttp.send();		
-
+	xhttp.send();
 }
 
 function editSavePackage() {
@@ -820,6 +597,9 @@ function addDataFrame() {
 */
 
 function GetFeatures(e) {
+	if (e.options[e.selectedIndex].value == -1)
+		return;
+	console.log(e);
 	var df_id = e.options[e.selectedIndex].value;
 	var xhttp = new XMLHttpRequest();
 	xhttp.onreadystatechange = function() {
@@ -837,7 +617,7 @@ function GetFeatures(e) {
 }
 
 function editSetAvailableFeatures(available_features) {
-	var table3 = document.getElementById('edit-output_features')
+	var table3 = document.getElementById('edit-output_df_name')
 	var children = table3.getElementsByTagName('option');
 	for (var i = children.length-1; i> 0; i--) {
 		table3.removeChild(children[i]);
@@ -859,6 +639,18 @@ function selectRT_Type(button) {
         document.getElementById("edit_rt_data_access").style.visibility = "collapse";
         document.getElementById("edit_rt_calculation").style.visibility = "visible";
 	}
+}
+
+function addOutputFeature() {
+    if (document.getElementById("edit-output_all_features").style.visibility == "visible") {
+		document.getElementById("edit-output_all_features").style.visibility = "hidden";
+		var e = document.getElementById('edit-output_all_features')
+		var name = e.options[e.selectedIndex].text;
+		if (name != '--none--')
+			ulAddLine("edit-output_features_lst", name);
+	}
+	else
+		document.getElementById("edit-output_all_features").style.visibility = "visible";
 }
 
 </script>

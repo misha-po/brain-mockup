@@ -41,21 +41,17 @@ while($row2 = $result2->fetch_assoc()) {
 	array_push($dfs, $row2);
 }
 
-$sql = "select distinct d.id,d.name from QualityMetrics q, Features f, DataFrames d "
-		."where f.dataframe_id=d.id and q.feature_id=f.id and q.package_id=".$pid;
+$sql = "SELECT distinct f.dataframe_id id, d.name name"
+		." FROM QualityMetrics q,Features f,DataFrames d "
+		." where d.id=f.dataframe_id and f.id=q.feature_id and q.package_id=".$pid;
 
-if(!$result3 = $conn->query($sql)) {
-	error_log('Error: '.$conn->error);
-	return;
-}
-$output_df = array();
-if ($row3 = $result3->fetch_assoc())
-	$output_df = $row3;
+$output_df = FetchData($sql, $conn);
+if (count($output_df) != 0)
+	$output_df = $output_df[0];
 else {
 	$output_df['id'] = -1;
-	$output_df['name'] = '';
+	$output_df['name'] = '--none--';
 }
-
 $sql4 = "select f.id,f.name,q.quality_metrics,dt.name as data_type, v.name as value_constraint, f.is_target "
 		." from QualityMetrics q, Features f, DataFrames d, Data_types dt, Value_constraints v "
 		." where f.dataframe_id=d.id and q.feature_id=f.id and f.data_type=dt.id and f.value_constraint=v.id and q.package_id=".$pid;
@@ -139,6 +135,6 @@ $json_data = (object) array(
 				'available_features' => $available_features
 			);
 
-//error_log(json_encode($json_data));
+error_log(json_encode($json_data));
 echo(json_encode($json_data));
 ?>
