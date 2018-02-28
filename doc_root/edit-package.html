@@ -64,7 +64,7 @@
                 <button id="edit-delete_output_feature" class='edit-button' 
                         onclick='ulDeleteSelectedLine("edit-output_features_lst");'>Delete</button>
             <td style="padding-top:5;">
-				<select id="edit-output_all_features" class='edit-row_data' style="width:150;visibility:hidden;" onchange="GetFeatures(this);">
+				<select id="edit-output_all_features" class='edit-row_data' style="width:150;visibility:hidden;">
 				</select>
             </td>
         </tr>
@@ -578,24 +578,6 @@ function editSavePackage() {
 	xhttp.send();		
 }
 
-/*
-function addDataFrame() {
-	var xhttp = new XMLHttpRequest();
-	xhttp.onreadystatechange = function() {
-		if (this.readyState == 4 && this.status == 200) {
-			var 	json_doc = JSON.parse(this.responseText);
-			if (json_doc.length == 0) {
-				return;
-			}
-			var pckg_data = json_doc.pckg_data;
-			showEditPanel(true);
-		}
-	};
-	xhttp.open("GET", 'static/ajax/GetFeatures.php?df_id='+out_df_id, true);
-	xhttp.send();		
-}
-*/
-
 function GetFeatures(e) {
 	if (e.options[e.selectedIndex].value == -1)
 		return;
@@ -608,26 +590,12 @@ function GetFeatures(e) {
 			if (json_doc.length == 0) {
 				return;
 			}
-			editSetAvailableFeatures(json_doc.available_features)
+			RewriteSelect('edit-output_all_features', json_doc.available_features);
 		}
 	};
 	xhttp.open("GET", 'static/ajax/GetFeatures.php?df_id='+df_id, true);
 	xhttp.send();		
 	console.log(e.options[e.selectedIndex].text);
-}
-
-function editSetAvailableFeatures(available_features) {
-	var table3 = document.getElementById('edit-output_df_name')
-	var children = table3.getElementsByTagName('option');
-	for (var i = children.length-1; i> 0; i--) {
-		table3.removeChild(children[i]);
-	}
-	for (var i = 0; i < available_features.length; i++) {
-		var opt1 = document.createElement('option');
-		opt1.value = available_features[i].id;
-		opt1.innerHTML = available_features[i].name;
-		table3.appendChild(opt1);
-	}
 }
 
 function selectRT_Type(button) {
@@ -647,7 +615,7 @@ function addOutputFeature() {
 		var e = document.getElementById('edit-output_all_features')
 		var name = e.options[e.selectedIndex].text;
 		if (name != '--none--')
-			ulAddLine("edit-output_features_lst", name);
+			ulAddLine("edit-output_features_lst", name, '--none--');
 	}
 	else
 		document.getElementById("edit-output_all_features").style.visibility = "visible";

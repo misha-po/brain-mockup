@@ -24,16 +24,22 @@ function RewriteSelect(select, list, selected_value=-1) {
 	table1.appendChild(opt);
 }
 
-function RewriteUL(ul_name, list) {
+function RewriteUL(ul_name, list, empty_value='--none--') {
 	var ul = document.getElementById(ul_name);
 	while( ul.firstChild )
 		ul.removeChild(ul.firstChild );
-	for (var i =0; i < list.length; i++) {
+	if (list.length == 0) {
 		var li = document.createElement("li");
-		li.appendChild(document.createTextNode(list[i].name));
-		// li.onclick = function(){ulSelectLine(li, ul_name)}
-		li.setAttribute('onclick', 'ulSelectLine(this, "'+ul_name+'")');
+		li.appendChild(document.createTextNode(empty_value));
 		ul.appendChild(li);
+	}
+	else {
+		for (var i =0; i < list.length; i++) {
+			var li = document.createElement("li");
+			li.appendChild(document.createTextNode(list[i].name));
+			li.setAttribute('onclick', 'ulSelectLine(this, "'+ul_name+'")');
+			ul.appendChild(li);
+		}
 	}
 }
 
@@ -121,8 +127,14 @@ function ulDeleteSelectedLine(list_name) {
     }
 }
 
-function ulAddLine(ul_name, name) {
+function ulAddLine(ul_name, name, empty_value='--none--') {
 	var ul = document.getElementById(ul_name);
+	if (ul.getElementsByTagName("li").length == 1) {
+		var li = ul.getElementsByTagName("li")[0]
+		if(li.innerHTML == empty_value) {
+			li.parentNode.removeChild(li);
+		}
+	}
 	var li = document.createElement("li");
 	li.appendChild(document.createTextNode(name));
 	li.setAttribute('onclick', 'ulSelectLine(this, "'+ul_name+'")');

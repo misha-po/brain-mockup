@@ -49,9 +49,9 @@
 			<td></td>
         </tr>
 		<!-- ------------------------------------------------------------ -->
-		<tr class='edit_row section_start common_part'><td colspan="2">Input:</td></tr>
+		<tr class='edit_row section_start'><td colspan="2">Input:</td></tr>
         <tr class='edit_row'>
-            <td class="edit-row_label common_part">Dataframes:</td>
+            <td class="edit-row_label">Dataframes:</td>
             <td>
                 <ul id="edit-input_dataframes" class="edit-row_data  selectable_list">
                 </ul>
@@ -209,30 +209,9 @@ function editSetValues() {
 				types.appendChild(br);
 			}
 			//////////////////////////////////////////////////////
-			if (json_doc.input_dataframes.length == 0) {
-				var li = document.createElement("li");
-				li.appendChild(document.createTextNode('any dataframe')); //if change check 
-				//li.onclick = function(){selectLine(li, list_name, 'li')}
-				document.getElementById('edit-input_dataframes').appendChild(li);				
-			}
-			else {
-				for(var i = 0; i < json_doc.input_dataframes.length; i++) {
-					var li = document.createElement("li");
-					li.appendChild(document.createTextNode(json_doc.input_dataframes[i].name)); //if change check 
-					li.onclick = function(){selectLine(li, list_name, 'li')}
-					document.getElementById('edit-input_dataframes').appendChild(li);				
-				}
-			}
-			var data_frames = json_doc.all_data_frames;
-
-			for (var i = 0; i < data_frames.length; i++) {
-				var opt1 = document.createElement('option');
-				opt1.value = data_frames[i].id;
-				opt1.innerHTML = data_frames[i].name;
-				//console.log("output_df="+json_doc.output_df.id);
-				document.getElementById('edit-new_dataframe_name').appendChild(opt1);
-			}
-			document.getElementById("edit-complex_algotype").style.visibility = ((algo_type == 'complexalgorithmType')?"visible":"collapse");
+			RewriteUL('edit-input_dataframes', json_doc.input_dataframes, 'any dataframe');
+			RewriteSelect('edit-new_dataframe_name', json_doc.all_data_frames);
+			//////////////////////////////////////////////////////
 		}
 	};
 	xhttp.open("GET", 'static/ajax/GetAlgoData.php?algo_id='+algo_id, true);
