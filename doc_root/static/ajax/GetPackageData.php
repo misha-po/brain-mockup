@@ -121,6 +121,9 @@ if ($output_df['id'] != -1) {
 	}
 }
 
+$sql = "SELECT p.tag_id id, v.name FROM PackageTagList p, VisibilityTags v where p.tag_id=v.id and package_id=".$pid;
+$prohibited_tags = FetchData($sql, $conn);
+
 $json_data = (object) array(
 				'error' => 'OK',
 				'pckg_data' => $row1,
@@ -132,7 +135,8 @@ $json_data = (object) array(
 				'all_data_frames' => $all_data_frames,
 //				'algo_types' => $algo_types,
 				'algorithms' => $algorithms,
-				'available_features' => $available_features
+				'available_features' => $available_features,
+				'prohibited_tags' => $prohibited_tags
 			);
 
 error_log(json_encode($json_data));

@@ -63,6 +63,7 @@
                         onclick='addOutputFeature();'>Add</button><br>
                 <button id="edit-delete_output_feature" class='edit-button' 
                         onclick='ulDeleteSelectedLine("edit-output_features_lst");'>Delete</button>
+			</td>
             <td style="padding-top:5;">
 				<select id="edit-output_all_features" class='edit-row_data' style="width:150;visibility:hidden;">
 				</select>
@@ -185,7 +186,9 @@
         <tr id='visibility_tags_header' class='edit_row section_start complex_part' ><td colspan="2">Prohibited tags:</td></tr>
         <tr id='visibility_tags_editor' class='edit_row' >
             <td>
-                <ul id="edit-tags" class='selectable_list' style='display: table-cell;'>
+            </td>
+            <td>
+                <ul id="edit-prohibited_tags" class='selectable_list' style='display: table-cell;'>
                     <li value="Tag1" onclick='selectLine(this, "edit-tags", "li")'>Tag1</li>
                     <li value="Tag2" onclick='selectLine(this, "edit-tags", "li")'>Tag2</li>
                     <li value="Tag3" onclick='selectLine(this, "edit-tags", "li")'>Tag3</li>
@@ -222,32 +225,59 @@
 
 		</tr>
 		<!-- ------------------------------------------------------------ -->
-        <tr class='edit_row section_start common_part'><td colspan="2">Deployment:</td></tr>
+		<!-- ------------------------------------------------------------ -->
+		<!-- ------------------------------------------------------------ -->
+        <tr class='edit_row section_start common_part'><td colspan="2">Serving:</td></tr>
 		<tr>
             <td>
-                <input type="checkbox" id='edit-is-target' onchange='document.getElementById("edit-rt_properties").style.visibility = (this.checked?"visible":"collapse");'>Real time</input>
+                <input type="checkbox" id='edit-is-target' onchange='displayServingPanel(this.checked)'>Serve</input>
             </td>
         </tr>
+        <tr id='edit-serving_properties1' class='edit_row' style="visibility: collapse;">
+            <td>
+                &nbsp&nbsp<input type="radio" name="edit-serving_Type" value="serving_rt" checked 
+							onchange='selectServingType(this.checked);'>Real time</input>
+            </td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+		<!-- ------------------------------------------------------------ -->
         <tr id='edit-rt_properties' class='edit_row' style="visibility: collapse;">
+            <td>
+            </td>
             <td>
                 &nbsp&nbsp<input type="radio" name="edit-rt_Type" value="rt_data" checked onchange="selectRT_Type(this);">RT data access</input>
 			<br>
                 &nbsp&nbsp<input type="radio" name="edit-rt_Type" value="rt_calc" onchange="selectRT_Type(this);">RT calculation</input>
             </td>
             <td colspan="2">
-				<div id='edit_rt_data_access' style='font-size: smaller;font-style: italic;'>
-					The entire output dataframe<br>will be copied to HBase for fast access
-				</div>
-				<div id='edit_rt_calculation' style='font-size: smaller;font-style: italic;visibility:hidden'>
-					This algorithms will be deployed on RealTime server<br>and not scheduled.
+				<div id='edit_rt_description' style='font-size: smaller;font-style: italic;'>
 				</div>
 			</td>
             <td></td>
+        </tr>
+		<!-- ------------------------------------------------------------ -->
+        <tr id='edit-serving_properties2' class='edit_row' style="visibility: collapse;">
+            <td>
+                &nbsp&nbsp<input type="radio" name="edit-serving_Type" value="serving_batch" 
+							onchange="selectServingType(!this.checked);">Batch</input>
+            </td>
+            <td></td>
+            <td></td>
             <td></td>
         </tr>
-        <tr id='edit-rt_data' class='edit_row' style="visibility:collapse;">
-        </tr>
-        <tr id='edit-rt_calc' class='edit_row' style="visibility:collapse;">
+		<!-- ------------------------------------------------------------ -->
+        <tr id='edit-batch_properties' class='edit_row' style="visibility: collapse;">
+            <td>
+            </td>
+            <td colspan="3">
+			File name:<input type="text" />
+            </td>
+            <td>
+            </td>
+            <td>
+            </td>
         </tr>
 		<!-- ------------------------------------------------------------ -->
         <tr class='edit_row'>
@@ -283,7 +313,6 @@ changeListener("edit-new_param_name", "edit-add_param");
 changeListener("edit-new_tag_name", "edit-add_tag");
 
 function showEditPanel(show) {
-	console.log('Here we go '+show);
     var show1 = show?"visible":"collapse";
     var show2 = show?"collapse":"visible";
     document.getElementById("edit-add_feature2").style.visibility = show1;
@@ -539,6 +568,9 @@ function editSetValues() {
 			RewriteUL('edit-output_features_lst', json_doc.features);
 			RewriteUL('edit-input_dataframes', json_doc.data_frames);
 			RewriteSelect('edit-output_all_features', json_doc.available_features);
+			RewriteUL('edit-prohibited_tags', json_doc.prohibited_tags);
+			RewriteRadioButtons(container_name, name, list, selected_value=-1)
+			
 		}
 	};
 	xhttp.open("GET", 'static/ajax/GetPackageData.php?id='+pid, true);
@@ -563,7 +595,6 @@ function editSavePackage() {
 //		feature_list.push(feature);
 		feature_list.push(table.rows[i].cells[0].innerHTML);
     }
-	console.log(feature_list);
 
 	var xhttp = new XMLHttpRequest();
 	xhttp.onreadystatechange = function() {
@@ -581,7 +612,6 @@ function editSavePackage() {
 function GetFeatures(e) {
 	if (e.options[e.selectedIndex].value == -1)
 		return;
-	console.log(e);
 	var df_id = e.options[e.selectedIndex].value;
 	var xhttp = new XMLHttpRequest();
 	xhttp.onreadystatechange = function() {
@@ -595,17 +625,14 @@ function GetFeatures(e) {
 	};
 	xhttp.open("GET", 'static/ajax/GetFeatures.php?df_id='+df_id, true);
 	xhttp.send();		
-	console.log(e.options[e.selectedIndex].text);
 }
 
 function selectRT_Type(button) {
 	if (button.value == "rt_data") {
-        document.getElementById("edit_rt_data_access").style.visibility = "visible";
-        document.getElementById("edit_rt_calculation").style.visibility = "collapse";
+        document.getElementById("edit_rt_description").innerHTML = "The entire output dataframe will be copied to<br>the Feature STore for fast access";
 	}
 	if (button.value == "rt_calc") {
-        document.getElementById("edit_rt_data_access").style.visibility = "collapse";
-        document.getElementById("edit_rt_calculation").style.visibility = "visible";
+        document.getElementById("edit_rt_description").innerHTML = "This algorithms will be deployed on RealTime server<br>and not scheduled.";
 	}
 }
 
@@ -621,6 +648,15 @@ function addOutputFeature() {
 		document.getElementById("edit-output_all_features").style.visibility = "visible";
 }
 
+function selectServingType(rt_type) {
+	document.getElementById("edit-rt_properties").style.visibility = (rt_type?"visible":"collapse");
+	document.getElementById("edit-batch_properties").style.visibility = (rt_type?"collapse":"visible");	
+}
+
+function displayServingPanel(display) {
+	document.getElementById("edit-serving_properties1").style.visibility = (display?"visible":"collapse");
+	document.getElementById("edit-serving_properties2").style.visibility = (display?"visible":"collapse");
+}
 </script>
 </body>
 </html>

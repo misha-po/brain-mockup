@@ -140,3 +140,31 @@ function ulAddLine(ul_name, name, empty_value='--none--') {
 	li.setAttribute('onclick', 'ulSelectLine(this, "'+ul_name+'")');
 	ul.appendChild(li);
 }
+
+function RewriteRadioButtons(container_name, name, list, selected_value=-1) {
+	var container = document.getElementById(container_name);
+	var children = container.getElementsByTagName(name);
+	
+	for (var i = children.length-1; i> 0; i--) {
+		children[i].parent.removeChild(children[i]);
+	}
+	
+	for (var i = 0; i < list.length; i++) {
+		try {
+			var radioHtml = '<input type="radio" name="' + name + '"';
+			if ( i ==  selected_value) {
+				radioHtml += ' checked="checked"';
+			}
+			radioHtml += '/>';
+			radioInput = document.createElement(radioHtml);
+		} catch( err ) {
+			radioInput = document.createElement('input');
+			radioInput.setAttribute('type', 'radio');
+			radioInput.setAttribute('name', name);
+			if ( i ==  selected_value ) {
+				radioInput.setAttribute('checked', 'checked');
+			}
+		}
+		container.appendChild(opt);
+	}
+}

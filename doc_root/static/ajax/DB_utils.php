@@ -18,7 +18,8 @@ if ($conn->connect_error) {
 
 function FetchData($sql, $conn) {
 	if(!$result = $conn->query($sql)) {
-		die('Error: '.$conn->error);
+		error_log('Error: '.$conn->error);
+		echo "{'error' => $conn->error}";
 	}
 	$out_data = array();
 	while($row = $result->fetch_assoc()) {
