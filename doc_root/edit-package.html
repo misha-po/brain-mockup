@@ -44,7 +44,7 @@
             <td class="edit-row_label invocation_part">Model name:</td>
             <td><input type="text" /></td>
         </tr>
-        <tr id='edit-output_features1' class='edit_row section_start'><td colspan="2">Output:</td></tr>
+        <tr id='edit-output_features1' class='edit_row section_start'><td colspan="2">Creates features:</td></tr>
         <tr id='edit-output_features3' class='edit_row'>
             <td class='edit-row_label'>Dataframe:</td>
             <td colspan="2">
@@ -81,17 +81,6 @@
                 </select>
             </td>
         </tr>
-		<!--
-        <tr id='edit-add_feature3' class='edit_row'>
-            <td class="edit-row_label basic_part">Tag list:</td>
-            <td class="basic_part">
-                <input id='edit-feature_tag_list' type="text" id='edit-tag_list'/>
-            </td>
-            <td id='edit-add_feature5' class="basic_part">
-                <input type="checkbox" id='edit-is-target'>is target</input>
-            </td>
-        </tr>
-		-->
         <tr id='edit-add_feature4' class='edit_row' style="visibility:collapse;">
             <td>
             </td>
@@ -145,8 +134,70 @@
                 </div>
             </td>
         </tr>
-        <tr class='edit_row section_start'><td colspan="2">Schedule:</td></tr>
-        <tr class='edit_row'>
+        <!-- ------------------------------------------------------ --> 
+        <tr id='visibility_tags_header' class='edit_row section_start complex_part' ><td colspan="2">Prohibited tags:</td></tr>
+        <tr id='visibility_tags_editor' class='edit_row' >
+            <td>
+            </td>
+            <td>
+                <ul id="edit-prohibited_tags" class='selectable_list' style='display: table-cell;'>
+                    <li value="Tag1" onclick='selectLine(this, "edit-tags", "li")'>Tag1</li>
+                    <li value="Tag2" onclick='selectLine(this, "edit-tags", "li")'>Tag2</li>
+                    <li value="Tag3" onclick='selectLine(this, "edit-tags", "li")'>Tag3</li>
+                </ul>
+            </td>
+            <td>
+                <button id='edit-add_tag' class='edit-button' 
+                        onclick='editAddLiElement("edit-new_tags", "edit-new_tag_name", "edit-tags", "edit-delete_tag");'>Add</button><br>
+                <button id="edit-delete_tag" class='edit-button' 
+                        onclick='ulDeleteSelectedLine("edit-tags");'>Delete</button>
+            </td>
+            <td>
+            </td>
+            <td>
+                <div id="edit-new_tags" style='display: none;'>
+                    <label>New tag:</label><br>
+                    <input id="edit-new_tag_name" type="text" />
+                </div>
+            </td>
+        </tr>		
+        <!-- ------------------------------------------------------ --> 
+        <!-- ------------------------------------------------------ --> 
+        <tr id="edit-resource_mgmt1" class='edit_row section_start common_part'><td colspan="2">Resource management:</td></tr>
+		<tr id="edit-resource_mgmt2">
+            <td class="edit-row_label common_part">Cores:</td>
+            <td class="common_part">
+				<input id="edit-n_cores" type="number" min="1" max="16" value="2"/>
+				Memory:
+				<input id="edit-ram_size" type="number"  min="1" max="32" value="2"/>GB
+			</td>
+            <td></td>
+            <td></td>
+        </tr>
+		<tr id="edit-resource_mgmt3" >
+            <td class="edit-row_label common_part">Max execution time:</td>
+            <td>
+				<input id="edit-max_execution-time" type="number" min="1"  max="59" value="10">
+				<select id="edit-max_execution-time-units">
+					<option value=1>minutes</option>
+					<option value=1>hours</option>
+					<option value=1>days</option>
+				<select>
+			</td>
+		</tr>
+		<!-- ------------------------------------------------------------ -->
+		<!-- ------------------------------------------------------------ -->
+		<!-- ------------------------------------------------------------ -->
+        <tr class='edit_row section_start common_part'><td colspan="2">Serving:</td></tr>
+		<tr>
+            <td id='edit-serving_buttons'></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+		<!-- ------------------------------------------------------------ -->
+        <tr id="edit-scheduler1" class='edit_row section_start'><td colspan="2">Schedule:</td></tr>
+        <tr id="edit-scheduler2" class='edit_row'>
             <td class="edit-row_label">Schedule type:</td>
             <td>
                 <input type="radio" name="scheduleType" value="standard" checked onchange="selectEditSchedule(1);">Standard</input><br>
@@ -182,74 +233,26 @@
                 </div>
             </td>
         </tr>
-        <!-- ------------------------------------------------------ --> 
-        <tr id='visibility_tags_header' class='edit_row section_start complex_part' ><td colspan="2">Prohibited tags:</td></tr>
-        <tr id='visibility_tags_editor' class='edit_row' >
-            <td>
-            </td>
-            <td>
-                <ul id="edit-prohibited_tags" class='selectable_list' style='display: table-cell;'>
-                    <li value="Tag1" onclick='selectLine(this, "edit-tags", "li")'>Tag1</li>
-                    <li value="Tag2" onclick='selectLine(this, "edit-tags", "li")'>Tag2</li>
-                    <li value="Tag3" onclick='selectLine(this, "edit-tags", "li")'>Tag3</li>
-                </ul>
-            </td>
-            <td>
-                <button id='edit-add_tag' class='edit-button' 
-                        onclick='editAddLiElement("edit-new_tags", "edit-new_tag_name", "edit-tags", "edit-delete_tag");'>Add</button><br>
-                <button id="edit-delete_tag" class='edit-button' 
-                        onclick='ulDeleteSelectedLine("edit-tags");'>Delete</button>
-            </td>
-            <td>
-            </td>
-            <td>
-                <div id="edit-new_tags" style='display: none;'>
-                    <label>New tag:</label><br>
-                    <input id="edit-new_tag_name" type="text" />
-                </div>
-            </td>
-        </tr>
-        <!-- ------------------------------------------------------ --> 
-        <tr class='edit_row section_start common_part'><td colspan="2">Resource management:</td></tr>
-		<tr>
-            <td class="edit-row_label common_part">Cores:</td>
-            <td><input id="edit-n_cores" type="number" min="1" max="16" value="2"/></td>
-            <td class="edit-row_label common_part">Memory:</td>
-            <td><input id="edit-ram_size" type="number"  min="1" max="32" value="2"/>GB</td>
-            <td></td>
-            <td></td>
-        </tr>
-		<tr>
-            <td class="edit-row_label common_part">Max execution time:</td>
-            <td><input id="edit-max_execution-time" type="time" name="appt-time" value="00:05"></td>
+		<!-- ------------------------------------------------------------ -->
+		<!-- ------------------------------------------------------------ -->
+		
 
-		</tr>
-		<!-- ------------------------------------------------------------ -->
-		<!-- ------------------------------------------------------------ -->
-		<!-- ------------------------------------------------------------ -->
-        <tr class='edit_row section_start common_part'><td colspan="2">Serving:</td></tr>
-		<tr>
-            <td>
-                <input type="checkbox" id='edit-is-target' onchange='displayServingPanel(this.checked)'>Serve</input>
-            </td>
-        </tr>
-        <tr id='edit-serving_properties1' class='edit_row' style="visibility: collapse;">
-            <td>
-                &nbsp&nbsp<input type="radio" name="edit-serving_Type" value="serving_rt" checked 
-							onchange='selectServingType(this.checked);'>Real time</input>
+
+
+        <tr id='edit-batch_properties' class='edit_row' style="visibility: collapse;">
+            <td></td>
+            <td colspan="3">
+			File name:<input id="edit-output_filename" type="text" />
             </td>
             <td></td>
             <td></td>
-            <td></td>
         </tr>
-		<!-- ------------------------------------------------------------ -->
         <tr id='edit-rt_properties' class='edit_row' style="visibility: collapse;">
+            <td></td>
             <td>
-            </td>
-            <td>
-                &nbsp&nbsp<input type="radio" name="edit-rt_Type" value="rt_data" checked onchange="selectRT_Type(this);">RT data access</input>
+                &nbsp&nbsp<input type="radio" name="edit-rt_Type" value="rt_data" checked onchange="selectRT_Type(this.value);">RT data access</input>
 			<br>
-                &nbsp&nbsp<input type="radio" name="edit-rt_Type" value="rt_calc" onchange="selectRT_Type(this);">RT calculation</input>
+                &nbsp&nbsp<input type="radio" name="edit-rt_Type" value="rt_calc" onchange="selectRT_Type(this.value);">RT calculation</input>
             </td>
             <td colspan="2">
 				<div id='edit_rt_description' style='font-size: smaller;font-style: italic;'>
@@ -258,26 +261,27 @@
             <td></td>
         </tr>
 		<!-- ------------------------------------------------------------ -->
-        <tr id='edit-serving_properties2' class='edit_row' style="visibility: collapse;">
+
+
+
+        <tr id='edit-serving_properties1' class='edit_row' style="visibility: collapse;">
             <td>
-                &nbsp&nbsp<input type="radio" name="edit-serving_Type" value="serving_batch" 
-							onchange="selectServingType(!this.checked);">Batch</input>
+                &nbsp&nbsp<input type="radio" name="edit-serving_type" value="serving_rt" checked 
+							onchange='selectServingType(this.checked);'>Real time</input>
             </td>
             <td></td>
             <td></td>
             <td></td>
         </tr>
 		<!-- ------------------------------------------------------------ -->
-        <tr id='edit-batch_properties' class='edit_row' style="visibility: collapse;">
+        <tr id='edit-serving_properties2' class='edit_row' style="visibility: collapse;">
             <td>
+                &nbsp&nbsp<input type="radio" name="edit-serving_type" value="serving_batch" 
+							onchange="selectServingType(!this.checked);">Batch</input>
             </td>
-            <td colspan="3">
-			File name:<input type="text" />
-            </td>
-            <td>
-            </td>
-            <td>
-            </td>
+            <td></td>
+            <td></td>
+            <td></td>
         </tr>
 		<!-- ------------------------------------------------------------ -->
         <tr class='edit_row'>
@@ -287,7 +291,7 @@
         </tr>
         <tr>
             <td colspan=2>
-                <button id='edit-save-package' class='action-button' onclick='editSavePackage();'>Save</button>
+                <button id='edit-save-package' class='action-button' onclick='editSaveValues();'>Save</button>
             </td>
             <td colspan=2>
                 <button id="edit-cancel" class='action-button' onclick='editCancelSavePackage(popup_name);'>Cancel</button>
@@ -296,6 +300,8 @@
         </table>
     </div>  
 <script>
+var rt_serving_type;
+
 var pid = window.parent.document.getElementsByName('object-package_id')[0].value;
 var aid;
 var out_df_id = -1;
@@ -480,6 +486,7 @@ function editAddDataframe(panel_name, text_box, list_name, delete_button) {
         document.getElementById(delete_button).style.visibility = "visible";
 		var tbl = document.getElementById(text_box);
         var text = tbl.options[tbl.selectedIndex].innerHTML;
+		var value = tbl.options[tbl.selectedIndex].value;
         
         var elements = document.getElementById(list_name).getElementsByTagName('li');
         for (var i = 0; i < elements.length; i++) {
@@ -489,6 +496,7 @@ function editAddDataframe(panel_name, text_box, list_name, delete_button) {
         }
         var li = document.createElement("li");
         li.appendChild(document.createTextNode(text));
+		li.value = value;
         li.onclick = function(){selectLine(li, list_name, 'li')}
         document.getElementById(list_name).appendChild(li);
     }
@@ -534,6 +542,7 @@ function editSchedulePeriod() {
 }
 
 function editSetValues() {
+	console.log(pid);
 	var xhttp = new XMLHttpRequest();
 	xhttp.onreadystatechange = function() {
 		if (this.readyState == 4 && this.status == 200) {
@@ -561,7 +570,8 @@ function editSetValues() {
 			}
 			//////////////////////////////////////////////////////
 			RewriteSelect('edit-algo_code', json_doc.algorithms);
-			selectValue('edit-algo_code', pckg_data.aid);
+//			console.log(json_doc.pckg_data);
+			selectValue('edit-algo_code', json_doc.pckg_data.aid);
 			RewriteSelect('edit-new_dataframe_name', json_doc.all_data_frames);
 			RewriteSelect('edit-output_df_name', json_doc.all_data_frames);
 			selectValue('edit-output_df_name', json_doc.output_df.id);
@@ -569,33 +579,45 @@ function editSetValues() {
 			RewriteUL('edit-input_dataframes', json_doc.data_frames);
 			RewriteSelect('edit-output_all_features', json_doc.available_features);
 			RewriteUL('edit-prohibited_tags', json_doc.prohibited_tags);
-			RewriteRadioButtons(container_name, name, list, selected_value=-1)
-			
+			RewriteRadioButtons('edit-serving_buttons', 'edit-serving_type', json_doc.all_serving_types, json_doc.serving_type, 'selectServingType(this.value)');
+			rt_serving_type = json_doc.rt_serving_type?'rt_data':'rt_calc';
+			//selectRT_Type(rt_serving_type);
+			selectServingType(json_doc.serving_type);
 		}
 	};
 	xhttp.open("GET", 'static/ajax/GetPackageData.php?id='+pid, true);
 	xhttp.send();
 }
 
-function editSavePackage() {
-	var df_list = [];
-	var children = document.getElementById('edit-input_dataframes').getElementsByTagName('li');
-	for (var i = 0; i < children.length; i++)
-		df_list.push(children[i].innerHTML);
-	var feature_list = [];
-    var table = document.getElementById('edit-dataframes_list');
-    for (var i = 1; i < table.rows.length; i++) {
-//		var feature = {
-//			id: table.rows[i].cells[0].innerHTML,
-//			name: table.rows[i].cells[1].innerHTML,
-//			data_type: table.rows[i].cells[2].innerHTML,
-//			value_constraint: table.rows[i].cells[3].innerHTML,
-//			is_target: (table.rows[i].cells[4].innerHTML=='N')?false:true
-//		};
-//		feature_list.push(feature);
-		feature_list.push(table.rows[i].cells[0].innerHTML);
-    }
-
+function editSaveValues() {
+	var algo = document.getElementById("edit-algo_code");
+	var output_df = document.getElementById("edit-output_df_name");
+	var units = document.getElementById("edit-max_execution-time-units");
+	var input_data = ulGetList("edit-input_dataframes");
+	console.log(input_data);
+	var resources = {
+		cores: document.getElementById("edit-n_cores").value,
+		memory: document.getElementById("edit-ram_size").value,
+		max_time_units:  units.options[units.selectedIndex].value,
+		max_time: document.getElementById("edit-max_execution-time").value
+	};
+	
+	
+	var serving = {
+		serving_type: document.querySelector('input[name="edit-serving_type"]:checked').value,
+		rt_serving_type: (document.querySelector('input[name="edit-rt_Type"]:checked').value=='rt_data'?0:1),
+		file_name: document.getElementById("edit-output_filename").value
+	};
+	
+	var package_data = {
+		algo: algo.options[algo.selectedIndex].value,
+		input_data: input_data,
+		output_df: output_df.options[output_df.selectedIndex].value,
+		output_features: ulGetList("edit-output_features_lst"),
+		resource_mgmt: resources,
+		serving: serving
+	}
+	
 	var xhttp = new XMLHttpRequest();
 	xhttp.onreadystatechange = function() {
 		if (this.readyState == 4 && this.status == 200) {
@@ -604,8 +626,7 @@ function editSavePackage() {
 		}
 	};
 	xhttp.open("GET", 'static/ajax/SavePackageData.php?package_id='+pid
-			+"&input_df_list="+encodeURI(JSON.stringify(df_list))
-			+"&output_features="+encodeURI(JSON.stringify(feature_list)), true);
+			+"&package_data="+encodeURI(JSON.stringify(package_data)), true);
 	xhttp.send();		
 }
 
@@ -627,36 +648,68 @@ function GetFeatures(e) {
 	xhttp.send();		
 }
 
-function selectRT_Type(button) {
-	if (button.value == "rt_data") {
-        document.getElementById("edit_rt_description").innerHTML = "The entire output dataframe will be copied to<br>the Feature STore for fast access";
-	}
-	if (button.value == "rt_calc") {
-        document.getElementById("edit_rt_description").innerHTML = "This algorithms will be deployed on RealTime server<br>and not scheduled.";
-	}
-}
-
 function addOutputFeature() {
     if (document.getElementById("edit-output_all_features").style.visibility == "visible") {
 		document.getElementById("edit-output_all_features").style.visibility = "hidden";
 		var e = document.getElementById('edit-output_all_features')
 		var name = e.options[e.selectedIndex].text;
+		var value = e.options[e.selectedIndex].value;
 		if (name != '--none--')
-			ulAddLine("edit-output_features_lst", name, '--none--');
+			ulAddLine("edit-output_features_lst", name, value, '--none--');
 	}
 	else
 		document.getElementById("edit-output_all_features").style.visibility = "visible";
 }
 
-function selectServingType(rt_type) {
-	document.getElementById("edit-rt_properties").style.visibility = (rt_type?"visible":"collapse");
-	document.getElementById("edit-batch_properties").style.visibility = (rt_type?"collapse":"visible");	
+///////////////////////////////////////////////////////////////////////////////////////
+
+function selectServingType(value) {
+	console.log('serving_type',value);
+	switch(value) {
+    case "1":
+		document.getElementById("edit-batch_properties").style.visibility = "collapse";
+		document.getElementById("edit-rt_properties").style.visibility = "collapse";
+		document.getElementById("edit-scheduler1").style.visibility = "visible";
+		document.getElementById("edit-scheduler2").style.visibility = "visible";
+        break;
+    case "2":
+		document.getElementById("edit-batch_properties").style.visibility = "visible";
+		document.getElementById("edit-rt_properties").style.visibility = "collapse";
+		document.getElementById("edit-scheduler1").style.visibility = "visible";
+		document.getElementById("edit-scheduler2").style.visibility = "visible";
+        break;
+    case "3":
+		document.getElementById("edit-batch_properties").style.visibility = "collapse";
+		document.getElementById("edit-rt_properties").style.visibility = "visible";
+		selectRT_Type(rt_serving_type);
+        break;
+    default:
+        //code block
+	}
 }
 
-function displayServingPanel(display) {
-	document.getElementById("edit-serving_properties1").style.visibility = (display?"visible":"collapse");
-	document.getElementById("edit-serving_properties2").style.visibility = (display?"visible":"collapse");
+function selectRT_Type(value) {
+	rt_serving_type = value;
+	switch(rt_serving_type) {
+	case "rt_data":
+        document.getElementById("edit_rt_description").innerHTML = "The entire output dataframe will be copied to<br>the Feature STore for fast access";
+		document.getElementById("edit-scheduler1").style.visibility = "visible";
+		document.getElementById("edit-scheduler2").style.visibility = "visible";
+		document.getElementById("edit-resource_mgmt1").style.visibility = "visible";
+		document.getElementById("edit-resource_mgmt2").style.visibility = "visible";
+		document.getElementById("edit-resource_mgmt3").style.visibility = "visible";
+		break;
+	case "rt_calc":
+        document.getElementById("edit_rt_description").innerHTML = "This algorithms will be deployed on RealTime server<br>and not scheduled.";
+		document.getElementById("edit-scheduler1").style.visibility = "collapse";
+		document.getElementById("edit-scheduler2").style.visibility = "collapse";
+		document.getElementById("edit-resource_mgmt1").style.visibility = "collapse";
+		document.getElementById("edit-resource_mgmt2").style.visibility = "collapse";
+		document.getElementById("edit-resource_mgmt3").style.visibility = "collapse";
+		break;
+	}
 }
+
 </script>
 </body>
 </html>

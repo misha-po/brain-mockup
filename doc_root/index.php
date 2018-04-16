@@ -38,6 +38,11 @@ $_SESSION["next_page"] = 1;
 		<button class="tab-button" type="button" onclick="SelectTab(0);">
 				Tags
 		</button>
+		<!--
+		<button class="tab-button" type="button" onclick="SelectTab(1); UpdateFeatureList()">
+				Dataframes
+		</button>
+		-->
 		<button class="tab-button" type="button" onclick="SelectTab(1); UpdateFeatureList()">
 				Features
 		</button>
@@ -46,6 +51,9 @@ $_SESSION["next_page"] = 1;
 		</button>
 		<button class="tab-button tab-button-selected" type="button" onclick="SelectTab(3);">
 				Packages
+		</button>
+		<button class="tab-button tab-button-selected" type="button" onclick="SelectTab(3);">
+				Variables
 		</button>
 		<!--
 		<button class="tab-button" type="button" onclick="SelectTab(4);">Airflow</button>
@@ -66,11 +74,11 @@ $_SESSION["next_page"] = 1;
 			<div id="right-pane" class="vertical-pane">
 				<ul class='menu-bar1'>
 					<li><button class="action-button project-button" type="button"  data-toggle="modal" data-target="#select-feature-popup" 
-									onclick="ShowEditDialog('tag-edit-popup', 'tag_list', 'object-tag_id', false);">Edit</button></li>
-					<li><button class="action-button project-button" type="button">Delete</button></li>
+									onclick="ShowEditDialog('tag-edit-popup', 'tag_list', 'object-tag_id', false);">Edit tag</button></li>
+					<li><button class="action-button project-button" type="button">Delete tag</button></li>
 					<li> &nbsp </li>
 					<li><button class="action-button project-button" type="button"  data-toggle="modal" data-target="#tag-edit-popup" 
-								onclick="ShowEditDialog('tag-edit-popup', 'tag_list', 'object-tag_id', true);">New</button></li>
+								onclick="ShowEditDialog('tag-edit-popup', 'tag_list', 'object-tag_id', true);">New tag</button></li>
 				</ul>
 			</div>
 		</div>
@@ -83,14 +91,14 @@ $_SESSION["next_page"] = 1;
 			<div id="right-pane" class="vertical-pane">
 				<ul class='menu-bar1'>
 					<li><button class="action-button project-button" type="button"  data-toggle="modal" data-target="#select-feature-popup" 
-										onclick="ShowEditDialog('pkg-edit-popup', 'pckg_list', 'object-package_id', false);">Edit</button></li>
+										onclick="ShowEditDialog('pkg-edit-popup', 'pckg_list', 'object-package_id', false);">Edit package</button></li>
 					<li><button class="action-button project-button" type="button"  data-toggle="modal" data-target="#select-feature-popup" >Show PDF</button></li>
 					<li><button class="action-button project-button" type="button"  data-toggle="modal" data-target="#select-feature-popup"  
 										onclick="ReloadGraph('pckg_list');" >Dependencies</button></li>
-					<li><button class="action-button project-button" type="button">Delete</button></li>
+					<li><button class="action-button project-button" type="button">Delete package</button></li>
 					<li> &nbsp </li>
 					<li><button class="action-button project-button" type="button"  data-toggle="modal" data-target="#pkg-edit-popup" 
-										onclick="ShowEditDialog('pkg-edit-popup', 'pckg_list', 'object-package_id', true);">New</button></li>
+										onclick="ShowEditDialog('pkg-edit-popup', 'pckg_list', 'object-package_id', true);">New package</button></li>
 				</ul>
 			</div>
 		</div>
@@ -102,10 +110,10 @@ $_SESSION["next_page"] = 1;
 			</div>
 			<div id="right-pane" class="vertical-pane">
 				<ul class='menu-bar1'>
-					<li><button class="action-button project-button" type="button"  data-toggle="modal" data-target="#select-feature-popup" onclick="ShowEditDialog('algo-view-popup', 'algo_list', 'object-algo_id', false);">Edit</button></li>
-					<li><button class="action-button project-button" type="button">Delete</button></li>
+					<li><button class="action-button project-button" type="button"  data-toggle="modal" data-target="#select-feature-popup" onclick="ShowEditDialog('algo-view-popup', 'algo_list', 'object-algo_id', false);">Edit algorithm</button></li>
+					<li><button class="action-button project-button" type="button">Delete algorithm</button></li>
 					<li> &nbsp </li>
-					<li><button class="action-button project-button" type="button"  data-toggle="modal" data-target="#algo-view-popup" onclick="ShowEditDialog('algo-view-popup', 'algo_list', 'object-algo_id', true);">New</button></li>
+					<li><button class="action-button project-button" type="button"  data-toggle="modal" data-target="#algo-view-popup" onclick="ShowEditDialog('algo-view-popup', 'algo_list', 'object-algo_id', true);">New algorithm</button></li>
 				</ul>
 			</div>
 		</div>
@@ -124,11 +132,13 @@ $_SESSION["next_page"] = 1;
 					<li><button class="action-button project-button" type="button"  data-toggle="modal" data-target="#select-feature-popup" 
 									onclick="UpdateFeatureList();ShowEditDialog('feature-view-popup', 'feature_list', 'object-feature_id', false);">Edit feature</button></li>
 					<li><button class="action-button project-button" type="button">Delete</button></li>
+					<li><button class="action-button project-button" type="button"  data-toggle="modal" data-target="#select-feature-popup" 
+									onclick="ShowEditDialog('quality-metrics-popup', '', 'object-feature_id', false);">Show metrics</button></li>
 					<li> &nbsp </li>
 					<li><button class="action-button project-button" type="button"  data-toggle="modal" data-target="#feature-view-popup" 
-									onclick="UpdateFeatureList();ShowEditDialog('feature-view-popup', 'feature_list', 'object-feature_id', true);">New Dataframe</button></li>
-					<li><button class="action-button project-button" type="button"  data-toggle="modal" data-target="#feature-view-popup" 
 									onclick="UpdateFeatureList();ShowEditDialog('feature-view-popup', 'feature_list', 'object-feature_id', true);">Add feature</button></li>
+					<li><button class="action-button project-button" type="button"  data-toggle="modal" data-target="#feature-view-popup" 
+									onclick="UpdateFeatureList();ShowEditDialog('new-df-popup', 'df_list', 'object-df_id', true);">New Dataframe</button></li>
 				</ul>
 			</div>
 		</div>
@@ -174,7 +184,7 @@ $_SESSION["next_page"] = 1;
 	<div class="modal fade" id="tag-edit-popup" role="dialog" style="top:100px;">
 	  <div class="modal-content">
 		<div style="border:solid black 1px;">
-			<h2 id="modal-title" style='float:left;margin-bottom:0'>Tag propertes</h2>
+			<h2 id="modal-title" style='float:left;margin-bottom:0'>Tag properties</h2>
 			<span id="tag-view-popup_close" class="close" onclick="CloseEditDialog('tag-edit-popup','tag_list','tag');">&times;</span>
 		</div>
 		<div style="border:solid black 1px; height:140px;">
@@ -185,12 +195,44 @@ $_SESSION["next_page"] = 1;
 	  </div>
 	</div>
 	<!-- ----------------- -->
+	<!-- new df ---------- -->
+	<!-- ----------------- -->
+	<div class="modal fade" id="new-df-popup" role="dialog" style="top:100px;">
+	  <div class="modal-content">
+		<div style="border:solid black 1px;">
+			<h2 id="modal-title" style='float:left;margin-bottom:0'>New dataframe</h2>
+			<span id="new-df-view-popup_close" class="close" onclick="CloseEditDialog('new-df-popup','df_list','feature');">&times;</span>
+		</div>
+		<div style="border:solid black 1px; height:140px;">
+			<object id="object-new-df" type="text/html" style="width:100%;border: 0; height:100%;" data="new-df.html">
+				<param name="new-df" value="unknown"/>
+			</object>
+		</div>
+	  </div>
+	</div>
+	<!-- ----------------- -->
+	<!-- quality metrics - -->
+	<!-- ----------------- -->
+	<div class="modal fade" id="quality-metrics-popup" role="dialog" style="top:100px;">
+	  <div class="modal-content">
+		<div style="border:solid black 1px;">
+			<h2 id="modal-title" style='float:left;margin-bottom:0'>Quality metrics</h2>
+			<span id="quality-metrics-view-popup_close" class="close" onclick="CloseEditDialog('quality-metrics-popup','df_list','feature');">&times;</span>
+		</div>
+		<div style="border:solid black 1px; height:140px;">
+			<object id="object-quality-metrics" type="text/html" style="width:100%;border: 0; height:100%;" data="quality-metrics.html">
+				<param name="" value="unknown"/>
+			</object>
+		</div>
+	  </div>
+	</div>	
+	<!-- ----------------- -->
 	<!-- edit package ---- -->
 	<!-- ----------------- -->
 	<div class="modal fade" id="pkg-edit-popup" role="dialog" style="top:100px;">
 	  <div class="modal-content">
 		<div style="border:solid black 1px;">
-			<h2 id="modal-title" style='float:left;margin-bottom:0'>Package propertes</h2>
+			<h2 id="modal-title" style='float:left;margin-bottom:0'>Package properties</h2>
 			<span id="pckg-view-popup_close" class="close" onclick="CloseEditDialog('pkg-edit-popup','pckg_list', 'pckg');">&times;</span>
 		</div>
 		<div style="border:solid black 1px; height:700px;">
@@ -207,7 +249,7 @@ $_SESSION["next_page"] = 1;
 	<div class="modal fade" id="algo-view-popup" role="dialog" style="top:100px;">
 	  <div class="modal-content">
 		<div style="border:solid black 1px;">
-			<h2 id="modal-title" style='float:left;margin-bottom:0'>Algorithm propertes</h2>
+			<h2 id="modal-title" style='float:left;margin-bottom:0'>Algorithm properties</h2>
 			<span id="algo-view-popup_close" class="close" onclick="CloseEditDialog('algo-view-popup','algo_list', 'algo');">&times;</span>
 		</div>
 		<div style="border:solid black 1px; height:550px;">
@@ -224,7 +266,7 @@ $_SESSION["next_page"] = 1;
 	<div class="modal fade" id="feature-view-popup" role="dialog"  style="top:100px;">
 	  <div class="modal-content">
 		<div style="border:solid black 1px;">
-			<h2 id="modal-title" style='float:left;margin-bottom:0'>Feature propertes</h2>
+			<h2 id="modal-title" style='float:left;margin-bottom:0'>Feature properties</h2>
 			<span id="feature-view-popup_close" class="close" onclick='CloseEditDialog("feature-view-popup","feature_list", "feature");'>&times;</span>
 		</div>
 		<div style="border:solid black 1px; height:350px;">
@@ -371,7 +413,18 @@ function CloseEditDialog(dlg_id, tbl_name, type) {
 	modal.style.display = "none";
 }
 
+/*
+	popup name: name of dialog implementation popup_name.html
+	table_name:  table to update or ''
+	param_name: object param holding object id in table
+*/
 function ShowEditDialog(popup_name, table_name, param_name, new_object) {
+	if (table_name == '') {
+		var modal = document.getElementById(popup_name);
+		modal.style.display = "block";
+		document.getElementsByName(param_name)[0].value = -1;
+		return;
+	}
 	var  tbl = document.getElementById(table_name);
 	var  row;
 	var  object_id;
@@ -389,7 +442,7 @@ function ShowEditDialog(popup_name, table_name, param_name, new_object) {
 		}
 		object_id = row.getElementsByTagName('td')[0].innerHTML;
 		var td = row.getElementsByTagName("td")[name_idx];
-		modal_title.innerText = 'Edit propertes of '+td.innerText;
+		modal_title.innerText = 'Edit properties of '+td.innerText;
 	}
 	else {
 		object_id = -1;

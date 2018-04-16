@@ -38,6 +38,7 @@ function RewriteUL(ul_name, list, empty_value='--none--') {
 			var li = document.createElement("li");
 			li.appendChild(document.createTextNode(list[i].name));
 			li.setAttribute('onclick', 'ulSelectLine(this, "'+ul_name+'")');
+			li.value = list[i].id;
 			ul.appendChild(li);
 		}
 	}
@@ -127,21 +128,32 @@ function ulDeleteSelectedLine(list_name) {
     }
 }
 
-function ulAddLine(ul_name, name, empty_value='--none--') {
+function ulAddLine(ul_name, name, value, empty_label='--none--') {
 	var ul = document.getElementById(ul_name);
 	if (ul.getElementsByTagName("li").length == 1) {
 		var li = ul.getElementsByTagName("li")[0]
-		if(li.innerHTML == empty_value) {
+		if(li.innerHTML == empty_label) {
 			li.parentNode.removeChild(li);
 		}
 	}
 	var li = document.createElement("li");
+	li.value = value;
 	li.appendChild(document.createTextNode(name));
 	li.setAttribute('onclick', 'ulSelectLine(this, "'+ul_name+'")');
 	ul.appendChild(li);
 }
 
-function RewriteRadioButtons(container_name, name, list, selected_value=-1) {
+function ulGetList(list_name) {
+    var the_list = document.getElementById(list_name);
+    var list_elems = the_list.getElementsByTagName('li');
+	var the_list = new Array();
+    for (var i = 0; i < list_elems.length; i++) {
+        the_list.push(list_elems[i].value);
+    }
+	return the_list;
+}
+
+function RewriteRadioButtons(container_name, name, list, selected_value=-1, onchange_func) {
 	var container = document.getElementById(container_name);
 	var children = container.getElementsByTagName(name);
 	
@@ -152,19 +164,28 @@ function RewriteRadioButtons(container_name, name, list, selected_value=-1) {
 	for (var i = 0; i < list.length; i++) {
 		try {
 			var radioHtml = '<input type="radio" name="' + name + '"';
-			if ( i ==  selected_value) {
-				radioHtml += ' checked="checked"';
+			if ( list[i].id ==  selected_value) {
+				radioHtml += ' checked';
 			}
-			radioHtml += '/>';
-			radioInput = document.createElement(radioHtml);
+			radioHtml += ' value="'+list[i].id+'"';
+			radioHtml += ' onchange="'+onchange_func+'"';
+			radioHtml += '>';
+			radioHtml += list[i].display_name;
+			radioHtml += '</input>';
+			container.insertAdjacentHTML('beforeend', radioHtml);
+			container.insertAdjacentHTML('beforeend', '<br>');
 		} catch( err ) {
+			console.log(err);
 			radioInput = document.createElement('input');
 			radioInput.setAttribute('type', 'radio');
 			radioInput.setAttribute('name', name);
-			if ( i ==  selected_value ) {
-				radioInput.setAttribute('checked', 'checked');
+			radioInput.value=list[i].id;
+			if ( list[i].id ==  selected_value) {
+				radioInput.setAttribute('checked', 'true');
 			}
+			radioInput.innerHTML = list[i].display_name;
+			container.appendChild(radioInput);
+			container.insertAdjacentHTML('beforeend', '<br>');
 		}
-		container.appendChild(opt);
 	}
 }

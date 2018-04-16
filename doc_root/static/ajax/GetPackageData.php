@@ -6,40 +6,28 @@ require 'DB_utils.php';
 //////////////////////////////////////////////////////////////
 $pid = $_GET['id'];
 
-$sql1 = "SELECT "
-			."p.id as pid, "
-			."a.id as aid, "
-			."a.algo_code, "
-			."at.name as algo_type, "
-			."a.owner_name, "
-			."a.owner_email, "
-			."p.egg_path, "
-			."u.name as universe, "
-			."e.name as input_entity, "
-			."a.description "
-			."from Packages p,Algorithms a,AlgoTypes as at,AlgoUniverse as u,AlgoInputEntities as e "
-			."where p.algorithm=a.id and a.algo_type=at.id and p.universe=u.id and p.input_entity=e.id and p.id=".$pid;
-
-$sql2 = "select * from InputDataFrames as f, DataFrames as df where df.id=f.dataframe_id and package_id=".$pid;
 
 $sql5 = "SELECT * from Data_types";
+if(!$result5 = $conn->query($sql5)) {
+	error_log('Error: '.$conn->error);
+	return;
+}
+$data_types = array();
+while($row5 = $result5->fetch_assoc()) {
+	array_push($data_types, $row5);
+}
 
 $sql6 = "SELECT * from Value_constraints";
-
-if(!$result1 = $conn->query($sql1)) {
+if(!$result6 = $conn->query($sql6)) {
 	error_log('Error: '.$conn->error);
 	return;
 }
-$row1 = $result1->fetch_assoc();
+$value_constraints = array();
+while($row6 = $result6->fetch_assoc()) {
+	array_push($value_constraints, $row6);
+}
 
-if(!$result2 = $conn->query($sql2)) {
-	error_log('Error: '.$conn->error);
-	return;
-}
-$dfs = array();
-while($row2 = $result2->fetch_assoc()) {
-	array_push($dfs, $row2);
-}
+
 
 $sql = "SELECT distinct f.dataframe_id id, d.name name"
 		." FROM QualityMetrics q,Features f,DataFrames d "
@@ -52,53 +40,19 @@ else {
 	$output_df['id'] = -1;
 	$output_df['name'] = '--none--';
 }
+
 $sql4 = "select f.id,f.name,q.quality_metrics,dt.name as data_type, v.name as value_constraint, f.is_target "
 		." from QualityMetrics q, Features f, DataFrames d, Data_types dt, Value_constraints v "
 		." where f.dataframe_id=d.id and q.feature_id=f.id and f.data_type=dt.id and f.value_constraint=v.id and q.package_id=".$pid;
 
 $features = FetchData($sql4, $conn);
 
-if(!$result5 = $conn->query($sql5)) {
-	error_log('Error: '.$conn->error);
-	return;
-}
-$data_types = array();
-while($row5 = $result5->fetch_assoc()) {
-	array_push($data_types, $row5);
-}
 
-
-if(!$result6 = $conn->query($sql6)) {
-	error_log('Error: '.$conn->error);
-	return;
-}
-$value_constraints = array();
-while($row6 = $result6->fetch_assoc()) {
-	array_push($value_constraints, $row6);
-}
 
 $sql = "select * from DataFrames";
 $all_data_frames = FetchData($sql, $conn);
-// if(!$result7 = $conn->query($sql7)) {
-	// error_log('Error: '.$conn->error);
-	// return;
-// }
-// $all_data_frames = array();
-// while($row7 = $result7->fetch_assoc()) {
-	// array_push($all_data_frames, $row7);
-// }
 
-/*
-$algo_types = array();
-$sql = "select * from AlgoTypes";
-if(!$result = $conn->query($sql)) {
-	error_log('Error: '.$conn->error);
-	return;
-}
-while($row = $result->fetch_assoc()) {
-	array_push($algo_types, $row);
-}
-*/
+
 $algorithms = array();
 $sql = "select id,algo_code name from Algorithms";
 if(!$result = $conn->query($sql)) {
@@ -121,12 +75,47 @@ if ($output_df['id'] != -1) {
 	}
 }
 
-$sql = "SELECT p.tag_id id, v.name FROM PackageTagList p, VisibilityTags v where p.tag_id=v.id and package_id=".$pid;
-$prohibited_tags = FetchData($sql, $conn);
+$sql = "SELECT * FROM ServingType";
+$all_serving_types = FetchData($sql, $conn);
+
+
+if ($pid != -1) {
+	$sql = "SELECT "
+				."p.id as pid, "
+				."a.id as aid, "
+				."a.algo_code, "
+				."at.name as algo_type, "
+				."a.owner_name, "
+				."a.owner_email, "
+				."p.egg_path, "
+				."u.name as universe, "
+				."e.name as input_entity, "
+				."a.description "
+				."from Packages p,Algorithms a,AlgoTypes as at,AlgoUniverse as u,AlgoInputEntities as e "
+				."where p.algorithm=a.id and a.algo_type=at.id and p.universe=u.id and p.input_entity=e.id and p.id=".$pid;
+	$pckg_data = FetchData($sql, $conn)[0];
+	$sql = "select * from InputDataFrames as f, DataFrames as df where df.id=f.dataframe_id and package_id=".$pid;
+	$dfs = FetchData($sql, $conn);
+
+	$sql = "SELECT p.tag_id id, v.name FROM PackageTagList p, VisibilityTags v where p.tag_id=v.id and package_id=".$pid;
+	$prohibited_tags = FetchData($sql, $conn);
+	$sql = "select s.id,s.name from Packages p, ServingType s where p.serving_type = s.id and p.id=".$pid;
+	$serving_type = FetchData($sql, $conn)[0]['id'];
+	$sql = "select rt_serving_type from Packages where id=".$pid;
+	$rt_serving_type = FetchData($sql, $conn)[0]['rt_serving_type'];
+}
+else {
+	$pckg_data = [];
+	$dfs = [];
+	$serving_type = 1;
+	$rt_serving_type = 0;
+	$prohibited_tags = [];
+}
+
 
 $json_data = (object) array(
 				'error' => 'OK',
-				'pckg_data' => $row1,
+				'pckg_data' => $pckg_data,
 				'data_frames' => $dfs,
 				'output_df' => $output_df,
 				'features' => $features,
@@ -136,7 +125,10 @@ $json_data = (object) array(
 //				'algo_types' => $algo_types,
 				'algorithms' => $algorithms,
 				'available_features' => $available_features,
-				'prohibited_tags' => $prohibited_tags
+				'prohibited_tags' => $prohibited_tags,
+				'all_serving_types' => $all_serving_types,
+				'serving_type' => $serving_type,
+				'rt_serving_type' => $rt_serving_type
 			);
 
 error_log(json_encode($json_data));
