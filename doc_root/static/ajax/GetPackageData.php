@@ -78,19 +78,24 @@ if ($output_df['id'] != -1) {
 $sql = "SELECT * FROM ServingType";
 $all_serving_types = FetchData($sql, $conn);
 
+$sql = "SELECT * from VisibilityTags";
+$available_tags = FetchData($sql, $conn);
+
 
 if ($pid != -1) {
 	$sql = "SELECT "
 				."p.id as pid, "
 				."a.id as aid, "
 				."a.algo_code, "
-				."at.name as algo_type, "
+				."at.name as algo_type_name, "
+				."a.algo_type, "
+				."at.id as type_id, "
 				."a.owner_name, "
 				."a.owner_email, "
 				."p.egg_path, "
 				."u.name as universe, "
 				."e.name as input_entity, "
-				."a.description "
+				."a.description, "
 				."from Packages p,Algorithms a,AlgoTypes as at,AlgoUniverse as u,AlgoInputEntities as e "
 				."where p.algorithm=a.id and a.algo_type=at.id and p.universe=u.id and p.input_entity=e.id and p.id=".$pid;
 	$pckg_data = FetchData($sql, $conn)[0];
@@ -99,18 +104,30 @@ if ($pid != -1) {
 
 	$sql = "SELECT p.tag_id id, v.name FROM PackageTagList p, VisibilityTags v where p.tag_id=v.id and package_id=".$pid;
 	$prohibited_tags = FetchData($sql, $conn);
+	
 	$sql = "select s.id,s.name from Packages p, ServingType s where p.serving_type = s.id and p.id=".$pid;
 	$serving_type = FetchData($sql, $conn)[0]['id'];
-	$sql = "select rt_serving_type from Packages where id=".$pid;
-	$rt_serving_type = FetchData($sql, $conn)[0]['rt_serving_type'];
+	// $sql = "select rt_serving_type from Packages where id=".$pid;
+	// $rt_serving_type = FetchData($sql, $conn)[0]['rt_serving_type'];
 }
 else {
+	$sql = "SELECT a.id as aid,a.algo_type,a.algo_code,a.owner_name,a.owner_email from Algorithms as a limit 1;";
+	$algo_data = FetchData($sql, $conn)[0];
+
 	$pckg_data = [];
+	$pckg_data['aid'] = $algo_data['aid'];
+	$pckg_data['algo_type'] = $algo_data['algo_type'];
+	$pckg_data['algo_code'] = $algo_data['algo_code'];
+	$pckg_data['owner_name'] = $algo_data['owner_name'];
+	$pckg_data['owner_email'] = $algo_data['owner_email'];
+
 	$dfs = [];
 	$serving_type = 1;
-	$rt_serving_type = 0;
 	$prohibited_tags = [];
+	$copy_to_serving = [];
 }
+$sql = "SELECT * from CopyToServing where id=".$pckg_data['algo_type'];
+$copy_to_serving = FetchData($sql, $conn)[0];
 
 
 $json_data = (object) array(
@@ -123,14 +140,14 @@ $json_data = (object) array(
 				'value_constraints' => $value_constraints,
 				'all_data_frames' => $all_data_frames,
 //				'algo_types' => $algo_types,
+				'available_tags' => $available_tags,
 				'algorithms' => $algorithms,
 				'available_features' => $available_features,
 				'prohibited_tags' => $prohibited_tags,
 				'all_serving_types' => $all_serving_types,
 				'serving_type' => $serving_type,
-				'rt_serving_type' => $rt_serving_type
+				'copy_to_serving' => $copy_to_serving
 			);
 
-error_log(json_encode($json_data));
 echo(json_encode($json_data));
 ?>

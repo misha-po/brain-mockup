@@ -8,7 +8,7 @@ $sql = "SELECT "
 			."at.name as algo_type, "
 			."a.owner_name, "
 			."a.owner_email, "
-			."a.description "
+			."a.description, "
 			."from Algorithms a, AlgoTypes as at  "
 			."where a.algo_type=at.id and a.id=".$algo_id;
 
@@ -23,12 +23,16 @@ $input_dataframes = FetchData($sql, $conn);
 $sql = "select * from DataFrames";
 $all_data_frames = FetchData($sql, $conn);
 
+$sql = "SELECT * from CopyToServing where id=".$algo_data.algo_type;
+$copy_to_serving = FetchData($sql, $conn)[0];
+
 $json_data = (object) array(
 				'error' => 'OK',
 				'algo_data' => $algo_data,
 				'input_dataframes' => $input_dataframes,
 				'all_data_frames' => $all_data_frames,
-				'algo_types' => $algo_types
+				'algo_types' => $algo_types,
+				'copy_to_serving' => $copy_to_serving
 			);
 
 error_log(json_encode($json_data));
